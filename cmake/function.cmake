@@ -7,6 +7,10 @@
 # + https://neerc.ifmo.ru/wiki/index.php?title=CMake_Tutorial
 # + https://habr.com/ru/post/330902/
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+set(LIBS_FOLDER "Libraries")
+
 # функция, создающая и подключающая библиотеку
 function(create_project_lib TARGET)
     file(GLOB TARGET_SRC "*.c*")        # добавляем в переменную TARGET_SRC все файлы с расширением .c и .cpp
@@ -16,6 +20,8 @@ function(create_project_lib TARGET)
     # в неё добавляются файлы из переменных ${TARGET_SRC} (исходный код) и ${TARGET_HD} (хедеры);
 	# если заменить «STATIC» на «SHARED», то получим библиотеку динамическую. 
 	add_library(${TARGET} STATIC ${TARGET_SRC} ${TARGET_HD})
+
+    set_target_properties(${TARGET} PROPERTIES FOLDER ${LIBS_FOLDER})
     
 	# ${CMAKE_CURRENT_SOURCE_DIR} - стандартная переменная с адресом рабочей директории
 	
@@ -28,6 +34,8 @@ function(create_project_lib TARGET)
     set_property ( GLOBAL PROPERTY LIBS_P ${LIB_LIST}) 
 endfunction()
 
+set(APPS_FOLDER "Applications")
+
 # функция, создающая приложение (исполняемый проект)
 function(create_executable_project TARGET)
     file(GLOB TARGET_SRC "*.c*")              # добавляем в переменную TARGET_SRC все файлы с расширением .c и .cpp
@@ -36,6 +44,8 @@ function(create_executable_project TARGET)
 	# создаём исполняемый проект,
 	# в него добавляются файлы из переменных ${TARGET_SRC} (исходный код) и ${TARGET_HD} (хедеры);
 	add_executable(${TARGET} ${TARGET_SRC} ${TARGET_HD})
+
+    set_target_properties(${TARGET} PROPERTIES FOLDER ${APPS_FOLDER})
     
 	# добавляем зависимость от всех имеющихся библиотек
     get_property ( INCLUDE_DIRS GLOBAL PROPERTY INC_DIR)
@@ -53,7 +63,6 @@ function(add_depend TARGET LIB INCLUDE_DIR)
     #get_property ( LIB_LIST GLOBAL PROPERTY LIBS_P)
 	target_link_libraries(${TARGET} ${LIB}) 
 endfunction()
-
 
 # define test hooks
 function(add_gtest test_name test_source)
