@@ -3,7 +3,7 @@
 #ifndef LIBS_LIB_SPHERE_SPHERE_H_
 #define LIBS_LIB_SPHERE_SPHERE_H_
 
-#include "../lib_point3/point3.h"
+#include "libs/lib_point3/point3.h"
 
 class Sphere {
  private:

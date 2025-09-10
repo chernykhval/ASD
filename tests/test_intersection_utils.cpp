@@ -1,11 +1,11 @@
 // Copyright 2024 Chernykh Valentin
 
 #include <gtest/gtest.h>
-#include "../lib_circle/circle.h"
-#include "../lib_sphere/sphere.h"
-#include "../lib_intersection_utils/intersection_utils.h"
-#include "../lib_point2/point2.h"
-#include "../lib_point3/point3.h"
+#include "libs/lib_circle/circle.h"
+#include "libs/lib_sphere/sphere.h"
+#include "libs/lib_intersection_utils/intersection_utils.h"
+#include "libs/lib_point2/point2.h"
+#include "libs/lib_point3/point3.h"
 
 #define EPSILON 0.000001
 
@@ -15,8 +15,7 @@ TEST(TestCircleIntersection, no_intersection) {
 
     IntersectionType actual_result = intersection_betwen(
         first_circle,
-        second_circle
-    );
+        second_circle);
     IntersectionType expected_result = IntersectionType::No_Intersection;
 
     EXPECT_EQ(expected_result, actual_result);
@@ -28,8 +27,7 @@ TEST(TestCircleIntersection, one_inside_other) {
 
     IntersectionType actual_result = intersection_betwen(
         first_circle,
-        second_circle
-    );
+        second_circle);
     IntersectionType expected_result = IntersectionType::One_Inside_Other;
 
     EXPECT_EQ(expected_result, actual_result);
@@ -41,8 +39,7 @@ TEST(TestCircleIntersection, intersection) {
 
     IntersectionType actual_result = intersection_betwen(
         first_circle,
-        second_circle
-    );
+        second_circle);
     IntersectionType expected_result = IntersectionType::Intersection;
 
     EXPECT_EQ(expected_result, actual_result);
@@ -54,8 +51,7 @@ TEST(TestCircleIntersection, external_tangency) {
 
     IntersectionType actual_result = intersection_betwen(
         first_circle,
-        second_circle
-    );
+        second_circle);
     IntersectionType expected_result = IntersectionType::External_Tangency;
 
     EXPECT_EQ(expected_result, actual_result);
@@ -67,8 +63,7 @@ TEST(TestCircleIntersection, internal_tangency) {
 
     IntersectionType actual_result = intersection_betwen(
         first_circle,
-        second_circle
-    );
+        second_circle);
     IntersectionType expected_result = IntersectionType::Internal_Tangency;
 
     EXPECT_EQ(expected_result, actual_result);
@@ -80,8 +75,7 @@ TEST(TestSphereIntersection, no_intersection) {
 
     IntersectionType actual_result = intersection_betwen(
         first_sphere,
-        second_sphere
-    );
+        second_sphere);
     IntersectionType expected_result = IntersectionType::No_Intersection;
 
     EXPECT_EQ(expected_result, actual_result);
@@ -93,8 +87,7 @@ TEST(TestSphereIntersection, one_inside_other) {
 
     IntersectionType actual_result = intersection_betwen(
         first_sphere,
-        second_sphere
-    );
+        second_sphere);
     IntersectionType expected_result = IntersectionType::One_Inside_Other;
 
     EXPECT_EQ(expected_result, actual_result);
@@ -106,8 +99,7 @@ TEST(TestSphereIntersection, intersection) {
 
     IntersectionType actual_result = intersection_betwen(
         first_sphere,
-        second_sphere
-    );
+        second_sphere);
     IntersectionType expected_result = IntersectionType::Intersection;
 
     EXPECT_EQ(expected_result, actual_result);
@@ -119,8 +111,7 @@ TEST(TestSphereIntersection, external_tangency) {
 
     IntersectionType actual_result = intersection_betwen(
         first_sphere,
-        second_sphere
-    );
+        second_sphere);
     IntersectionType expected_result = IntersectionType::External_Tangency;
 
     EXPECT_EQ(expected_result, actual_result);
@@ -132,8 +123,7 @@ TEST(TestSphereIntersection, internal_tangency) {
 
     IntersectionType actual_result = intersection_betwen(
         first_sphere,
-        second_sphere
-    );
+        second_sphere);
     IntersectionType expected_result = IntersectionType::Internal_Tangency;
 
     EXPECT_EQ(expected_result, actual_result);

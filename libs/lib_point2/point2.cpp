@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "point2.h"
+#include "libs/lib_point2/point2.h"
 
 Point2::Point2() : _x(0), _y(0) {}
 Point2::Point2(int x, int y) : _x(x), _y(y) {}

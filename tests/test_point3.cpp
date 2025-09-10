@@ -1,7 +1,7 @@
 // Copyright 2024 Chernykh Valentin
 
 #include <gtest/gtest.h>
-#include "../lib_point3/point3.h"
+#include "libs/lib_point3/point3.h"
 
 #define EPSILON 0.000001
 
