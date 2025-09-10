@@ -6,12 +6,12 @@
 #define EPSILON 0.000001
 
 TEST(TestEasyExampleLib, can_div) {
-  // Arrange
-  int x = 10;
-  int y = 2;
+    // Arrange
+    int x = 10;
+    int y = 2;
 
-  // Act & Assert
-  ASSERT_NO_THROW(division(x, y));
+    // Act & Assert
+    ASSERT_NO_THROW(division(x, y));
 }
 
 TEST(TestEasyExampleLib, can_div_correctly) {
@@ -41,10 +41,10 @@ TEST(TestEasyExampleLib, can_div_correctly_with_remainder) {
 }
 
 TEST(TestEasyExampleLib, throw_when_try_div_by_zero) {
-  // Arrange
-  int x = 10;
-  int y = 0;
+    // Arrange
+    int x = 10;
+    int y = 0;
 
-  // Act & Assert
-  ASSERT_ANY_THROW(division(x, y));
+    // Act & Assert
+    ASSERT_ANY_THROW(division(x, y));
 }

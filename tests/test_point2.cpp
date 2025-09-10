@@ -8,7 +8,7 @@
 TEST(TestPoint2, distance_to_another) {
     Point2 pos_1 = Point2(3, 4);
     Point2 pos_2 = Point2(0, 0);
-    
+
     float actual_result = pos_1.distance_to(pos_2);
     float expected_result = 5;
 
