@@ -26,13 +26,13 @@ IntersectionType intersection_betwen(T first, T second) {
 
     if (distance > big_r + small_r) {
         return IntersectionType::No_Intersection;
-    }else if (distance == big_r + small_r) {
+    } else if (distance == big_r + small_r) {
         return IntersectionType::External_Tangency;
-    }else if (distance < big_r - small_r) {
+    } else if (distance < big_r - small_r) {
         return IntersectionType::One_Inside_Other;
-    }else if (distance == big_r - small_r) {
+    } else if (distance == big_r - small_r) {
         return IntersectionType::Internal_Tangency;
-    }else if (distance > big_r - small_r && distance < big_r + small_r) {
+    } else if (distance > big_r - small_r && distance < big_r + small_r) {
         return IntersectionType::Intersection;
     }
 
