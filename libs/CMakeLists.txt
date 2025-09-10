@@ -1,0 +1,7 @@
+file(GLOB LIB_DIRS "*")
+foreach(LIB_DIR ${LIB_DIRS})
+    if(IS_DIRECTORY ${LIB_DIR} AND EXISTS "${LIB_DIR}/CMakeLists.txt")
+        message(STATUS "Adding library: ${LIB_DIR}")
+        add_subdirectory(${LIB_DIR})
+    endif()
+endforeach()
