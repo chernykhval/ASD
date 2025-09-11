@@ -1,4 +1,4 @@
-// Copyright 2024 Chernykh Valentin
+// Copyright 2025 Chernykh Valentin
 
 #include "libs/lib_circle/circle.h"
 #include "libs/lib_point2/point2.h"

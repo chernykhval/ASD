@@ -1,4 +1,4 @@
-// Copyright 2024 Chernykh Valentin
+// Copyright 2025 Chernykh Valentin
 
 #ifndef LIBS_LIB_SPHERE_SPHERE_H_
 #define LIBS_LIB_SPHERE_SPHERE_H_

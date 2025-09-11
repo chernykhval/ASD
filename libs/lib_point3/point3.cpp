@@ -1,4 +1,4 @@
-// Copyright 2024 Chernykh Valentin
+// Copyright 2025 Chernykh Valentin
 
 #include <cmath>
 
