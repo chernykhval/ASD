@@ -20,7 +20,10 @@ function(create_project_lib TARGET)
     # в неё добавляются файлы из переменных ${TARGET_SRC} (исходный код) и ${TARGET_HD} (хедеры);
 	# если заменить «STATIC» на «SHARED», то получим библиотеку динамическую. 
 	add_library(${TARGET} STATIC ${TARGET_SRC} ${TARGET_HD})
-
+    target_include_directories(${TARGET} PUBLIC 
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_SOURCE_DIR}
+    )
     set_target_properties(${TARGET} PROPERTIES FOLDER ${LIBS_FOLDER})
     
 	# ${CMAKE_CURRENT_SOURCE_DIR} - стандартная переменная с адресом рабочей директории
@@ -44,7 +47,10 @@ function(create_executable_project TARGET)
 	# создаём исполняемый проект,
 	# в него добавляются файлы из переменных ${TARGET_SRC} (исходный код) и ${TARGET_HD} (хедеры);
 	add_executable(${TARGET} ${TARGET_SRC} ${TARGET_HD})
-
+    target_include_directories(${TARGET} PUBLIC 
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_SOURCE_DIR}
+    )
     set_target_properties(${TARGET} PROPERTIES FOLDER ${APPS_FOLDER})
     
 	# добавляем зависимость от всех имеющихся библиотек
