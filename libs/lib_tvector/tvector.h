@@ -149,6 +149,7 @@ public:
     inline void clear() noexcept;
     void shrink_to_fit();
     void resize(size_type);
+    void reserve(size_type);
     inline bool is_empty() const noexcept;
     TVector& operator=(const TVector&) noexcept;
     TVector& operator=(TVector&&) noexcept;
@@ -762,6 +763,19 @@ void TVector<T>::resize(size_type new_size) {
         _used = new_size;
     }
     else {
+        _used = new_size;
+        reset_memory_for_delete();
+    }
+}
+
+template<typename T>
+inline void TVector<T>::reserve(size_type new_size) {
+    reset_memory_for_delete();
+
+    if (new_size > _capacity) {
+        reset_memory(new_size);
+    }
+    else if (new_size < _used) {
         _used = new_size;
         reset_memory_for_delete();
     }
