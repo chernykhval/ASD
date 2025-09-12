@@ -16,7 +16,7 @@ enum State {
 
 template<typename T>
 class TVector {
-private:
+ private:
     T* _data;
     State* _states;
     size_t _capacity;
@@ -25,7 +25,7 @@ private:
     size_t _capacity_step = 15;
     float _removal_coefficient = 0.15f;
 
-public:
+ public:
     using value_type = T;
     using reference = T&;
     using const_reference = const T&;
@@ -35,11 +35,11 @@ public:
     using difference_type = std::ptrdiff_t;
 
     class Iterator {
-    private:
+     private:
         T* _ptr;
         TVector<T>& _parent;
 
-    public:
+     public:
         using iterator_category = std::random_access_iterator_tag;
         using value_type = TVector::value_type;
         using reference = TVector::reference;
@@ -72,11 +72,11 @@ public:
     };
 
     class ConstIterator {
-    private:
+     private:
         const T* _ptr;
         const TVector<T>& _parent;
 
-    public:
+     public:
         using iterator_category = std::random_access_iterator_tag;
         using value_type = TVector::value_type;
         using reference = TVector::const_reference;
@@ -171,7 +171,7 @@ public:
     template<typename U>
     friend int search_end(TVector<U>&, bool(*check) (U)) noexcept;
 
-private:
+ private:
     void reset_memory_for_delete() noexcept;
     void reset_memory(size_type) noexcept;
     Iterator reset_memory(size_type, const Iterator&) noexcept;
@@ -209,7 +209,8 @@ TVector<T>::TVector(size_type size) noexcept : _used(size), _deleted(0) {
 }
 
 template<typename T>
-TVector<T>::TVector(size_type size, value_type elem) : _used(size), _deleted(0) {
+TVector<T>::TVector(size_type size, value_type elem) :
+    _used(size), _deleted(0) {
     if (size == 0) {
         throw std::runtime_error("TVector with value"
             " can not be with zero size");

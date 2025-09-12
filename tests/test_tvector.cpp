@@ -1,16 +1,14 @@
 // Copyright 2025 Chernykh Valentin
 
 #include <gtest/gtest.h>
-#include "libs/lib_tvector/tvector.h"
-
-#define EPSILON 0.000001
-
-#include <gtest/gtest.h>
 #include <stdexcept>
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
 #include <utility>
+#include "libs/lib_tvector/tvector.h"
+
+#define EPSILON 0.000001
 
 // Helper functions for testing
 bool find_chet(int a) {
@@ -464,7 +462,7 @@ TEST(TVectorTest, PopBackLessCapacity) {
 
 TEST(TVectorTest, PopBackLargeVector) {
     TVector<int> actual_result(500000);
-    const int large_size =500000;
+    const int large_size = 500000;
     for (int i = 0; i < large_size; ++i) {
         actual_result.pop_back();
     }
@@ -489,7 +487,8 @@ TEST(TVectorTest, PopBackAfterShrinkToFit) {
 
 TEST(TVectorTest, PopFront) {
     TVector<int> actual_result = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-        14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
+        14, 15, 16, 17, 18, 19, 20, 21,
+        22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
     TVector<int> expected_result = { 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
         18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
 
@@ -507,7 +506,8 @@ TEST(TVectorTest, PopFront) {
 
 TEST(TVectorTest, Erase) {
     TVector<int> actual_result = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-        14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
+        14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+        24, 25, 26, 27, 28, 29, 30, 31 };
     TVector<int> expected_result = { 3, 4, 5, 6, 8, 9, 10, 12, 13, 14, 16, 17,
         18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29 };
 
@@ -1328,7 +1328,8 @@ TEST(TVectorTest, PerformancePushBack) {
     }
 
     auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    auto duration = std::chrono::
+        duration_cast<std::chrono::microseconds>(end - start);
 
     // Check that it completed and has correct size
     EXPECT_EQ(100000u, vec.size());
@@ -1355,7 +1356,8 @@ TEST(TVectorTest, ConstIteratorDereference) {
     TVector<int>::ConstIterator it = vec.begin();
 
     EXPECT_EQ(1, *it);
-    // Note: Cannot modify through const_iterator - this is enforced at compile time
+    // Note: Cannot modify through const_iterator
+    // - this is enforced at compile time
 }
 
 TEST(TVectorTest, ConstIteratorIncrement) {
