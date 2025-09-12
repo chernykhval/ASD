@@ -755,18 +755,16 @@ void TVector<T>::resize(size_type new_size) {
         }
 
         _used = new_size;
-    }
-    else if (new_size > _used) {
+    } else if (new_size > _used) {
         for (size_type i = _used; i < new_size; i++) {
             _states[i] = Busy;
         }
 
         _used = new_size;
-    }
-    else {
+    } else {
         _used = new_size;
         reset_memory_for_delete();
-    }
+    } 
 }
 
 template<typename T>
@@ -775,11 +773,10 @@ inline void TVector<T>::reserve(size_type new_size) {
 
     if (new_size > _capacity) {
         reset_memory(new_size);
-    }
-    else if (new_size < _used) {
+    } else if (new_size < _used) {
         _used = new_size;
         reset_memory_for_delete();
-    }
+    } 
 }
 
 template<typename T>
@@ -1066,10 +1063,9 @@ int* search_all(TVector<U>& vec, bool(*check)(U)) noexcept {
                 search_result[index] = i - deleted_count;
                 index++;
             }
-        }
-        else {
+        } else {
             deleted_count++;
-        }
+        } 
     }
 
     for (int i = index; i < vec.size(); i++) {
@@ -1087,10 +1083,9 @@ int search_begin(TVector<U>& vec, bool(*check)(U)) noexcept {
         if (vec._states[i] == Busy) {
             if (check(vec._data[i]))
                 return i - deleted_count;
-        }
-        else {
+        } else {
             deleted_count++;
-        }
+        } 
     }
 
     return -1;
