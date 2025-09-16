@@ -15,4 +15,3 @@ class Point2 {
 };
 
 #endif  // LIBS_LIB_POINT2_POINT2_H_
-

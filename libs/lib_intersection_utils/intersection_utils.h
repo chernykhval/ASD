@@ -3,6 +3,8 @@
 #ifndef LIBS_LIB_INTERSECTION_UTILS_INTERSECTION_UTILS_H_
 #define LIBS_LIB_INTERSECTION_UTILS_INTERSECTION_UTILS_H_
 
+#include <stdexcept>
+
 enum class IntersectionType {
     No_Intersection,
     One_Inside_Other,
@@ -36,7 +38,7 @@ IntersectionType intersection_betwen(T first, T second) {
         return IntersectionType::Intersection;
     }
 
-    throw std::exception("Error type");
+    throw std::runtime_error("Error type");
 }
 
 #endif  // LIBS_LIB_INTERSECTION_UTILS_INTERSECTION_UTILS_H_
