@@ -1,7 +1,7 @@
 // Copyright 2024 Chernykh Valentin
 
-#include "sphere.h"
-#include "point3.h"
+#include "libs/lib_sphere/sphere.h"
+#include "libs/lib_point3/point3.h"
 
 Sphere::Sphere() : _position(), _radius(1) {}
 Sphere::Sphere(Point3 position, int radius) :
