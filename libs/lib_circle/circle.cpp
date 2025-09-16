@@ -1,7 +1,7 @@
 // Copyright 2024 Chernykh Valentin
 
-#include "circle.h"
-#include "point2.h"
+#include "libs/lib_circle/circle.h"
+#include "libs/lib_point2/point2.h"
 
 Circle::Circle() : _position(), _radius(1) {}
 Circle::Circle(Point2 position, int radius) :

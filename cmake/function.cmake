@@ -54,10 +54,10 @@ function(create_executable_project TARGET)
 	target_link_libraries(${TARGET} ${LIB_LIST})    
 endfunction()
 
-function(add_depend TARGET LIB INCLUDE_DIR)
+function(add_depend TARGET LIB)
 	# добавляем пути поиска заголовков, от которых зависит создаваемый проект (альтернативный способ)
     #get_property ( INCLUDE_DIRS GLOBAL PROPERTY INC_DIR)
-    target_include_directories(${TARGET} PUBLIC ${INCLUDE_DIR})
+    target_include_directories(${TARGET} PUBLIC ${CMAKE_SOURCE_DIR})
 	
 	# линкуем к проекту имеющиеся библиотеки, от которых он зависит (альтернативный способ)
     #get_property ( LIB_LIST GLOBAL PROPERTY LIBS_P)
