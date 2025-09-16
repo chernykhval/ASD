@@ -7,9 +7,9 @@
 # + https://neerc.ifmo.ru/wiki/index.php?title=CMake_Tutorial
 # + https://habr.com/ru/post/330902/
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON) # включение использования папок
 
-set(LIBS_FOLDER "Libraries")
+set(LIBS_FOLDER "Libraries") # настройка для создания папки
 
 # функция, создающая и подключающая библиотеку
 function(create_project_lib TARGET)
@@ -20,13 +20,13 @@ function(create_project_lib TARGET)
     # в неё добавляются файлы из переменных ${TARGET_SRC} (исходный код) и ${TARGET_HD} (хедеры);
 	# если заменить «STATIC» на «SHARED», то получим библиотеку динамическую. 
 	add_library(${TARGET} STATIC ${TARGET_SRC} ${TARGET_HD})
-    target_include_directories(${TARGET} PUBLIC 
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_SOURCE_DIR}
-    )
-    set_target_properties(${TARGET} PROPERTIES FOLDER ${LIBS_FOLDER})
+
+    set_target_properties(${TARGET} PROPERTIES FOLDER ${LIBS_FOLDER}) # настройка для добавления в папку
     
 	# ${CMAKE_CURRENT_SOURCE_DIR} - стандартная переменная с адресом рабочей директории
+
+    # добавляем путь ${CMAKE_SOURCE_DIR} в директории заголовочных файлов
+    target_include_directories(${TARGET} PUBLIC ${CMAKE_SOURCE_DIR})
 	
 	# добавляем созданную библиотеку к списку имеющихся
     get_property ( INCLUDE_DIRS GLOBAL PROPERTY INC_DIR)
@@ -47,17 +47,14 @@ function(create_executable_project TARGET)
 	# создаём исполняемый проект,
 	# в него добавляются файлы из переменных ${TARGET_SRC} (исходный код) и ${TARGET_HD} (хедеры);
 	add_executable(${TARGET} ${TARGET_SRC} ${TARGET_HD})
-    target_include_directories(${TARGET} PUBLIC 
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_SOURCE_DIR}
-    )
+    
     set_target_properties(${TARGET} PROPERTIES FOLDER ${APPS_FOLDER})
     
 	# добавляем зависимость от всех имеющихся библиотек
     get_property ( INCLUDE_DIRS GLOBAL PROPERTY INC_DIR)
     target_include_directories(${TARGET} PUBLIC ${INCLUDE_DIRS})
     get_property ( LIB_LIST GLOBAL PROPERTY LIBS_P)
-	target_link_libraries(${TARGET} ${LIB_LIST})    
+	target_link_libraries(${TARGET} ${LIB_LIST})
 endfunction()
 
 function(add_depend TARGET LIB INCLUDE_DIR)
@@ -68,6 +65,10 @@ function(add_depend TARGET LIB INCLUDE_DIR)
 	# линкуем к проекту имеющиеся библиотеки, от которых он зависит (альтернативный способ)
     #get_property ( LIB_LIST GLOBAL PROPERTY LIBS_P)
 	target_link_libraries(${TARGET} ${LIB}) 
+endfunction()
+
+function(add_link TARGET LIB)
+    target_link_libraries(${TARGET} ${LIB}) 
 endfunction()
 
 # define test hooks
