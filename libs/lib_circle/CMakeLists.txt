@@ -1,2 +1,2 @@
 create_project_lib(Circle)
-add_depend(Circle Point2)
+add_link(Circle Point2)

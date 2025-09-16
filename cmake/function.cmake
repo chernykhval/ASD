@@ -24,6 +24,9 @@ function(create_project_lib TARGET)
     set_target_properties(${TARGET} PROPERTIES FOLDER ${LIBS_FOLDER}) # настройка для добавления в папку
     
 	# ${CMAKE_CURRENT_SOURCE_DIR} - стандартная переменная с адресом рабочей директории
+
+    # добавляем путь ${CMAKE_SOURCE_DIR} в директории заголовочных файлов
+    target_include_directories(${TARGET} PUBLIC ${CMAKE_SOURCE_DIR})
 	
 	# добавляем созданную библиотеку к списку имеющихся
     get_property ( INCLUDE_DIRS GLOBAL PROPERTY INC_DIR)
@@ -51,17 +54,21 @@ function(create_executable_project TARGET)
     get_property ( INCLUDE_DIRS GLOBAL PROPERTY INC_DIR)
     target_include_directories(${TARGET} PUBLIC ${INCLUDE_DIRS})
     get_property ( LIB_LIST GLOBAL PROPERTY LIBS_P)
-	target_link_libraries(${TARGET} ${LIB_LIST})    
+	target_link_libraries(${TARGET} ${LIB_LIST})
 endfunction()
 
-function(add_depend TARGET LIB)
+function(add_depend TARGET LIB INCLUDE_DIR)
 	# добавляем пути поиска заголовков, от которых зависит создаваемый проект (альтернативный способ)
     #get_property ( INCLUDE_DIRS GLOBAL PROPERTY INC_DIR)
-    target_include_directories(${TARGET} PUBLIC ${CMAKE_SOURCE_DIR})
+    target_include_directories(${TARGET} PUBLIC ${INCLUDE_DIR})
 	
 	# линкуем к проекту имеющиеся библиотеки, от которых он зависит (альтернативный способ)
     #get_property ( LIB_LIST GLOBAL PROPERTY LIBS_P)
 	target_link_libraries(${TARGET} ${LIB}) 
+endfunction()
+
+function(add_link TARGET LIB)
+    target_link_libraries(${TARGET} ${LIB}) 
 endfunction()
 
 # define test hooks
