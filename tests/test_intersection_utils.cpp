@@ -1,11 +1,11 @@
 // Copyright 2024 Chernykh Valentin
 
 #include <gtest/gtest.h>
-#include "circle.h"
-#include "sphere.h"
-#include "intersection_utils.h"
-#include "point2.h"
-#include "point3.h"
+#include "libs/lib_circle/circle.h"
+#include "libs/lib_sphere/sphere.h"
+#include "libs/lib_intersection_utils/intersection_utils.h"
+#include "libs/lib_point2/point2.h"
+#include "libs/lib_point3/point3.h"
 
 #define EPSILON 0.000001
 

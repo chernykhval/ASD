@@ -5,7 +5,8 @@
 
 #include <iostream>
 #include <iomanip>
-#include "easy_example.h"
+#include <stdexcept>
+#include "libs/lib_easy_example/easy_example.h"
 
 int main() {
     int a, b;
@@ -18,7 +19,7 @@ int main() {
         std::cout << a << " / " << b << " = "
             << std::setprecision(2) << result << std::endl;
     }
-    catch (std::exception err) {
+    catch (const std::runtime_error& err) {
         std::cerr << err.what() << std::endl;
     }
 
@@ -29,7 +30,7 @@ int main() {
         std::cout << a << " / " << b << " = "
             << std::setprecision(2) << result << std::endl;
     }
-    catch (std::exception err) {
+    catch (const std::runtime_error& err) {
         std::cerr << err.what() << std::endl;
     }
 

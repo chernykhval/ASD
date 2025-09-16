@@ -1,7 +1,7 @@
 // Copyright 2024 Chernykh Valentin
 
 #include <gtest/gtest.h>
-#include "point2.h"
+#include "libs/lib_point2/point2.h"
 
 #define EPSILON 0.000001
 
