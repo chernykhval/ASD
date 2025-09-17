@@ -7,8 +7,6 @@
 
 template<typename T>
 class MVector {
-
-
 };
 
 #endif  // LIBS_LIB_MVECTOR_MVECTOR_H_
