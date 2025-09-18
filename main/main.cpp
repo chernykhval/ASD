@@ -52,7 +52,7 @@ int main() {
 //     int a;
 //
 //     for (int i = 0; i < m; i++) {
-//         std::cout << "Input " << i << " row of matrix (" << n << " values): ";
+//         std::cout << "Input " << i << " row of matrix (" << n << " values):";
 //
 //         for (int j = 0; j < n; j++) {
 //             // std::cout << "element (" << i << ", " << j << "): ";
@@ -105,8 +105,9 @@ void start_matrix_calculator() {
 
             case '*':
                 rows_B = columns_A;
-                std::cout << "Your choice: A(" << rows_A << "x" << columns_A << ") "
-                << operation << " B(" << rows_B << "x<columns>)" << std::endl;
+                std::cout << "Your choice: A(" << rows_A << "x"
+                << columns_A << ") " << operation << " B("
+                << rows_B << "x<columns>)" << std::endl;
                 std::cout << "Input B columns count: ";
                 std::cin >> columns_B;
 
