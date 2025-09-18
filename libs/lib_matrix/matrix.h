@@ -11,6 +11,7 @@ class Matrix{
     size_t _m, _n;
 
  public:
+    Matrix();
     Matrix(size_t m, size_t n);
 
     Matrix operator+(const Matrix& other) const;
@@ -28,6 +29,10 @@ class Matrix{
     friend std::istream& operator>>(std::istream& is, Matrix<U>& matrix);
 };
 
+
+template<typename T>
+Matrix<T>::Matrix() : _m(0), _n(0) {}
+
 template<typename T>
 Matrix<T>::Matrix(const size_t m, const size_t n) : _m(m), _n(n) {}
 
@@ -43,7 +48,7 @@ Matrix<T> Matrix<T>::operator-(const Matrix& other) const {
 
 template<typename T>
 Matrix<T> Matrix<T>::operator*(const Matrix& other) const {
-    return Matrix(_m, _n);
+    return Matrix(_m, other._n);
 }
 
 template<typename T>
@@ -54,6 +59,20 @@ Matrix<T> Matrix<T>::operator*(const T& scalar) const {
 template<typename T>
 Matrix<T> Matrix<T>::transpose() const {
     return Matrix(_m, _n);
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix) {
+    os << "operator<<: Matrix(" << matrix._m
+    << ", " << matrix._n << ")" << std::endl;
+    return os;
+}
+
+template <typename T>
+std::istream& operator>>(std::istream& is, Matrix<T>& matrix) {
+    std::cout << "operator>>: Input matrix(" << matrix._m
+    << ", " << matrix._n << ")" << std::endl;
+    return is;
 }
 
 #endif  // LIBS_LIB_MATRIX_MATRIX_H_
