@@ -1,9 +1,11 @@
 // Copyright 2024 Marina Usova
 
-#define EASY_EXAMPLE
+#include <iostream>
+
+#define MATRIX
+
 #ifdef EASY_EXAMPLE
 
-#include <iostream>
 #include <iomanip>
 #include <stdexcept>
 #include "libs/lib_easy_example/easy_example.h"
@@ -38,3 +40,108 @@ int main() {
 }
 
 #endif  // EASY_EXAMPLE
+
+#ifdef MATRIX
+
+#include "cstdio"
+#include "libs/lib_matrix/matrix.h"
+
+template<typename T>
+Matrix<T> fill_matrix(int m, int n) {
+    Matrix<T> matrix(m, n);
+    int a;
+
+    for (int i = 0; i < m; i++) {
+        std::cout << "Input " << i << " row of matrix (" << n << " values): ";
+
+        for (int j = 0; j < n; j++) {
+            // std::cout << "element (" << i << ", " << j << "): ";
+            std::cin >> a;
+        }
+    }
+
+    std::cout << "\n";
+
+    return matrix;
+}
+
+void start_matrix_calculator() {
+}
+
+void start_triangle_matrix_calculator() {
+}
+
+int main() {
+    // int m, n, t, k;
+    // char operation;
+    //
+    // std::cout << "Set size of matrix m x n.\nm: ";
+    // std::cin >> m;
+    // std::cout << "n: ";
+    // std::cin >> n;
+    //
+    // std::cout << "Choose operation (+, -, *):";
+    // std::cin >> operation;
+    //
+    // switch (operation) {
+    //     case '+':
+    //     case '-':
+    //         t = m;
+    //         k = n;
+    //         std::cout << "Your choise " << m << "x" << n << " "
+    //         << operation << " " << t << "x" << k << std::endl;
+    //         break;
+    //     case '*':
+    //         t = n;
+    //         std::cout << "Your choise " << m << "x" << n << " "
+    //         << operation << " " << t << "xk" << std::endl;
+    //         std::cout << "Input k: ";
+    //         std::cin >> k;
+    //         break;
+    //     default:
+    //         std::cout << "Wrong operation!";
+    //         break;
+    // }
+    //
+    // std::cout << "Fill first matrix\n";
+    // Matrix<int> first_matrix = fill_matrix<int>(m, n);
+    // std::cout << "Fill second matrix\n";
+    // Matrix<int> second_matrix = fill_matrix<int>(t, k);
+
+    char user_input;
+    bool is_exit = false;
+
+    while (true) {
+        if (is_exit) {
+            break;
+        }
+
+        std::cout << "Choose calculator:\n"
+                     "1. Matrix\n"
+                     "2. TriangleMatrix\n"
+                     "0. Exit\n"
+                     "Input: ";
+        std::cin >> user_input;
+
+        switch (user_input) {
+            case '1':
+                start_matrix_calculator();
+                break;
+
+            case '2':
+                start_triangle_matrix_calculator();
+                break;
+
+            case '0':
+                is_exit = true;
+                break;
+
+            default:
+                std::cout << "Wrong input!\n";
+                break;
+        }
+    }
+    return 0;
+}
+
+#endif  // MATRIX
