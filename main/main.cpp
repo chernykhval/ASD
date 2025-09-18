@@ -66,48 +66,52 @@ Matrix<T> fill_matrix(int m, int n) {
 }
 
 void start_matrix_calculator() {
-}
+    size_t rows_A, columns_A, rows_B, columns_B;
+    char operation;
 
-void start_triangle_matrix_calculator() {
-}
+    std::cout << "Set size of matrix A.\nRows count: ";
+    std::cin >> rows_A;
+    std::cout << "Columns count: ";
+    std::cin >> columns_A;
 
-int main() {
-    // int m, n, t, k;
-    // char operation;
-    //
-    // std::cout << "Set size of matrix m x n.\nm: ";
-    // std::cin >> m;
-    // std::cout << "n: ";
-    // std::cin >> n;
-    //
-    // std::cout << "Choose operation (+, -, *):";
-    // std::cin >> operation;
-    //
-    // switch (operation) {
-    //     case '+':
-    //     case '-':
-    //         t = m;
-    //         k = n;
-    //         std::cout << "Your choise " << m << "x" << n << " "
-    //         << operation << " " << t << "x" << k << std::endl;
-    //         break;
-    //     case '*':
-    //         t = n;
-    //         std::cout << "Your choise " << m << "x" << n << " "
-    //         << operation << " " << t << "xk" << std::endl;
-    //         std::cout << "Input k: ";
-    //         std::cin >> k;
-    //         break;
-    //     default:
-    //         std::cout << "Wrong operation!";
-    //         break;
-    // }
-    //
+    std::cout << "Choose operation (+, -, *):";
+    std::cin >> operation;
+
+    switch (operation) {
+        case '+':
+        case '-':
+            rows_B = rows_A;
+            columns_B = columns_A;
+            std::cout << "Your choice: A(" << rows_A << "x" << columns_A << ") "
+            << operation << " B(" << rows_B << "x" << columns_B << ")" << std::endl;
+            break;
+
+        case '*':
+            rows_B = columns_A;
+            std::cout << "Your choice: A(" << rows_A << "x" << columns_A << ") "
+            << operation << " B(" << rows_B << "x<columns>)" << std::endl;
+            std::cout << "Input B columns count: ";
+            std::cin >> columns_B;
+            std::cout << "Your choice: A(" << rows_A << "x" << columns_A << ") "
+            << operation << " B(" << rows_B << "x" << columns_B << ")" << std::endl;
+            break;
+
+        default:
+            std::cout << "Wrong operation!";
+            break;
+    }
+
     // std::cout << "Fill first matrix\n";
     // Matrix<int> first_matrix = fill_matrix<int>(m, n);
     // std::cout << "Fill second matrix\n";
     // Matrix<int> second_matrix = fill_matrix<int>(t, k);
+}
 
+void start_triangle_matrix_calculator() {
+    std::cout << "To be developed...";
+}
+
+int main() {
     char user_input;
     bool is_exit = false;
 
