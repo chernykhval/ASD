@@ -46,65 +46,111 @@ int main() {
 #include "cstdio"
 #include "libs/lib_matrix/matrix.h"
 
-template<typename T>
-Matrix<T> fill_matrix(int m, int n) {
-    Matrix<T> matrix(m, n);
-    int a;
-
-    for (int i = 0; i < m; i++) {
-        std::cout << "Input " << i << " row of matrix (" << n << " values): ";
-
-        for (int j = 0; j < n; j++) {
-            // std::cout << "element (" << i << ", " << j << "): ";
-            std::cin >> a;
-        }
-    }
-
-    std::cout << "\n";
-
-    return matrix;
-}
+// template<typename T>
+// Matrix<T> fill_matrix(int m, int n) {
+//     Matrix<T> matrix(m, n);
+//     int a;
+//
+//     for (int i = 0; i < m; i++) {
+//         std::cout << "Input " << i << " row of matrix (" << n << " values): ";
+//
+//         for (int j = 0; j < n; j++) {
+//             // std::cout << "element (" << i << ", " << j << "): ";
+//             std::cin >> a;
+//         }
+//     }
+//
+//     std::cout << "\n";
+//
+//     return matrix;
+// }
 
 void start_matrix_calculator() {
-    size_t rows_A, columns_A, rows_B, columns_B;
+    int rows_A = 0,
+    columns_A = 0,
+    rows_B = 0,
+    columns_B = 0;
     char operation;
+    bool is_correct = false;
 
-    std::cout << "Set size of matrix A.\nRows count: ";
-    std::cin >> rows_A;
-    std::cout << "Columns count: ";
-    std::cin >> columns_A;
+    do {
+        std::cout << "Set size of matrix A.\nRows count: ";
+        std::cin >> rows_A;
 
-    std::cout << "Choose operation (+, -, *):";
-    std::cin >> operation;
+        if (rows_A < 1) {
+            std::cout << "Error: The number of rows must be >= 1\n";
+            continue;
+        }
+
+        std::cout << "Columns count: ";
+        std::cin >> columns_A;
+
+        if (columns_A < 1) {
+            std::cout << "Error: The number of columns must be >= 1\n";
+            continue;
+        }
+
+        std::cout << "Choose operation (+, -, *):";
+        std::cin >> operation;
+
+        switch (operation) {
+            case '+':
+            case '-':
+                rows_B = rows_A;
+                columns_B = columns_A;
+                std::cout << "Your choice: A(" << rows_A << "x" << columns_A
+                << ") " << operation << " B(" << rows_B << "x" << columns_B
+                << ")" << std::endl;
+                break;
+
+            case '*':
+                rows_B = columns_A;
+                std::cout << "Your choice: A(" << rows_A << "x" << columns_A << ") "
+                << operation << " B(" << rows_B << "x<columns>)" << std::endl;
+                std::cout << "Input B columns count: ";
+                std::cin >> columns_B;
+
+                if (rows_A < 1) {
+                    std::cout << "Error: The number of columns must be >= 1\n";
+                    continue;
+                }
+
+                std::cout << "Your choice: A(" << rows_A << "x" << columns_A
+                << ") " << operation << " B(" << rows_B << "x" << columns_B
+                << ")" << std::endl;
+                break;
+
+            default:
+                std::cout << "Wrong operation!\n";
+                continue;
+        }
+
+        is_correct = true;
+    } while (is_correct == false);
+
+    Matrix<float> matrix_A(rows_A, columns_A);
+    Matrix<float> matrix_B(rows_B, columns_B);
+
+    std::cout << "Fill matrix A\n";\
+    std::cin >> matrix_A;
+    std::cout << "Fill matrix B\n";
+    std::cin >> matrix_B;
+
+    Matrix<float> result;
 
     switch (operation) {
         case '+':
+            result = matrix_A + matrix_B;
+            break;
         case '-':
-            rows_B = rows_A;
-            columns_B = columns_A;
-            std::cout << "Your choice: A(" << rows_A << "x" << columns_A << ") "
-            << operation << " B(" << rows_B << "x" << columns_B << ")" << std::endl;
+            result = matrix_A - matrix_B;
             break;
-
         case '*':
-            rows_B = columns_A;
-            std::cout << "Your choice: A(" << rows_A << "x" << columns_A << ") "
-            << operation << " B(" << rows_B << "x<columns>)" << std::endl;
-            std::cout << "Input B columns count: ";
-            std::cin >> columns_B;
-            std::cout << "Your choice: A(" << rows_A << "x" << columns_A << ") "
-            << operation << " B(" << rows_B << "x" << columns_B << ")" << std::endl;
-            break;
-
-        default:
-            std::cout << "Wrong operation!";
+            result = matrix_A * matrix_B;
             break;
     }
 
-    // std::cout << "Fill first matrix\n";
-    // Matrix<int> first_matrix = fill_matrix<int>(m, n);
-    // std::cout << "Fill second matrix\n";
-    // Matrix<int> second_matrix = fill_matrix<int>(t, k);
+    std::cout << "Result Matrix:\n" << result << std::endl;
 }
 
 void start_triangle_matrix_calculator() {
@@ -144,7 +190,13 @@ int main() {
                 std::cout << "Wrong input!\n";
                 break;
         }
+
+        if (!is_exit) {
+            std::cout << "Press any key to continue...";
+            std::cin.get();
+        }
     }
+
     return 0;
 }
 
