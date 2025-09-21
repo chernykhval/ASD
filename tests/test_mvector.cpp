@@ -13,6 +13,10 @@ TEST(TestMVector, init) {
     EXPECT_EQ(expected_result, actual_result);
 }
 
+TEST(TestMVector, negative_size_init) {
+    ASSERT_ANY_THROW(MVector<int> vec(-5););
+}
+
 TEST(TestMVector, size_init) {
     MVector<int> vec(5);
     int expected_result = 5;

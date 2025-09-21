@@ -12,7 +12,7 @@ class MVector {
 
  public:
     MVector();
-    explicit MVector(size_t);
+    explicit MVector(int);
     MVector(const MVector&);
 
     MVector<T>& operator=(const MVector<T>&);
@@ -28,7 +28,11 @@ template<typename T>
 MVector<T>::MVector() :_data() {}
 
 template<typename T>
-MVector<T>::MVector(size_t size) : _data(size) {
+MVector<T>::MVector(int size) {
+    if (size < 0) {
+        throw std::invalid_argument("MVector: size must be non-negative");
+    }
+    _data = TVector<T>(size);
     _data.shrink_to_fit();
 }
 
