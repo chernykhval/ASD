@@ -49,25 +49,6 @@ int main() {
 #include "cstdio"
 #include "libs/lib_matrix/matrix.h"
 
-// template<typename T>
-// Matrix<T> fill_matrix(int m, int n) {
-//     Matrix<T> matrix(m, n);
-//     int a;
-//
-//     for (int i = 0; i < m; i++) {
-//         std::cout << "Input " << i << " row of matrix (" << n << " values):";
-//
-//         for (int j = 0; j < n; j++) {
-//             // std::cout << "element (" << i << ", " << j << "): ";
-//             std::cin >> a;
-//         }
-//     }
-//
-//     std::cout << "\n";
-//
-//     return matrix;
-// }
-
 int read_int(const std::string& prompt) {
     int value;
 
@@ -114,6 +95,17 @@ void read_matrix_size(const std::string& name,
         std::cout << "Error: Dimensions must be positive!\n";
         rows = read_size("Rows: ");
         columns = read_size("Columns: ");
+    }
+}
+
+void read_triangle_matrix_size(const std::string& name,
+    size_t& dim) {
+    std::cout << "Enter dimension for triangle matrix " << name << ":\n";
+    dim = read_size("Dim: ");
+
+    while (dim == 0) {
+        std::cout << "Error: Dimensions must be positive!\n";
+        dim = read_size("Dim: ");
     }
 }
 
@@ -186,7 +178,39 @@ void start_matrix_calculator() {
 }
 
 void start_triangle_matrix_calculator() {
-    std::cout << "To be developed...\n";
+    size_t dim;
+    char operation;
+
+    read_triangle_matrix_size("A", dim);
+    operation = raed_operation();
+
+    std::cout << "For this operation, matrix B must be "
+        << dim << "x" << dim << "\n";
+
+
+    Matrix<float> matrix_A(dim, dim);
+    Matrix<float> matrix_B(dim, dim);
+
+    std::cout << "Fill matrix A\n";\
+    std::cin >> matrix_A;
+    std::cout << "Fill matrix B\n";
+    std::cin >> matrix_B;
+
+    Matrix<float> result;
+
+    switch (operation) {
+        case '+':
+            result = matrix_A + matrix_B;
+            break;
+        case '-':
+            result = matrix_A - matrix_B;
+            break;
+        case '*':
+            result = matrix_A * matrix_B;
+            break;
+    }
+
+    std::cout << "Result Matrix:\n" << result << std::endl;
 }
 
 int main() {
