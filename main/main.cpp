@@ -44,6 +44,7 @@ int main() {
 #ifdef MATRIX
 
 #include <limits>
+#include <string>
 
 #include "cstdio"
 #include "libs/lib_matrix/matrix.h"
@@ -75,16 +76,32 @@ int read_int(const std::string& prompt) {
 
         if (std::cin >> value) {
             break;
-        } else {
-            std::cout << "Invalid input! Please enter an integer.\n";
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
+
+        std::cout << "Invalid input! Please enter an integer.\n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     return value;
+}
+
+size_t read_size(const std::string& prompt) {
+    int value;
+
+    while (true) {
+        value = read_int(prompt);
+
+        if (value >= 0) {
+            break;
+        }
+
+        std::cout << "Invalid input! Please enter an number >= 0.\n";
+    }
+
+    return static_cast<size_t>(value);
 }
 
 void start_matrix_calculator() {
