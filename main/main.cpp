@@ -117,6 +117,22 @@ void read_matrix_size(const std::string& name,
     }
 }
 
+char raed_operation() {
+    char operation;
+
+    std::cout << "Enter operation(+, -, *): ";
+    std::cin >> operation;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    while (operation != '+' && operation != '-' && operation != '*') {
+        std::cout << "Invalid operation! Choose from +, -, *: ";
+        std::cin >> operation;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+
+    return operation;
+}
+
 void start_matrix_calculator() {
     int rows_A = 0,
     columns_A = 0,
