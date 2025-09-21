@@ -98,7 +98,7 @@ size_t read_size(const std::string& prompt) {
             break;
         }
 
-        std::cout << "Invalid input! Please enter not negative number.\n";
+        std::cout << "Invalid input! Please enter non-negative number.\n";
     }
 
     return static_cast<size_t>(value);
@@ -134,68 +134,31 @@ char raed_operation() {
 }
 
 void start_matrix_calculator() {
-    int rows_A = 0,
+    size_t rows_A = 0,
     columns_A = 0,
     rows_B = 0,
     columns_B = 0;
     char operation;
-    bool is_correct = false;
 
-    do {
-        std::cout << "Set size of matrix A.\nRows count: ";
-        std::cin >> rows_A;
+    read_matrix_size("A", rows_A, columns_A);
+    operation = raed_operation();
 
-        if (rows_A < 1) {
-            std::cout << "Error: The number of rows must be >= 1\n";
-            continue;
+    if (operation == '*') {
+        rows_B = columns_A;
+        std::cout << "For multiplication, matrix B must have "
+        << rows_B << " rows\n";
+        columns_B = read_size("Enter columns for matrix B: ");
+
+        while (columns_B == 0) {
+            std::cout << "Error: Dimensions must be positive!\n";
+            columns_B = read_size("Enter columns for matrix B: ");
         }
-
-        std::cout << "Columns count: ";
-        std::cin >> columns_A;
-
-        if (columns_A < 1) {
-            std::cout << "Error: The number of columns must be >= 1\n";
-            continue;
-        }
-
-        std::cout << "Choose operation (+, -, *):";
-        std::cin >> operation;
-
-        switch (operation) {
-            case '+':
-            case '-':
-                rows_B = rows_A;
-                columns_B = columns_A;
-                std::cout << "Your choice: A(" << rows_A << "x" << columns_A
-                << ") " << operation << " B(" << rows_B << "x" << columns_B
-                << ")" << std::endl;
-                break;
-
-            case '*':
-                rows_B = columns_A;
-                std::cout << "Your choice: A(" << rows_A << "x"
-                << columns_A << ") " << operation << " B("
-                << rows_B << "x<columns>)" << std::endl;
-                std::cout << "Input B columns count: ";
-                std::cin >> columns_B;
-
-                if (rows_A < 1) {
-                    std::cout << "Error: The number of columns must be >= 1\n";
-                    continue;
-                }
-
-                std::cout << "Your choice: A(" << rows_A << "x" << columns_A
-                << ") " << operation << " B(" << rows_B << "x" << columns_B
-                << ")" << std::endl;
-                break;
-
-            default:
-                std::cout << "Wrong operation!\n";
-                continue;
-        }
-
-        is_correct = true;
-    } while (is_correct == false);
+    } else {
+        rows_B = rows_A;
+        columns_B = columns_A;
+        std::cout << "For this operation, matrix B must be "
+        << rows_B << "x" << columns_B << "\n";
+    }
 
     Matrix<float> matrix_A(rows_A, columns_A);
     Matrix<float> matrix_B(rows_B, columns_B);
@@ -223,7 +186,7 @@ void start_matrix_calculator() {
 }
 
 void start_triangle_matrix_calculator() {
-    std::cout << "To be developed...";
+    std::cout << "To be developed...\n";
 }
 
 int main() {
@@ -231,9 +194,6 @@ int main() {
     bool is_exit = false;
 
     while (true) {
-        size_t rows, cols;
-        read_matrix_size("A", rows, cols);
-        std::cout << rows << "x" << cols << std::endl;
         if (is_exit) {
             break;
         }
@@ -244,6 +204,7 @@ int main() {
                      "0. Exit\n"
                      "Input: ";
         std::cin >> user_input;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (user_input) {
             case '1':
@@ -265,7 +226,6 @@ int main() {
 
         if (!is_exit) {
             std::cout << "Press any key to continue...\n";
-            std::cin.get();
             std::cin.get();
         }
     }
