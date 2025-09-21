@@ -98,10 +98,23 @@ size_t read_size(const std::string& prompt) {
             break;
         }
 
-        std::cout << "Invalid input! Please enter an number >= 0.\n";
+        std::cout << "Invalid input! Please enter not negative number.\n";
     }
 
     return static_cast<size_t>(value);
+}
+
+void read_matrix_size(const std::string& name,
+    size_t& rows, size_t& columns) {
+    std::cout << "Enter dimensions for matrix " << name << ":\n";
+    rows = read_size("Rows: ");
+    columns = read_size("Columns: ");
+
+    while (rows == 0 || columns == 0) {
+        std::cout << "Error: Dimensions must be positive!\n";
+        rows = read_size("Rows: ");
+        columns = read_size("Columns: ");
+    }
 }
 
 void start_matrix_calculator() {
@@ -202,6 +215,9 @@ int main() {
     bool is_exit = false;
 
     while (true) {
+        size_t rows, cols;
+        read_matrix_size("A", rows, cols);
+        std::cout << rows << "x" << cols << std::endl;
         if (is_exit) {
             break;
         }
