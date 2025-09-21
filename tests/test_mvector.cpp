@@ -29,3 +29,12 @@ TEST(TestMVector, copy_init) {
 
     EXPECT_EQ(expected_result, actual_result);
 }
+
+TEST(TestMVector, assign_to_mvector) {
+    MVector<int> vec_1(5);
+    MVector<int> vec_2 = vec_1;
+    int expected_result = vec_1.size();
+    int actual_result = vec_2.size();
+
+    EXPECT_EQ(expected_result, actual_result);
+}

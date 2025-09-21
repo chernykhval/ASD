@@ -15,6 +15,12 @@ class MVector {
     explicit MVector(size_t);
     MVector(const MVector&);
 
+    MVector<T>& operator=(const MVector<T>&);
+    MVector operator+(const MVector<T>&);
+    MVector operator-(const MVector<T>&);
+    T operator*(const MVector<T>&);
+    MVector operator*(T scalar);
+
     size_t size() const;
 };
 
@@ -29,6 +35,12 @@ MVector<T>::MVector(size_t size) : _data(size) {
 template<typename T>
 MVector<T>::MVector(const MVector& other) {
     _data = other._data;
+}
+
+template<typename T>
+MVector<T>& MVector<T>::operator=(const MVector<T>& other) {
+    _data = other._data;
+    return *this;
 }
 
 template<typename T>
