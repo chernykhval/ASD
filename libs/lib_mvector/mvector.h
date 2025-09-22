@@ -65,6 +65,21 @@ MVector<T> MVector<T>::operator+(const MVector<T>& other) {
 }
 
 template<typename T>
+MVector<T> MVector<T>::operator-(const MVector<T>& other) {
+    if (_data.size() != other._data.size()) {
+        throw std::invalid_argument("MVector: size mismatch");
+    }
+
+    MVector<T> result(size());
+
+    for (size_t i = 0; i < size(); i++) {
+        result[i] = _data[i] - other._data[i];
+    }
+
+    return result;
+}
+
+template<typename T>
 T& MVector<T>::operator[](size_t index) {
     return _data[index];
 }

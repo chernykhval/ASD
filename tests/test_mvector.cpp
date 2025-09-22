@@ -52,7 +52,7 @@ TEST(TestMVector, add_to_mvector) {
     }
 
     for (int i = 0; i < vec_2.size(); i++) {
-        vec_2[i] = i+4;
+        vec_2[i] = i + 4;
     }
 
     MVector<int> vec_3 = vec_1 + vec_2;
@@ -67,4 +67,30 @@ TEST(TestMVector, add_to_mvector_with_different_size) {
     MVector<int> vec_2(4);
 
     ASSERT_ANY_THROW(MVector<int> vec_3 = vec_1 + vec_2;);
+}
+
+TEST(TestMVector, sub_to_mvector) {
+    MVector<int> vec_1(3);
+    MVector<int> vec_2(3);
+
+    for (int i = 0; i < vec_1.size(); i++) {
+        vec_1[i] = i + 1;
+    }
+
+    for (int i = 0; i < vec_2.size(); i++) {
+        vec_2[i] = i + 4;
+    }
+
+    MVector<int> vec_3 = vec_1 - vec_2;
+
+    EXPECT_EQ(vec_3[0], -3);
+    EXPECT_EQ(vec_3[1], -3);
+    EXPECT_EQ(vec_3[2], -3);
+}
+
+TEST(TestMVector, sub_to_mvector_with_different_size) {
+    MVector<int> vec_1(3);
+    MVector<int> vec_2(4);
+
+    ASSERT_ANY_THROW(MVector<int> vec_3 = vec_1 - vec_2;);
 }
