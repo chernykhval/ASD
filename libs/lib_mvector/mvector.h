@@ -13,13 +13,15 @@ class MVector {
  public:
     MVector();
     explicit MVector(int);
+    MVector(std::initializer_list<T> init);
     MVector(const MVector&);
 
     MVector<T>& operator=(const MVector<T>&);
-    MVector operator+(const MVector<T>&);
-    MVector operator-(const MVector<T>&);
+    MVector<T> operator+(const MVector<T>&);
+    MVector<T> operator-(const MVector<T>&);
     T operator*(const MVector<T>&);
-    MVector operator*(T scalar);
+    MVector<T> operator*(T scalar);
+    MVector<T> operator/(T scalar);
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
 
@@ -35,6 +37,11 @@ MVector<T>::MVector(int size) {
         throw std::invalid_argument("MVector: size must be non-negative");
     }
     _data = TVector<T>(size);
+    _data.shrink_to_fit();
+}
+
+template<typename T>
+MVector<T>::MVector(std::initializer_list<T> init) : _data(init) {
     _data.shrink_to_fit();
 }
 
@@ -74,6 +81,43 @@ MVector<T> MVector<T>::operator-(const MVector<T>& other) {
 
     for (size_t i = 0; i < size(); i++) {
         result[i] = _data[i] - other._data[i];
+    }
+
+    return result;
+}
+
+template<typename T>
+T MVector<T>::operator*(const MVector<T>& other) {
+    if (_data.size() != other._data.size()) {
+        throw std::invalid_argument("MVector: size mismatch");
+    }
+
+    T result;
+
+    for (size_t i = 0; i < size(); i++) {
+        result = result + _data[i] * other._data[i];
+    }
+
+    return result;
+}
+
+template<typename T>
+MVector<T> MVector<T>::operator*(T scalar) {
+    MVector<T> result(size());
+
+    for (size_t i = 0; i < size(); i++) {
+        result[i] = _data[i] * scalar;
+    }
+
+    return result;
+}
+
+template<typename T>
+MVector<T> MVector<T>::operator/(T scalar) {
+    MVector<T> result(size());
+
+    for (size_t i = 0; i < size(); i++) {
+        result[i] = _data[i] / scalar;
     }
 
     return result;
