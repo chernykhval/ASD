@@ -139,7 +139,7 @@ TEST(TestMVector, zero_normalized) {
     ASSERT_ANY_THROW(vec.normalized());
 }
 
-TEST(TestMVector, compound_addition) {
+TEST(TestMVector, compound_add) {
     MVector<int> vec_1 = {1, 2, 3};
     MVector<int> vec_2 = {4, 5, 6};
     vec_1 += vec_2;
@@ -149,7 +149,7 @@ TEST(TestMVector, compound_addition) {
     EXPECT_EQ(vec_1[2], 9);
 }
 
-TEST(TestMVector, compound_subtraction) {
+TEST(TestMVector, compound_sub) {
     MVector<int> vec_1 = {1, 2, 3};
     MVector<int> vec_2 = {4, 5, 6};
     vec_1 -= vec_2;
@@ -157,4 +157,14 @@ TEST(TestMVector, compound_subtraction) {
     EXPECT_EQ(vec_1[0], -3);
     EXPECT_EQ(vec_1[1], -3);
     EXPECT_EQ(vec_1[2], -3);
+}
+
+TEST(TestMVector, compound_mult) {
+    MVector<int> vec_1 = {1, 2, 3};
+
+    vec_1 *= 2;
+
+    EXPECT_EQ(vec_1[0], 2);
+    EXPECT_EQ(vec_1[1], 4);
+    EXPECT_EQ(vec_1[2], 6);
 }
