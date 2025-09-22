@@ -168,6 +168,13 @@ MVector<T> & MVector<T>::operator*=(T scalar) {
 }
 
 template<typename T>
+MVector<T> & MVector<T>::operator/=(T scalar) {
+    *this = *this / scalar;
+
+    return *this;
+}
+
+template<typename T>
 T MVector<T>::length() const {
     return sqrt(*this * *this);
 }

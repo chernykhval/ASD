@@ -168,3 +168,19 @@ TEST(TestMVector, compound_mult) {
     EXPECT_EQ(vec_1[1], 4);
     EXPECT_EQ(vec_1[2], 6);
 }
+
+TEST(TestMVector, compound_div) {
+    MVector<int> vec_1 = {2, 4, 6};
+
+    vec_1 /= 2;
+
+    EXPECT_EQ(vec_1[0], 1);
+    EXPECT_EQ(vec_1[1], 2);
+    EXPECT_EQ(vec_1[2], 3);
+}
+
+TEST(TestMVector, compound_div_by_zero) {
+    MVector<int> vec_1 = {2, 4, 6};
+
+    ASSERT_ANY_THROW(vec_1 /= 0;);
+}
