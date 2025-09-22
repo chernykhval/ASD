@@ -3,6 +3,7 @@
 #ifndef LIBS_LIB_MVECTOR_MVECTOR_H_
 #define LIBS_LIB_MVECTOR_MVECTOR_H_
 
+#include <cmath>
 #include "libs/lib_tvector/tvector.h"
 
 template<typename T>
@@ -17,11 +18,11 @@ class MVector {
     MVector(const MVector&);
 
     MVector<T>& operator=(const MVector<T>&);
-    MVector<T> operator+(const MVector<T>&);
-    MVector<T> operator-(const MVector<T>&);
-    T operator*(const MVector<T>&);
-    MVector<T> operator*(T scalar);
-    MVector<T> operator/(T scalar);
+    MVector<T> operator+(const MVector<T>&) const;
+    MVector<T> operator-(const MVector<T>&) const;
+    T operator*(const MVector<T>&) const;
+    MVector<T> operator*(T scalar) const;
+    MVector<T> operator/(T scalar) const;
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
 
@@ -65,7 +66,7 @@ MVector<T>& MVector<T>::operator=(const MVector<T>& other) {
 }
 
 template<typename T>
-MVector<T> MVector<T>::operator+(const MVector<T>& other) {
+MVector<T> MVector<T>::operator+(const MVector<T>& other) const {
     if (_data.size() != other._data.size()) {
         throw std::invalid_argument("MVector: size mismatch");
     }
@@ -80,7 +81,7 @@ MVector<T> MVector<T>::operator+(const MVector<T>& other) {
 }
 
 template<typename T>
-MVector<T> MVector<T>::operator-(const MVector<T>& other) {
+MVector<T> MVector<T>::operator-(const MVector<T>& other) const {
     if (_data.size() != other._data.size()) {
         throw std::invalid_argument("MVector: size mismatch");
     }
@@ -95,12 +96,12 @@ MVector<T> MVector<T>::operator-(const MVector<T>& other) {
 }
 
 template<typename T>
-T MVector<T>::operator*(const MVector<T>& other) {
+T MVector<T>::operator*(const MVector<T>& other) const {
     if (_data.size() != other._data.size()) {
         throw std::invalid_argument("MVector: size mismatch");
     }
 
-    T result;
+    T result{};
 
     for (size_t i = 0; i < size(); i++) {
         result = result + _data[i] * other._data[i];
@@ -110,7 +111,7 @@ T MVector<T>::operator*(const MVector<T>& other) {
 }
 
 template<typename T>
-MVector<T> MVector<T>::operator*(T scalar) {
+MVector<T> MVector<T>::operator*(T scalar) const  {
     MVector<T> result(size());
 
     for (size_t i = 0; i < size(); i++) {
@@ -121,7 +122,7 @@ MVector<T> MVector<T>::operator*(T scalar) {
 }
 
 template<typename T>
-MVector<T> MVector<T>::operator/(T scalar) {
+MVector<T> MVector<T>::operator/(T scalar) const {
     if (scalar == T()) {
         throw std::invalid_argument("MVector: divide by zero");
     }
@@ -143,6 +144,22 @@ T& MVector<T>::operator[](size_t index) {
 template<typename T>
 const T& MVector<T>::operator[](size_t index) const {
     return _data[index];
+}
+
+template<typename T>
+T MVector<T>::length() const {
+    return sqrt(*this * *this);
+}
+
+template<typename T>
+MVector<T> MVector<T>::normalized() const {
+    T len = length();
+
+    if (len == 0) {
+        throw std::domain_error("Cannot normalize zero vector");
+    }
+
+    return *this / len;
 }
 
 template<typename T>

@@ -119,3 +119,22 @@ TEST(TestMVector, div_by_zero) {
 
     ASSERT_ANY_THROW(MVector<int> result = vec / 0;);
 }
+
+TEST(TestMVector, length) {
+    MVector<int> vec = {3, 4};
+
+    EXPECT_EQ(5, vec.length());
+}
+
+TEST(TestMVector, normalized) {
+    MVector<float> vec = {3.0, 4.0};
+    MVector<float> result = vec.normalized();
+
+    EXPECT_EQ(1, result.length());
+}
+
+TEST(TestMVector, zero_normalized) {
+    MVector<int> vec = {0, 0, 0};
+
+    ASSERT_ANY_THROW(vec.normalized());
+}
