@@ -113,3 +113,9 @@ TEST(TestMVector, div_to_scalar) {
     EXPECT_EQ(result[1], 2);
     EXPECT_EQ(result[2], 3);
 }
+
+TEST(TestMVector, div_by_zero) {
+    MVector<int> vec = {1, 2, 3};
+
+    ASSERT_ANY_THROW(MVector<int> result = vec / 0;);
+}

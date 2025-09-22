@@ -25,6 +25,14 @@ class MVector {
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
 
+    MVector<T>& operator+=(const MVector<T>&);
+    MVector<T>& operator-=(const MVector<T>&);
+    MVector<T>& operator*=(T scalar);
+    MVector<T>& operator/=(T scalar);
+
+    T length() const;
+    MVector<T> normalized() const;
+
     size_t size() const;
 };
 
@@ -114,6 +122,10 @@ MVector<T> MVector<T>::operator*(T scalar) {
 
 template<typename T>
 MVector<T> MVector<T>::operator/(T scalar) {
+    if (scalar == T()) {
+        throw std::invalid_argument("MVector: divide by zero");
+    }
+
     MVector<T> result(size());
 
     for (size_t i = 0; i < size(); i++) {
