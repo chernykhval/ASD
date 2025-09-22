@@ -148,3 +148,13 @@ TEST(TestMVector, compound_addition) {
     EXPECT_EQ(vec_1[1], 7);
     EXPECT_EQ(vec_1[2], 9);
 }
+
+TEST(TestMVector, compound_subtraction) {
+    MVector<int> vec_1 = {1, 2, 3};
+    MVector<int> vec_2 = {4, 5, 6};
+    vec_1 -= vec_2;
+
+    EXPECT_EQ(vec_1[0], -3);
+    EXPECT_EQ(vec_1[1], -3);
+    EXPECT_EQ(vec_1[2], -3);
+}
