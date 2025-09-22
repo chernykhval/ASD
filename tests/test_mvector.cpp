@@ -138,3 +138,13 @@ TEST(TestMVector, zero_normalized) {
 
     ASSERT_ANY_THROW(vec.normalized());
 }
+
+TEST(TestMVector, compound_addition) {
+    MVector<int> vec_1 = {1, 2, 3};
+    MVector<int> vec_2 = {4, 5, 6};
+    vec_1 += vec_2;
+
+    EXPECT_EQ(vec_1[0], 5);
+    EXPECT_EQ(vec_1[1], 7);
+    EXPECT_EQ(vec_1[2], 9);
+}

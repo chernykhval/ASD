@@ -147,6 +147,13 @@ const T& MVector<T>::operator[](size_t index) const {
 }
 
 template<typename T>
+MVector<T>& MVector<T>::operator+=(const MVector<T>& other) {
+    *this = *this + other;
+
+    return *this;
+}
+
+template<typename T>
 T MVector<T>::length() const {
     return sqrt(*this * *this);
 }
