@@ -21,6 +21,23 @@ class Matrix {
 
     MVector<T>& operator[](size_t index);
     const MVector<T>& operator[](size_t index) const;
+
+    Matrix<T> operator+(const Matrix<T>&) const;
+    Matrix<T> operator-(const Matrix<T>&) const;
+    Matrix<T> operator*(const Matrix<T>&) const;
+
+    Matrix<T>& operator+=(const Matrix<T>&);
+    Matrix<T>& operator-=(const Matrix<T>&);
+    Matrix<T>& operator*=(const Matrix<T>&);
+
+    Matrix<T> operator*(const T&) const;
+    Matrix<T> operator/(const T&) const;
+    Matrix<T>& operator*=(const T&);
+    Matrix<T>& operator/=(const T&);
+
+    MVector<T> operator*(const MVector<T>&) const;
+
+    Matrix<T> transpose() const;
 };
 
 template<typename T>
