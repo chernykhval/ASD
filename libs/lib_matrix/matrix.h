@@ -122,6 +122,23 @@ Matrix<T> Matrix<T>::operator+(const Matrix<T>& other) const {
 }
 
 template<typename T>
+Matrix<T> Matrix<T>::operator-(const Matrix<T>& other) const {
+    if (_rows != other._rows || _cols != other._cols) {
+        throw std::invalid_argument("Matrix: Incompatible sizes");
+    }
+
+    Matrix<T> result(_rows, _cols);
+
+    for (size_t i = 0; i < _rows; i++) {
+        for (size_t j = 0; j < _cols; j++) {
+            result._data[i] = _data[i] - other._data[i];
+        }
+    }
+
+    return result;
+}
+
+template<typename T>
 Matrix<T>& Matrix<T>::operator=(const MVector<T>& other) {
     if (this == &other) {
         return *this;
