@@ -38,7 +38,7 @@ class MVector {
 };
 
 template<typename T>
-MVector<T>::MVector() :_data() {}
+MVector<T>::MVector() : _data() {}
 
 template<typename T>
 MVector<T>::MVector(int size) {
