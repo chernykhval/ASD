@@ -39,6 +39,9 @@ class Matrix {
 
     Matrix<T>& operator=(const MVector<T>&);
 
+    bool operator==(const Matrix<T>& other) const;
+    bool operator!=(const Matrix<T>& other) const;
+
     Matrix<T> transpose() const;
 };
 
@@ -139,6 +142,24 @@ Matrix<T> Matrix<T>::operator-(const Matrix<T>& other) const {
 }
 
 template<typename T>
+Matrix<T> Matrix<T>::operator*(const Matrix<T>& other) const {
+    if (_cols != other._rows) {
+        throw std::invalid_argument("Matrix: Incompatible sizes");
+    }
+
+    Matrix<T> result(_rows, other._cols);
+    Matrix<T> other_transpose = other.transpose();
+
+    for (size_t i = 0; i < _rows; i++) {
+        for (size_t j = 0; j < other._cols; j++) {
+            result._data[i][j] = _data[i] * other_transpose._data[j];
+        }
+    }
+
+    return result;
+}
+
+template<typename T>
 Matrix<T>& Matrix<T>::operator=(const MVector<T>& other) {
     if (this == &other) {
         return *this;
@@ -149,6 +170,19 @@ Matrix<T>& Matrix<T>::operator=(const MVector<T>& other) {
     _data = other._data;
 
     return *this;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::transpose() const {
+    Matrix<T> result(_cols, _rows);
+
+    for (size_t i = 0; i < _rows; i++) {
+        for (size_t j = 0; j < _cols; j++) {
+            result._data[j][i] = _data[i][j];
+        }
+    }
+
+    return result;
 }
 
 #endif  // LIBS_LIB_MATRIX_MATRIX_H_

@@ -120,3 +120,43 @@ TEST(TestMatrix, sub_with_matrix_different_size) {
 
     ASSERT_ANY_THROW(Matrix<int> matrix_3 = matrix_1 - matrix_2);
 }
+
+TEST(TestMatrix, transpose) {
+    Matrix<int> matrix_1 = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+    Matrix<int> matrix_2 = matrix_1.transpose();
+
+    EXPECT_EQ(1, matrix_2[0][0]);
+    EXPECT_EQ(4, matrix_2[0][1]);
+    EXPECT_EQ(2, matrix_2[1][0]);
+    EXPECT_EQ(5, matrix_2[1][1]);
+    EXPECT_EQ(3, matrix_2[2][0]);
+    EXPECT_EQ(6, matrix_2[2][1]);
+}
+
+TEST(TestMatrix, mult_with_matrix) {
+    Matrix<int> matrix_1 = {
+        {1, 2},
+        {3, 4},
+        {5, 6}
+    };
+    Matrix<int> matrix_2 = {
+        {1, 0, 1},
+        {0, 1, 0}
+    };
+    Matrix<int> matrix_3 = matrix_1 * matrix_2;
+
+    EXPECT_EQ(3, matrix_3.rows());
+    EXPECT_EQ(3, matrix_3.cols());
+    EXPECT_EQ(1, matrix_3[0][0]);
+    EXPECT_EQ(2, matrix_3[0][1]);
+    EXPECT_EQ(1, matrix_3[0][2]);
+    EXPECT_EQ(3, matrix_3[1][0]);
+    EXPECT_EQ(4, matrix_3[1][1]);
+    EXPECT_EQ(3, matrix_3[1][2]);
+    EXPECT_EQ(5, matrix_3[2][0]);
+    EXPECT_EQ(6, matrix_3[2][1]);
+    EXPECT_EQ(5, matrix_3[2][2]);
+}
