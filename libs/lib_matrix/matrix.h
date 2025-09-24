@@ -18,6 +18,9 @@ class Matrix {
 
     size_t rows() const;
     size_t cols() const;
+
+    MVector<T>& operator[](size_t index);
+    const MVector<T>& operator[](size_t index) const;
 };
 
 template<typename T>
@@ -64,6 +67,16 @@ size_t Matrix<T>::rows() const {
 template<typename T>
 size_t Matrix<T>::cols() const {
     return _cols;
+}
+
+template<typename T>
+MVector<T>& Matrix<T>::operator[](size_t index) {
+    return _data[index];
+}
+
+template<typename T>
+const MVector<T>& Matrix<T>::operator[](size_t index) const {
+    return _data[index];
 }
 
 #endif  // LIBS_LIB_MATRIX_MATRIX_H_

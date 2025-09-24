@@ -45,6 +45,7 @@ MVector<T>::MVector(int size) {
     if (size < 0) {
         throw std::invalid_argument("MVector: size must be non-negative");
     }
+
     _data = TVector<T>(size);
     _data.shrink_to_fit();
 }
