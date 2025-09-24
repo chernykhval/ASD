@@ -15,6 +15,9 @@ class Matrix {
     Matrix(size_t, size_t);
     Matrix(std::initializer_list<std::initializer_list<T>>);
     Matrix(const Matrix<T>&);
+
+    size_t rows() const;
+    size_t cols() const;
 };
 
 template<typename T>
@@ -24,12 +27,43 @@ template<typename T>
 Matrix<T>::Matrix(size_t rows, size_t cols) : _rows(rows), _cols(cols) {}
 
 template<typename T>
-Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> init) :
-_rows(0), _cols(0), _data(init) {}
+Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> init) {
+    _rows = init.size();
+
+    if (_rows > 0) {
+        _cols = init.begin()->size();
+    } else {
+        _cols = 0;
+    }
+
+    for (const auto& row : init) {
+        if (row.size() != _cols) {
+            throw std::invalid_argument("Matrix: All rows"
+                                        " must have the same length");
+        }
+    }
+
+    _data = MVector<MVector<T>>(_rows);
+    size_t i = 0;
+
+    for (const auto& row_list : init) {
+        _data[i] = MVector<T>(row_list);
+        ++i;
+    }
+}
 
 template<typename T>
 Matrix<T>::Matrix(const Matrix<T>& other) :
 _rows(other._rows), _cols(other._cols), _data(other._data) {}
 
+template<typename T>
+size_t Matrix<T>::rows() const {
+    return _rows;
+}
+
+template<typename T>
+size_t Matrix<T>::cols() const {
+    return _cols;
+}
 
 #endif  // LIBS_LIB_MATRIX_MATRIX_H_
