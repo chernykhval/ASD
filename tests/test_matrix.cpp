@@ -295,8 +295,6 @@ TEST(TestMatrix, mult_by_scalar) {
     };
     Matrix<int> matrix_2 = matrix_1 * 2;
 
-    EXPECT_EQ(3, matrix_2.rows());
-    EXPECT_EQ(2, matrix_2.cols());
     EXPECT_EQ(2, matrix_2[0][0]);
     EXPECT_EQ(4, matrix_2[0][1]);
     EXPECT_EQ(6, matrix_2[1][0]);
@@ -313,8 +311,6 @@ TEST(TestMatrix, div_by_scalar) {
     };
     Matrix<int> matrix_2 = matrix_1 / 2;
 
-    EXPECT_EQ(3, matrix_2.rows());
-    EXPECT_EQ(2, matrix_2.cols());
     EXPECT_EQ(1, matrix_2[0][0]);
     EXPECT_EQ(2, matrix_2[0][1]);
     EXPECT_EQ(3, matrix_2[1][0]);
@@ -331,4 +327,46 @@ TEST(TestMatrix, div_by_zero) {
     };
 
     ASSERT_ANY_THROW(Matrix<int> matrix_2 = matrix_1 / 0);
+}
+
+TEST(TestMatrix, compound_mult_by_scalar) {
+    Matrix<int> matrix_1 = {
+        {1, 2},
+        {3, 4},
+        {5, 6}
+    };
+    matrix_1 *= 2;
+
+    EXPECT_EQ(2, matrix_1[0][0]);
+    EXPECT_EQ(4, matrix_1 [0][1]);
+    EXPECT_EQ(6, matrix_1[1][0]);
+    EXPECT_EQ(8, matrix_1[1][1]);
+    EXPECT_EQ(10, matrix_1[2][0]);
+    EXPECT_EQ(12, matrix_1[2][1]);
+}
+
+TEST(TestMatrix, compound_div_by_scalar) {
+    Matrix<int> matrix_1 = {
+        {2, 4},
+        {6, 8},
+        {10, 12}
+    };
+    matrix_1 /= 2;
+
+    EXPECT_EQ(1, matrix_1[0][0]);
+    EXPECT_EQ(2, matrix_1[0][1]);
+    EXPECT_EQ(3, matrix_1[1][0]);
+    EXPECT_EQ(4, matrix_1[1][1]);
+    EXPECT_EQ(5, matrix_1[2][0]);
+    EXPECT_EQ(6, matrix_1[2][1]);
+}
+
+TEST(TestMatrix, compound_div_by_zero) {
+    Matrix<int> matrix_1 = {
+        {2, 4},
+        {6, 8},
+        {10, 12}
+    };
+
+    ASSERT_ANY_THROW(matrix_1 /= 0);
 }

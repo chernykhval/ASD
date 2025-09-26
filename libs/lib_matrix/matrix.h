@@ -201,6 +201,18 @@ Matrix<T> Matrix<T>::operator/(const T& scalar) const {
 }
 
 template<typename T>
+Matrix<T>& Matrix<T>::operator*=(const T& scalar) {
+    *this = *this * scalar;
+    return *this;
+}
+
+template<typename T>
+Matrix<T>& Matrix<T>::operator/=(const T& scalar) {
+    *this = *this / scalar;
+    return *this;
+}
+
+template<typename T>
 Matrix<T>& Matrix<T>::operator=(const MVector<T>& other) {
     if (this == &other) {
         return *this;
