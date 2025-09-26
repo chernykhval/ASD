@@ -3,10 +3,21 @@
 #ifndef LIBS_LIB_MATRIX_MATRIX_H_
 #define LIBS_LIB_MATRIX_MATRIX_H_
 
-// #include <sstream>
-// #include <string>
-// #include <iomanip>
+#include <sstream>
+#include <string>
+#include <iomanip>
 #include "libs/lib_mvector/mvector.h"
+#include "libs/lib_tvector/tvector.h"
+
+namespace detail {
+template <typename T>
+size_t get_element_display_width(const T& element) {
+    std::stringstream ss;
+
+    ss << element;
+    return ss.str().length();
+}
+}
 
 template<typename T>
 class Matrix {
@@ -47,6 +58,11 @@ class Matrix {
     bool operator!=(const Matrix<T>& other) const;
 
     Matrix<T> transpose() const;
+    template <typename U>
+    friend std::ostream& operator<<(std::ostream& os, const Matrix<U>& matrix);
+
+    template <typename U>
+    friend std::istream& operator>>(std::istream& is, Matrix<U>& matrix);
 };
 
 template<typename T>
@@ -268,49 +284,45 @@ Matrix<T> Matrix<T>::transpose() const {
     return result;
 }
 
-// template<typename T>
-// size_t Matrix<T>::get_element_display_width(const T& element) {
-//     std::stringstream ss;
-//     ss << element;
-//
-//     return ss.str().length();
-// }
-//
-// template <typename T>
-// std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix) {
-//     if (matrix.rows() == 0) {
-//         return os;
-//     }
-//
-//     size_t max_width = 2;
-//
-//     for (size_t i = 0; i < matrix.rows(); i++) {
-//         for (size_t j = 0; j < matrix.cols(); j++) {
-//             size_t current_width = get_element_width(matrix[i][j]);
-//             if (current_width > max_width) {
-//                 max_width = current_width;
-//             }
-//         }
-//     }
-//
-//     for (size_t i = 0; i < matrix.rows(); ++i) {
-//         os << "| ";
-//
-//         for (size_t j = 0; j < matrix.cols(); ++j) {
-//             os << std::setw(static_cast<int>(max_width))
-//             << matrix[i][j] << " ";
-//         }
-//
-//         os << "|\n";
-//     }
-//
-//     return os;
-// }
-//
-// template <typename T>
-// std::istream& operator>>(std::istream& is, Matrix<T>& matrix) {
-//
-//     return is;
-// }
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix) {
+    if (matrix.rows() == 0) {
+        return os;
+    }
+
+    const size_t num_rows = matrix.rows();
+    const size_t num_cols = matrix.cols();
+
+    TVector<size_t> max_widths(num_cols, 0);
+
+    for (size_t i = 0; i < num_rows; ++i) {
+        for (size_t j = 0; j < num_cols; ++j) {
+            size_t current_width =
+                detail::get_element_display_width(matrix[i][j]);
+
+            if (current_width > max_widths[j]) {
+                max_widths[j] = current_width;
+            }
+        }
+    }
+
+    for (size_t i = 0; i < matrix.rows(); ++i) {
+        os << "| ";
+
+        for (size_t j = 0; j < matrix.cols(); ++j) {
+            os << std::setw(static_cast<int>(max_widths[j]))
+               << matrix[i][j] << " ";
+        }
+
+        os << "|\n";
+    }
+
+    return os;
+}
+
+template <typename T>
+std::istream& operator>>(std::istream& is, Matrix<T>& matrix) {
+    return is;
+}
 
 #endif  // LIBS_LIB_MATRIX_MATRIX_H_

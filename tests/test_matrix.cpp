@@ -1,6 +1,7 @@
 // Copyright 2025 Chernykh Valentin
 
 #include <gtest/gtest.h>
+#include <string>
 #include "libs/lib_matrix/matrix.h"
 
 #define EPSILON 0.000001
@@ -484,19 +485,65 @@ TEST(TestMatrix, inequality_operator_different_size) {
     EXPECT_TRUE(matrix_1 != matrix_2);
 }
 
-// TEST(TestMatrix, basic_integer_output) {
-//     Matrix<int> matrix = {
-//         {10, 200},
-//         {3, 40}
-//     };
-//
-//     const std::string expected =
-//         "|  10 200 |\n"
-//         "|   3  40 |\n";
-//
-//     std::stringstream ss;
-//
-//     ss << matrix;
-//
-//     EXPECT_EQ(expected, ss.str());
-// }
+TEST(TestMatrix, basic_integer_output) {
+    Matrix<int> matrix = {
+        {10, 200},
+        {3, 40}
+    };
+
+    const std::string expected =
+        "| 10 200 |\n"
+        "|  3  40 |\n";
+
+    std::stringstream ss;
+
+    ss << matrix;
+
+    EXPECT_EQ(expected, ss.str());
+}
+
+TEST(TestMatrix, floating_point_output) {
+    Matrix<double> matrix = {
+        {1.23, 10.0},
+        {100.12345, 0.5}
+    };
+
+    const std::string expected =
+        "|    1.23  10 |\n"
+        "| 100.123 0.5 |\n";
+
+    std::stringstream ss;
+
+    ss << matrix;
+
+    EXPECT_EQ(expected, ss.str());
+}
+
+TEST(TestMatrix, empty_matrix_output) {
+    Matrix<int> matrix(0, 0);
+
+    const std::string expected = "";
+
+    std::stringstream ss;
+    ss << matrix;
+
+    EXPECT_EQ(expected, ss.str());
+}
+
+TEST(TestMatrixOutput, ColumnarWidthAlignment) {
+    Matrix<int> matrix = {
+        {1000, 20, 3},
+        {1, 5, 300},
+        {10, 2, 30},
+    };
+
+    const std::string expected =
+        "| 1000 20   3 |\n"
+        "|    1  5 300 |\n"
+        "|   10  2  30 |\n";
+
+    std::stringstream ss;
+    ss << matrix;
+
+    EXPECT_EQ(expected, ss.str());
+}
