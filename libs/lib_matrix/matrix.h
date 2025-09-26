@@ -213,6 +213,17 @@ Matrix<T>& Matrix<T>::operator/=(const T& scalar) {
 }
 
 template<typename T>
+MVector<T> Matrix<T>::operator*(const MVector<T>& column) const {
+    MVector<T> result(_rows);
+
+    for (size_t i = 0; i < _rows; i++) {
+        result[i] = _data[i] * column;
+    }
+
+    return result;
+}
+
+template<typename T>
 Matrix<T>& Matrix<T>::operator=(const MVector<T>& other) {
     if (this == &other) {
         return *this;

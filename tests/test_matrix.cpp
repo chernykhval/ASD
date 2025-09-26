@@ -370,3 +370,17 @@ TEST(TestMatrix, compound_div_by_zero) {
 
     ASSERT_ANY_THROW(matrix_1 /= 0);
 }
+
+TEST(TestMatrix, mult_by_mvector) {
+    Matrix<int> matrix = {
+        {1, 2},
+        {3, 4},
+        {5, 6}
+    };
+    MVector<int> mvector = {1, 2};
+    MVector<int> result = matrix * mvector;
+
+    EXPECT_EQ(5, result[0]);
+    EXPECT_EQ(11, result[1]);
+    EXPECT_EQ(17, result[2]);
+}
