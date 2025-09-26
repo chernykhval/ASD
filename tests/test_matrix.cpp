@@ -338,7 +338,7 @@ TEST(TestMatrix, compound_mult_by_scalar) {
     matrix_1 *= 2;
 
     EXPECT_EQ(2, matrix_1[0][0]);
-    EXPECT_EQ(4, matrix_1 [0][1]);
+    EXPECT_EQ(4, matrix_1[0][1]);
     EXPECT_EQ(6, matrix_1[1][0]);
     EXPECT_EQ(8, matrix_1[1][1]);
     EXPECT_EQ(10, matrix_1[2][0]);
@@ -383,4 +383,46 @@ TEST(TestMatrix, mult_by_mvector) {
     EXPECT_EQ(5, result[0]);
     EXPECT_EQ(11, result[1]);
     EXPECT_EQ(17, result[2]);
+}
+
+TEST(TestMatrix, equality_operator_equal) {
+    Matrix<int> matrix_1 = {{1, 2}, {3, 4}};
+    Matrix<int> matrix_2 = {{1, 2}, {3, 4}};
+
+    EXPECT_TRUE(matrix_1 == matrix_2);
+}
+
+TEST(TestMatrix, equality_operator_different_value) {
+    Matrix<int> matrix_1 = {{1, 2}, {3, 4}};
+    Matrix<int> matrix_2 = {{1, 2}, {3, 99}};
+
+    EXPECT_FALSE(matrix_1 == matrix_2);
+}
+
+TEST(TestMatrix, equality_operator_different_size) {
+    Matrix<int> matrix_1 = {{1, 2}, {3, 4}};
+    Matrix<int> matrix_2 = {{1, 2, 3}, {4, 5, 6}};
+
+    EXPECT_FALSE(matrix_1 == matrix_2);
+}
+
+TEST(TestMatrix, inequality_operator_equal) {
+    Matrix<int> matrix_1 = {{1, 2}, {3, 4}};
+    Matrix<int> matrix_2 = {{1, 2}, {3, 4}};
+
+    EXPECT_FALSE(matrix_1 != matrix_2);
+}
+
+TEST(TestMatrix, inequality_operator_different_value) {
+    Matrix<int> matrix_1 = {{1, 2}, {3, 4}};
+    Matrix<int> matrix_2 = {{1, 2}, {3, 99}};
+
+    EXPECT_TRUE(matrix_1 != matrix_2);
+}
+
+TEST(TestMatrix, inequality_operator_different_size) {
+    Matrix<int> matrix_1 = {{1, 2}, {3, 4}};
+    Matrix<int> matrix_2 = {{1, 2, 3}, {4, 5, 6}};
+
+    EXPECT_TRUE(matrix_1 != matrix_2);
 }

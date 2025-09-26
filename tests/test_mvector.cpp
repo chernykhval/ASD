@@ -184,3 +184,45 @@ TEST(TestMVector, compound_div_by_zero) {
 
     ASSERT_ANY_THROW(vec_1 /= 0;);
 }
+
+TEST(TestMVector, equality_operator_equal) {
+    MVector<int> vector_1 = {1, 2, 3, 4};
+    MVector<int> vector_2 = {1, 2, 3, 4};
+
+    EXPECT_TRUE(vector_1 == vector_2);
+}
+
+TEST(TestMVector, equality_operator_different_value) {
+    MVector<int> vector_1 = {1, 2, 3, 4};
+    MVector<int> vector_2 = {1, 2, 3, 99};
+
+    EXPECT_FALSE(vector_1 == vector_2);
+}
+
+TEST(TestMVector, equality_operator_different_size) {
+    MVector<int> vector_1 = {1, 2, 3, 4};
+    MVector<int> vector_2 = {1, 2, 3, 4, 5, 6};
+
+    EXPECT_FALSE(vector_1 == vector_2);
+}
+
+TEST(TestMVector, inequality_operator_equal) {
+    MVector<int> vector_1 = {1, 2, 3, 4};
+    MVector<int> vector_2 = {1, 2, 3, 4};
+
+    EXPECT_FALSE(vector_1 != vector_2);
+}
+
+TEST(TestMVector, inequality_operator_different_value) {
+    MVector<int> vector_1 = {1, 2, 3, 4};
+    MVector<int> vector_2 = {1, 2, 3, 99};
+
+    EXPECT_TRUE(vector_1 != vector_2);
+}
+
+TEST(TestMVector, inequality_operator_different_size) {
+    MVector<int> vector_1 = {1, 2, 3, 4};
+    MVector<int> vector_2 = {1, 2, 3, 4, 5, 6};
+
+    EXPECT_TRUE(vector_1 != vector_2);
+}

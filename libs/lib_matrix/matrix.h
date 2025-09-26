@@ -237,6 +237,22 @@ Matrix<T>& Matrix<T>::operator=(const MVector<T>& other) {
 }
 
 template<typename T>
+bool Matrix<T>::operator==(const Matrix<T> &other) const {
+    for (size_t i = 0; i < _rows; i++) {
+        if (_data[i] != other._data[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+template<typename T>
+bool Matrix<T>::operator!=(const Matrix<T> &other) const {
+    return !(*this == other);
+}
+
+template<typename T>
 Matrix<T> Matrix<T>::transpose() const {
     Matrix<T> result(_cols, _rows);
 
