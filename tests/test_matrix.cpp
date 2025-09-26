@@ -29,6 +29,10 @@ TEST(TestMatrix, list_init) {
     EXPECT_EQ(3, matrix.cols());
 }
 
+TEST(TestMatrix, list_init_different_size) {
+    ASSERT_ANY_THROW(Matrix<int> matrix({{1, 2, 3}, {4, 5}}));
+}
+
 TEST(TestMatrix, copy_init) {
     Matrix<int> matrix_1 = {
         {1, 2, 3},
@@ -159,4 +163,126 @@ TEST(TestMatrix, mult_with_matrix) {
     EXPECT_EQ(5, matrix_3[2][0]);
     EXPECT_EQ(6, matrix_3[2][1]);
     EXPECT_EQ(5, matrix_3[2][2]);
+}
+
+TEST(TestMatrix, mult_with_matrix_different_size) {
+    Matrix<int> matrix_1 = {
+        {1, 2, 7},
+        {3, 4, 8},
+        {5, 6, 9}
+    };
+    Matrix<int> matrix_2 = {
+        {1, 0, 1},
+        {0, 1, 0}
+    };
+
+    ASSERT_ANY_THROW(Matrix<int> matrix_3 = matrix_1 * matrix_2;);
+}
+
+TEST(TestMatrix, compound_add) {
+    Matrix<int> matrix_1 = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+    Matrix<int> matrix_2 = {
+        {1, 1, 1},
+        {1, 1, 1}
+    };
+
+    matrix_1 += matrix_2;
+
+    EXPECT_EQ(2, matrix_1[0][0]);
+    EXPECT_EQ(3, matrix_1[0][1]);
+    EXPECT_EQ(4, matrix_1[0][2]);
+    EXPECT_EQ(5, matrix_1[1][0]);
+    EXPECT_EQ(6, matrix_1[1][1]);
+    EXPECT_EQ(7, matrix_1[1][2]);
+}
+
+TEST(TestMatrix, compound_add_different_size) {
+    Matrix<int> matrix_1 = {
+        {1, 2},
+        {3, 4},
+        {5, 6}
+    };
+    Matrix<int> matrix_2 = {
+        {1, 0, 1},
+        {0, 1, 0}
+    };
+
+    ASSERT_ANY_THROW(matrix_1 += matrix_2);
+}
+
+TEST(TestMatrix, compound_sub) {
+    Matrix<int> matrix_1 = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+    Matrix<int> matrix_2 = {
+        {1, 1, 1},
+        {1, 1, 1}
+    };
+
+    matrix_1 -= matrix_2;
+
+    EXPECT_EQ(0, matrix_1[0][0]);
+    EXPECT_EQ(1, matrix_1[0][1]);
+    EXPECT_EQ(2, matrix_1[0][2]);
+    EXPECT_EQ(3, matrix_1[1][0]);
+    EXPECT_EQ(4, matrix_1[1][1]);
+    EXPECT_EQ(5, matrix_1[1][2]);
+}
+
+TEST(TestMatrix, compound_sub_different_size) {
+    Matrix<int> matrix_1 = {
+        {1, 2},
+        {3, 4},
+        {5, 6}
+    };
+    Matrix<int> matrix_2 = {
+        {1, 0, 1},
+        {0, 1, 0}
+    };
+
+    ASSERT_ANY_THROW(matrix_1 -= matrix_2);
+}
+
+TEST(TestMatrix, compound_mult) {
+    Matrix<int> matrix_1 = {
+        {1, 2},
+        {3, 4},
+        {5, 6}
+    };
+    Matrix<int> matrix_2 = {
+        {1, 0, 1},
+        {0, 1, 0}
+    };
+
+    matrix_1 *= matrix_2;
+
+    EXPECT_EQ(3, matrix_1.rows());
+    EXPECT_EQ(3, matrix_1.cols());
+    EXPECT_EQ(1, matrix_1[0][0]);
+    EXPECT_EQ(2, matrix_1[0][1]);
+    EXPECT_EQ(1, matrix_1[0][2]);
+    EXPECT_EQ(3, matrix_1[1][0]);
+    EXPECT_EQ(4, matrix_1[1][1]);
+    EXPECT_EQ(3, matrix_1[1][2]);
+    EXPECT_EQ(5, matrix_1[2][0]);
+    EXPECT_EQ(6, matrix_1[2][1]);
+    EXPECT_EQ(5, matrix_1[2][2]);
+}
+
+TEST(TestMatrix, compound_mult_different_size) {
+    Matrix<int> matrix_1 = {
+        {1, 2, 7},
+        {3, 4, 8},
+        {5, 6, 9}
+    };
+    Matrix<int> matrix_2 = {
+        {1, 0, 1},
+        {0, 1, 0}
+    };
+
+    ASSERT_ANY_THROW(matrix_1 *= matrix_2);
 }

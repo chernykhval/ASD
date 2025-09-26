@@ -10,6 +10,7 @@ class Matrix {
  private:
     size_t _rows, _cols;
     MVector<MVector<T>> _data;
+
  public:
     Matrix();
     Matrix(size_t, size_t);
@@ -157,6 +158,24 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T>& other) const {
     }
 
     return result;
+}
+
+template<typename T>
+Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& other) {
+    *this = *this + other;
+    return *this;
+}
+
+template<typename T>
+Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& other) {
+    *this = *this - other;
+    return *this;
+}
+
+template<typename T>
+Matrix<T> & Matrix<T>::operator*=(const Matrix<T>& other) {
+    *this = *this * other;
+    return *this;
 }
 
 template<typename T>
