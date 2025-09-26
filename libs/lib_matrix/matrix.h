@@ -3,6 +3,9 @@
 #ifndef LIBS_LIB_MATRIX_MATRIX_H_
 #define LIBS_LIB_MATRIX_MATRIX_H_
 
+// #include <sstream>
+// #include <string>
+// #include <iomanip>
 #include "libs/lib_mvector/mvector.h"
 
 template<typename T>
@@ -38,7 +41,7 @@ class Matrix {
 
     MVector<T> operator*(const MVector<T>&) const;
 
-    Matrix<T>& operator=(const MVector<T>&);
+    Matrix<T>& operator=(const Matrix<T>&);
 
     bool operator==(const Matrix<T>& other) const;
     bool operator!=(const Matrix<T>& other) const;
@@ -224,7 +227,7 @@ MVector<T> Matrix<T>::operator*(const MVector<T>& column) const {
 }
 
 template<typename T>
-Matrix<T>& Matrix<T>::operator=(const MVector<T>& other) {
+Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
     if (this == &other) {
         return *this;
     }
@@ -237,7 +240,7 @@ Matrix<T>& Matrix<T>::operator=(const MVector<T>& other) {
 }
 
 template<typename T>
-bool Matrix<T>::operator==(const Matrix<T> &other) const {
+bool Matrix<T>::operator==(const Matrix<T>& other) const {
     for (size_t i = 0; i < _rows; i++) {
         if (_data[i] != other._data[i]) {
             return false;
@@ -264,5 +267,50 @@ Matrix<T> Matrix<T>::transpose() const {
 
     return result;
 }
+
+// template<typename T>
+// size_t Matrix<T>::get_element_display_width(const T& element) {
+//     std::stringstream ss;
+//     ss << element;
+//
+//     return ss.str().length();
+// }
+//
+// template <typename T>
+// std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix) {
+//     if (matrix.rows() == 0) {
+//         return os;
+//     }
+//
+//     size_t max_width = 2;
+//
+//     for (size_t i = 0; i < matrix.rows(); i++) {
+//         for (size_t j = 0; j < matrix.cols(); j++) {
+//             size_t current_width = get_element_width(matrix[i][j]);
+//             if (current_width > max_width) {
+//                 max_width = current_width;
+//             }
+//         }
+//     }
+//
+//     for (size_t i = 0; i < matrix.rows(); ++i) {
+//         os << "| ";
+//
+//         for (size_t j = 0; j < matrix.cols(); ++j) {
+//             os << std::setw(static_cast<int>(max_width))
+//             << matrix[i][j] << " ";
+//         }
+//
+//         os << "|\n";
+//     }
+//
+//     return os;
+// }
+//
+// template <typename T>
+// std::istream& operator>>(std::istream& is, Matrix<T>& matrix) {
+//
+//     return is;
+// }
 
 #endif  // LIBS_LIB_MATRIX_MATRIX_H_

@@ -179,6 +179,63 @@ TEST(TestMatrix, mult_with_matrix_different_size) {
     ASSERT_ANY_THROW(Matrix<int> matrix_3 = matrix_1 * matrix_2;);
 }
 
+TEST(TestMatrix, assignment_deep_copy) {
+    Matrix<int> matrix_1 = {
+        {10, 20},
+        {30, 40}
+    };
+
+    Matrix<int> matrix_2(1, 1);
+
+    matrix_2 = matrix_1;
+
+    EXPECT_EQ(2, matrix_2.rows());
+    EXPECT_EQ(2, matrix_2.cols());
+    EXPECT_EQ(10, matrix_2[0][0]);
+    EXPECT_EQ(40, matrix_2[1][1]);
+
+    matrix_1[0][0] = 99;
+
+    EXPECT_EQ(10, matrix_2[0][0]);
+    EXPECT_EQ(99, matrix_1[0][0]);
+}
+
+TEST(TestMatrix, assignment_self_assignment) {
+    Matrix<int> matrix = {
+        {1, 2},
+        {3, 4}
+    };
+
+    const int expected_row = matrix.rows();
+    const int expected_val = matrix[1][0];
+
+    matrix = matrix;
+
+    EXPECT_EQ(expected_row, matrix.rows());
+    EXPECT_EQ(expected_val, matrix[1][0]);
+    EXPECT_EQ(4, matrix[1][1]);
+
+    Matrix<int>& assigned_ref = (matrix = matrix);
+    EXPECT_EQ(&matrix, &assigned_ref);
+}
+
+TEST(TestMatrix, assignment_chained) {
+    Matrix<int> matrix_A(1, 1);
+    Matrix<int> matrix_B(1, 1);
+    Matrix<int> matrix_C = {{5, 6}};
+
+    matrix_A = matrix_B = matrix_C;
+
+    EXPECT_EQ(5, matrix_A[0][0]);
+    EXPECT_EQ(6, matrix_A[0][1]);
+
+    EXPECT_EQ(5, matrix_B[0][0]);
+    EXPECT_EQ(6, matrix_B[0][1]);
+
+    matrix_C[0][0] = 99;
+    EXPECT_EQ(5, matrix_A[0][0]);
+}
+
 TEST(TestMatrix, compound_add) {
     Matrix<int> matrix_1 = {
         {1, 2, 3},
@@ -426,3 +483,20 @@ TEST(TestMatrix, inequality_operator_different_size) {
 
     EXPECT_TRUE(matrix_1 != matrix_2);
 }
+
+// TEST(TestMatrix, basic_integer_output) {
+//     Matrix<int> matrix = {
+//         {10, 200},
+//         {3, 40}
+//     };
+//
+//     const std::string expected =
+//         "|  10 200 |\n"
+//         "|   3  40 |\n";
+//
+//     std::stringstream ss;
+//
+//     ss << matrix;
+//
+//     EXPECT_EQ(expected, ss.str());
+// }
