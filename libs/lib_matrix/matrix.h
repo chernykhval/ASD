@@ -136,9 +136,7 @@ Matrix<T> Matrix<T>::operator+(const Matrix<T>& other) const {
     Matrix<T> result(_rows, _cols);
 
     for (size_t i = 0; i < _rows; i++) {
-        for (size_t j = 0; j < _cols; j++) {
-            result._data[i] = _data[i] + other._data[i];
-        }
+        result._data[i] = _data[i] + other._data[i];
     }
 
     return result;
@@ -153,9 +151,7 @@ Matrix<T> Matrix<T>::operator-(const Matrix<T>& other) const {
     Matrix<T> result(_rows, _cols);
 
     for (size_t i = 0; i < _rows; i++) {
-        for (size_t j = 0; j < _cols; j++) {
-            result._data[i] = _data[i] - other._data[i];
-        }
+        result._data[i] = _data[i] - other._data[i];
     }
 
     return result;
@@ -257,6 +253,10 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
 
 template<typename T>
 bool Matrix<T>::operator==(const Matrix<T>& other) const {
+    if (_rows != other._rows || _cols != other._cols) {
+        return false;
+    }
+
     for (size_t i = 0; i < _rows; i++) {
         if (_data[i] != other._data[i]) {
             return false;
