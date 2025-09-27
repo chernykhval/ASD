@@ -1,6 +1,8 @@
 // Copyright 2024 Marina Usova
 
-#define EASY_EXAMPLE
+#define IOMATRIX_EXAMPLE
+#include "libs/lib_matrix/matrix.h"
+
 #ifdef EASY_EXAMPLE
 
 #include <iostream>
@@ -38,3 +40,16 @@ int main() {
 }
 
 #endif  // EASY_EXAMPLE
+
+#ifdef IOMATRIX_EXAMPLE
+
+int main() {
+    Matrix<int> matrix(2, 3);
+    std::cout << matrix << std::endl;
+    std::cout << "Fill the matrix (2, 3): " << std::endl;
+    std::cin >> matrix;
+    std::cout << matrix << std::endl;
+    return 0;
+}
+
+#endif  // IOMATRIX_EXAMPLE

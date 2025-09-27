@@ -60,6 +60,31 @@ TEST(TestMatrix, access_operator) {
     EXPECT_EQ(6, matrix[1][2]);
 }
 
+TEST(TestMatrix, const_access_operator) {
+    const Matrix<int> matrix = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+
+    EXPECT_EQ(1, matrix[0][0]);
+    EXPECT_EQ(2, matrix[0][1]);
+    EXPECT_EQ(3, matrix[0][2]);
+    EXPECT_EQ(4, matrix[1][0]);
+    EXPECT_EQ(5, matrix[1][1]);
+    EXPECT_EQ(6, matrix[1][2]);
+}
+
+TEST(TestMatrix, access_operator_write) {
+    Matrix<int> matrix = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+
+    matrix[0][0] = 123;
+
+    EXPECT_EQ(123, matrix[0][0]);
+}
+
 TEST(TestMatrix, add_with_matrix) {
     Matrix<int> matrix_1 = {
         {1, 2, 3},
