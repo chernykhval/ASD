@@ -547,3 +547,54 @@ TEST(TestMatrixOutput, ColumnarWidthAlignment) {
 
     EXPECT_EQ(expected, ss.str());
 }
+
+TEST(TestMatrix, basic_correct_input) {
+    Matrix<int> matrix(2, 3);
+
+    const std::string input_data = "1 2 3 \n 4 5 6";
+
+    std::stringstream ss(input_data);
+
+    ss >> matrix;
+
+    EXPECT_FALSE(ss.fail());
+
+    EXPECT_EQ(2, matrix.rows());
+    EXPECT_EQ(3, matrix.cols());
+    EXPECT_EQ(1, matrix[0][0]);
+    EXPECT_EQ(3, matrix[0][2]);
+    EXPECT_EQ(4, matrix[1][0]);
+    EXPECT_EQ(6, matrix[1][2]);
+}
+
+TEST(TestMatrix, format_error_handling_input) {
+    Matrix<double> matrix(3, 3);
+
+    const std::string input_data = "1.1 2.2 3.3 \n 4.4 X 5.5 6.6";
+
+    std::stringstream ss(input_data);
+
+    ss >> matrix;
+
+    EXPECT_TRUE(ss.fail());
+
+    EXPECT_EQ(1.1, matrix[0][0]);
+    EXPECT_EQ(4.4, matrix[1][0]);
+    EXPECT_EQ(0.0, matrix[1][1]);
+}
+
+TEST(TestMatrix, end_of_file_handling_input) {
+    Matrix<int> matrix(3, 3);
+
+    const std::string input_data = "1 2 3 4 5";
+
+    std::stringstream ss(input_data);
+
+    ss >> matrix;
+
+    EXPECT_TRUE(ss.eof());
+    EXPECT_TRUE(ss.fail());
+
+    EXPECT_EQ(5, matrix[1][1]);
+    EXPECT_EQ(0, matrix[2][2]);
+}

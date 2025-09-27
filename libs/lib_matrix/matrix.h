@@ -322,6 +322,25 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix) {
 
 template <typename T>
 std::istream& operator>>(std::istream& is, Matrix<T>& matrix) {
+    if (matrix.rows() == 0) {
+        return is;
+    }
+
+    const size_t num_rows = matrix.rows();
+    const size_t num_cols = matrix.cols();
+
+    T value;
+
+    for (size_t i = 0; i < num_rows; i++) {
+        for (size_t j = 0; j < num_cols; j++) {
+            if (!(is >> value)) {
+                return is;
+            }
+
+            matrix[i][j] = value;
+        }
+    }
+
     return is;
 }
 
