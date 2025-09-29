@@ -31,6 +31,9 @@ class MVector {
     MVector<T>& operator*=(T scalar);
     MVector<T>& operator/=(T scalar);
 
+    bool operator==(const MVector<T>& other) const;
+    bool operator!=(const MVector<T>& other) const;
+
     T length() const;
     MVector<T> normalized() const;
 
@@ -38,13 +41,14 @@ class MVector {
 };
 
 template<typename T>
-MVector<T>::MVector() :_data() {}
+MVector<T>::MVector() : _data() {}
 
 template<typename T>
 MVector<T>::MVector(int size) {
     if (size < 0) {
         throw std::invalid_argument("MVector: size must be non-negative");
     }
+
     _data = TVector<T>(size);
     _data.shrink_to_fit();
 }
@@ -172,6 +176,26 @@ MVector<T> & MVector<T>::operator/=(T scalar) {
     *this = *this / scalar;
 
     return *this;
+}
+
+template<typename T>
+bool MVector<T>::operator==(const MVector<T>& other) const {
+    if (size() != other.size()) {
+        return false;
+    }
+
+    for (size_t i = 0; i < size(); i++) {
+        if (_data[i] != other._data[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+template<typename T>
+bool MVector<T>::operator!=(const MVector<T>& other) const {
+    return !(*this == other);
 }
 
 template<typename T>
