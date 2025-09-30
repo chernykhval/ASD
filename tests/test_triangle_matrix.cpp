@@ -16,3 +16,30 @@ TEST(TestTriangleMatrix, size_init) {
 
     EXPECT_EQ(3, matrix.dim());
 }
+
+TEST(TestTriangleMatrix, list_init) {
+    TriangleMatrix<int> matrix = {
+        {1, 2, 3},
+        {4, 5},
+        {6}
+    };
+
+    EXPECT_EQ(3, matrix.dim());
+}
+
+TEST(TestTriangleMatrix, list_init_different_size) {
+    ASSERT_ANY_THROW(TriangleMatrix<int> matrix({{1, 2, 3}, {4, 5}}));
+    ASSERT_ANY_THROW(TriangleMatrix<int> matrix({{1, 2, 3}, {4, 5}, {6, 7}}));
+}
+
+TEST(TestTriangleMatrix, copy_init) {
+    TriangleMatrix<int> matrix_1 = {
+        {1, 2, 3},
+        {4, 5},
+        {6}
+    };
+
+    TriangleMatrix<int> matrix_2(matrix_1);
+
+    EXPECT_EQ(3, matrix_2.dim());
+}
