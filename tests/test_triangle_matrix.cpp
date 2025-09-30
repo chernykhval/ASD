@@ -190,3 +190,56 @@ TEST(TestTriangleMatrix, mult_with_matrix_different_size) {
 
     ASSERT_ANY_THROW(TriangleMatrix<int> matrix_3 = matrix_1 * matrix_2);
 }
+
+TEST(TestTriangleMatrix, assignment_deep_copy) {
+    TriangleMatrix<int> matrix_1 = {
+        {10, 20},
+        {30}
+    };
+
+    TriangleMatrix<int> matrix_2(2);
+
+    matrix_2 = matrix_1;
+
+    EXPECT_EQ(2, matrix_2.dim());
+    EXPECT_TRUE(matrix_1 == matrix_2);
+}
+
+// Add two tests
+
+TEST(TestTriangleMatrix, compound_add) {
+    TriangleMatrix<int> matrix_1 = {
+        {1, 2, 3},
+        {4, 5},
+        {6}
+    };
+    TriangleMatrix<int> matrix_2 = {
+        {1, 1, 1},
+        {1, 1},
+        {1}
+    };
+
+    matrix_1 += matrix_2;
+
+    TriangleMatrix<int> result = {
+        {2, 3, 4},
+        {5, 6},
+        {7}
+    };
+
+    EXPECT_TRUE(matrix_1 == result);
+}
+
+TEST(TestTriangleMatrix, compound_add_different_size) {
+    TriangleMatrix<int> matrix_1 = {
+        {1, 2},
+        {3}
+    };
+    TriangleMatrix<int> matrix_2 = {
+        {1, 0, 1},
+        {1, 0},
+        {1}
+    };
+
+    ASSERT_ANY_THROW(matrix_1 += matrix_2);
+}

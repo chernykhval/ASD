@@ -22,9 +22,15 @@ class TriangleMatrix {
     bool operator==(const TriangleMatrix<T>&) const;
     bool operator!=(const TriangleMatrix<T>&) const;
 
+    TriangleMatrix<T>& operator=(const TriangleMatrix<T>&);
+
     TriangleMatrix<T> operator+(const TriangleMatrix<T>&) const;
     TriangleMatrix<T> operator-(const TriangleMatrix<T>&) const;
     TriangleMatrix<T> operator*(const TriangleMatrix<T>&) const;
+
+    TriangleMatrix<T>& operator+=(const TriangleMatrix<T>&);
+    TriangleMatrix<T>& operator-=(const TriangleMatrix<T>&);
+    TriangleMatrix<T>& operator*=(const TriangleMatrix<T>&);
 };
 
 template<typename T>
@@ -94,6 +100,18 @@ bool TriangleMatrix<T>::operator!=(const TriangleMatrix<T>& other) const {
 }
 
 template<typename T>
+TriangleMatrix<T>& TriangleMatrix<T>::operator=(const TriangleMatrix<T>& other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    _size = other._size;
+    _data = other._data;
+
+    return *this;
+}
+
+template<typename T>
 TriangleMatrix<T> TriangleMatrix<T>::
 operator+(const TriangleMatrix<T>& other) const {
     if (_size != other._size) {
@@ -154,6 +172,13 @@ operator*(const TriangleMatrix<T>& other) const {
     }
 
     return result;
+}
+
+template<typename T>
+TriangleMatrix<T>& TriangleMatrix<T>::
+operator+=(const TriangleMatrix<T>& other) {
+    *this = *this + other;
+    return *this;
 }
 
 #endif  // LIBS_LIB_TRIANGLE_MATRIX_TRIANGLE_MATRIX_H_
