@@ -43,3 +43,45 @@ TEST(TestTriangleMatrix, copy_init) {
 
     EXPECT_EQ(3, matrix_2.dim());
 }
+
+TEST(TestTriangleMatrix, equality_operator_equal) {
+    TriangleMatrix<int> matrix_1 = {{1, 2, 3}, {4, 5}, {6}};
+    TriangleMatrix<int> matrix_2 = {{1, 2, 3}, {4, 5}, {6}};
+
+    EXPECT_TRUE(matrix_1 == matrix_2);
+}
+
+TEST(TestTriangleMatrix, equality_operator_different_value) {
+    TriangleMatrix<int> matrix_1 = {{1, 2, 3}, {4, 5}, {6}};
+    TriangleMatrix<int> matrix_2 = {{1, 2, 3}, {4, 5}, {7}};
+
+    EXPECT_FALSE(matrix_1 == matrix_2);
+}
+
+TEST(TestTriangleMatrix, equality_operator_different_size) {
+    TriangleMatrix<int> matrix_1 = {{1, 2, 3}, {4, 5}, {6}};
+    TriangleMatrix<int> matrix_2 = {{1, 2}, {3}};
+
+    EXPECT_FALSE(matrix_1 == matrix_2);
+}
+
+TEST(TestTriangleMatrix, inequality_operator_equal) {
+    TriangleMatrix<int> matrix_1 = {{1, 2, 3}, {4, 5}, {6}};
+    TriangleMatrix<int> matrix_2 = {{1, 2, 3}, {4, 5}, {6}};
+
+    EXPECT_FALSE(matrix_1 != matrix_2);
+}
+
+TEST(TestTriangleMatrix, inequality_operator_different_value) {
+    TriangleMatrix<int> matrix_1 = {{1, 2, 3}, {4, 5}, {6}};
+    TriangleMatrix<int> matrix_2 = {{1, 2, 3}, {4, 5}, {7}};
+
+    EXPECT_TRUE(matrix_1 != matrix_2);
+}
+
+TEST(TestTriangleMatrix, inequality_operator_different_size) {
+    TriangleMatrix<int> matrix_1 = {{1, 2, 3}, {4, 5}, {6}};
+    TriangleMatrix<int> matrix_2 = {{1, 2}, {3}};
+
+    EXPECT_TRUE(matrix_1 != matrix_2);
+}

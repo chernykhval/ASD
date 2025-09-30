@@ -18,6 +18,9 @@ class TriangleMatrix {
     TriangleMatrix(const TriangleMatrix&);
 
     size_t dim() const;
+
+    bool operator==(const TriangleMatrix<T>&) const;
+    bool operator!=(const TriangleMatrix<T>&) const;
 };
 
 template<typename T>
@@ -64,6 +67,26 @@ _size(other._size), _data(other._data) {
 template<typename T>
 size_t TriangleMatrix<T>::dim() const {
     return _size;
+}
+
+template<typename T>
+bool TriangleMatrix<T>::operator==(const TriangleMatrix<T>& other) const {
+    if (_size != other._size) {
+        return false;
+    }
+
+    for (size_t i = 0; i < _size; i++) {
+        if (_data[i] != other._data[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+template<typename T>
+bool TriangleMatrix<T>::operator!=(const TriangleMatrix<T>& other) const {
+    return !(*this == other);
 }
 
 #endif  // LIBS_LIB_TRIANGLE_MATRIX_TRIANGLE_MATRIX_H_
