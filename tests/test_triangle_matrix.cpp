@@ -280,3 +280,40 @@ TEST(TestTriangleMatrix, compound_sub_different_size) {
 
     ASSERT_ANY_THROW(matrix_1 -= matrix_2);
 }
+
+TEST(TestTriangleMatrix, compound_mult) {
+    TriangleMatrix<int> matrix_1 = {
+        {1, 2, 3},
+        {4, 5},
+        {6}
+    };
+    TriangleMatrix<int> matrix_2 = {
+        {1, 1, 1},
+        {1, 1},
+        {1}
+    };
+
+    matrix_1 *= matrix_2;
+
+    TriangleMatrix<int> result = {
+        {1, 3, 6},
+        {4, 9},
+        {6}
+    };
+
+    EXPECT_TRUE(matrix_1 == result);
+}
+
+TEST(TestTriangleMatrix, compound_mult_different_size) {
+    TriangleMatrix<int> matrix_1 = {
+        {1, 2},
+        {3}
+    };
+    TriangleMatrix<int> matrix_2 = {
+        {1, 0, 1},
+        {1, 0},
+        {1}
+    };
+
+    ASSERT_ANY_THROW(matrix_1 *= matrix_2);
+}
