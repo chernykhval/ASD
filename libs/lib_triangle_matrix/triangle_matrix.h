@@ -181,4 +181,11 @@ operator+=(const TriangleMatrix<T>& other) {
     return *this;
 }
 
+template<typename T>
+TriangleMatrix<T>& TriangleMatrix<T>::
+operator-=(const TriangleMatrix<T>& other) {
+    *this = *this - other;
+    return *this;
+}
+
 #endif  // LIBS_LIB_TRIANGLE_MATRIX_TRIANGLE_MATRIX_H_
