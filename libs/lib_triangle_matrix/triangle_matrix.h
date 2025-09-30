@@ -21,6 +21,10 @@ class TriangleMatrix {
 
     bool operator==(const TriangleMatrix<T>&) const;
     bool operator!=(const TriangleMatrix<T>&) const;
+
+    TriangleMatrix<T> operator+(const TriangleMatrix<T>&) const;
+    TriangleMatrix<T> operator-(const TriangleMatrix<T>&) const;
+    TriangleMatrix<T> operator*(const TriangleMatrix<T>&) const;
 };
 
 template<typename T>
@@ -87,6 +91,69 @@ bool TriangleMatrix<T>::operator==(const TriangleMatrix<T>& other) const {
 template<typename T>
 bool TriangleMatrix<T>::operator!=(const TriangleMatrix<T>& other) const {
     return !(*this == other);
+}
+
+template<typename T>
+TriangleMatrix<T> TriangleMatrix<T>::
+operator+(const TriangleMatrix<T>& other) const {
+    if (_size != other._size) {
+        throw std::invalid_argument("TriangleMatrix: Incompatible sizes");
+    }
+
+    TriangleMatrix<T> result(_size);
+
+    for (size_t i = 0; i < _size; i++) {
+        result._data[i] = _data[i] + other._data[i];
+    }
+
+    return result;
+}
+
+template<typename T>
+TriangleMatrix<T> TriangleMatrix<T>::
+operator-(const TriangleMatrix<T>& other) const {
+    if (_size != other._size) {
+        throw std::invalid_argument("TriangleMatrix: Incompatible sizes");
+    }
+
+    TriangleMatrix<T> result(_size);
+
+    for (size_t i = 0; i < _size; i++) {
+        result._data[i] = _data[i] - other._data[i];
+    }
+
+    return result;
+}
+
+template<typename T>
+TriangleMatrix<T> TriangleMatrix<T>::
+operator*(const TriangleMatrix<T>& other) const {
+    if (_size != other._size) {
+        throw std::invalid_argument("TriangleMatrix: Incompatible sizes");
+    }
+
+    TriangleMatrix<T> result(_size);
+
+    int terms_number = 1;
+
+    for (size_t i = 0; i < _size; i++) {
+        for (size_t j = 0; j < _size; j++) {
+            if (i + j >= _size)
+                continue;
+
+            T sum = T();
+
+            for (size_t k = 0; k < terms_number; k++) {
+                sum += _data[j][k] * other._data[k + j][i - k];
+            }
+
+            result._data[j][i] = sum;
+        }
+
+        terms_number++;
+    }
+
+    return result;
 }
 
 #endif  // LIBS_LIB_TRIANGLE_MATRIX_TRIANGLE_MATRIX_H_

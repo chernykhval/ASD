@@ -44,11 +44,63 @@ int main() {
 #ifdef IOMATRIX_EXAMPLE
 
 int main() {
-    Matrix<int> matrix(2, 3);
-    std::cout << matrix << std::endl;
-    std::cout << "Fill the matrix (2, 3): " << std::endl;
-    std::cin >> matrix;
-    std::cout << matrix << std::endl;
+    // Matrix<int> matrix(2, 3);
+    // std::cout << matrix << std::endl;
+    // std::cout << "Fill the matrix (2, 3): " << std::endl;
+    // std::cin >> matrix;
+    // std::cout << matrix << std::endl;
+
+    Matrix<int> matrix = {
+        {1, 2, 3},
+        {0, 4, 5},
+        {0, 0, 6}
+    };
+
+    int size = 3;
+    int layer = 1;
+
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (i + j >= size)
+                continue;
+
+            std::cout << "(" << j << ", " << i + j << "): " << layer << " = ";
+
+            for (int k = 0; k < layer; k++) {
+                std::cout << "(" << j << ", " << k + j <<
+                    ") * (" << k + j << ", " << j + i << ") + ";
+            }
+
+            std::cout << std::endl;
+        }
+
+        layer++;
+    }
+
+    std::cout << std::endl;
+
+    layer = 1;
+
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (i + j >= size)
+                continue;
+
+            std::cout << "(" << j << ", " << i << "): " << layer << " = ";
+
+            if (j == 0 && i == 1) {
+                std::cout << "";
+            }
+            for (int k = 0; k < layer; k++) {
+                std::cout << "(" << j << ", " <<
+                    k << ") * (" << k + j << ", " << i - k << ") + ";
+            }
+
+            std::cout << std::endl;
+        }
+
+        layer++;
+    }
     return 0;
 }
 
