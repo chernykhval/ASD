@@ -566,7 +566,7 @@ TEST(TestMatrix, empty_matrix_output) {
     EXPECT_EQ(expected, ss.str());
 }
 
-TEST(TestMatrixOutput, ColumnarWidthAlignment) {
+TEST(TestMatrixOutput, columnar_width_alignment) {
     Matrix<int> matrix = {
         {1000, 20, 3},
         {1, 5, 300},

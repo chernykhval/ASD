@@ -3,7 +3,21 @@
 #ifndef LIBS_LIB_TRIANGLE_MATRIX_TRIANGLE_MATRIX_H_
 #define LIBS_LIB_TRIANGLE_MATRIX_TRIANGLE_MATRIX_H_
 
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <iomanip>
 #include "libs/lib_mvector/mvector.h"
+
+namespace detail {
+template <typename T>
+size_t get_element_display_width(const T& element) {
+    std::stringstream ss;
+
+    ss << element;
+    return ss.str().length();
+}
+}
 
 template<typename T>
 class TriangleMatrix {
@@ -41,6 +55,14 @@ class TriangleMatrix {
 
     T at(size_t row, size_t col) const;
     void set(size_t row, size_t col, const T& value);
+
+    template<typename U>
+    friend std::ostream&
+        operator<<(std::ostream& os, const TriangleMatrix<U>& matrix);
+
+    template<typename U>
+    friend std::istream&
+        operator>>(std::istream& is, TriangleMatrix<U>& matrix);
 };
 
 template<typename T>
@@ -110,7 +132,8 @@ bool TriangleMatrix<T>::operator!=(const TriangleMatrix<T>& other) const {
 }
 
 template<typename T>
-TriangleMatrix<T>& TriangleMatrix<T>::operator=(const TriangleMatrix<T>& other) {
+TriangleMatrix<T>& TriangleMatrix<T>::
+operator=(const TriangleMatrix<T>& other) {
     if (this == &other) {
         return *this;
     }
@@ -284,6 +307,70 @@ void TriangleMatrix<T>::set(size_t row, size_t col, const T& value) {
     }
 
     _data[row][col - row] = value;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const TriangleMatrix<T>& matrix) {
+    if (matrix.dim() == 0) {
+        return os;
+    }
+
+    const size_t dim = matrix.dim();
+
+    TVector<size_t> max_widths(dim, 0);
+
+    for (size_t i = 0; i < dim; ++i) {
+        for (size_t j = 0; j < dim; ++j) {
+            size_t current_width =
+                detail::get_element_display_width(matrix.at(i, j));
+
+            if (current_width > max_widths[j]) {
+                max_widths[j] = current_width;
+            }
+        }
+    }
+
+    for (size_t i = 0; i < dim; ++i) {
+        os << "| ";
+
+        for (size_t j = 0; j < dim; ++j) {
+            os << std::setw(static_cast<int>(max_widths[j]))
+               << matrix.at(i, j) << " ";
+        }
+
+        os << "|\n";
+    }
+
+    return os;
+}
+
+template <typename T>
+std::istream& operator>>(std::istream& is, TriangleMatrix<T>& matrix) {
+    if (matrix.dim() == 0) {
+        return is;
+    }
+
+    const size_t dim = matrix.dim();
+
+    T value;
+
+    for (size_t i = 0; i < dim; i++) {
+        for (size_t j = 0; j < dim; j++) {
+            if (!(is >> value)) {
+                return is;
+            }
+
+            if (j >= i) {
+                matrix.set(i, j, value);
+            } else if (j < i && value != T()) {
+                throw std::invalid_argument("TriangleMatrix: Invalid input.\n"
+                                            "The values below the diagonal"
+                                            " should be zero.");
+            }
+        }
+    }
+
+    return is;
 }
 
 #endif  // LIBS_LIB_TRIANGLE_MATRIX_TRIANGLE_MATRIX_H_

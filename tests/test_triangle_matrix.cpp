@@ -1,6 +1,7 @@
 // Copyright 2025 Chernykh Valentin
 
 #include <gtest/gtest.h>
+#include <string>
 #include "libs/lib_triangle_matrix/triangle_matrix.h"
 
 #define EPSILON 0.000001
@@ -205,7 +206,39 @@ TEST(TestTriangleMatrix, assignment_deep_copy) {
     EXPECT_TRUE(matrix_1 == matrix_2);
 }
 
-// Add two tests
+TEST(TestTriangleMatrix, assignment_self_assignment) {
+    TriangleMatrix<int> matrix = {
+        {1, 2},
+        {3}
+    };
+
+    const int expected_row = matrix.dim();
+    const int expected_val = matrix.at(1, 0);
+
+    matrix = matrix;
+
+    EXPECT_EQ(expected_row, matrix.dim());
+    EXPECT_EQ(expected_val, matrix.at(1, 0));
+    EXPECT_EQ(3, matrix.at(1, 1));
+
+    TriangleMatrix<int>& assigned_ref = (matrix = matrix);
+    EXPECT_EQ(&matrix, &assigned_ref);
+}
+
+TEST(TestTriangleMatrix, assignment_chained) {
+    TriangleMatrix<int> matrix_A(1);
+    TriangleMatrix<int> matrix_B(1);
+    TriangleMatrix<int> matrix_C = {{5}};
+
+    matrix_A = matrix_B = matrix_C;
+
+    EXPECT_EQ(5, matrix_A.at(0, 0));
+
+    EXPECT_EQ(5, matrix_B.at(0, 0));
+
+    matrix_C.set(0, 0, 99);
+    EXPECT_EQ(5, matrix_A.at(0, 0));
+}
 
 TEST(TestTriangleMatrix, compound_add) {
     TriangleMatrix<int> matrix_1 = {
@@ -493,4 +526,134 @@ TEST(TestTriangleMatrix, set_method_out_of_range) {
     EXPECT_THROW(matrix.set(2, 0, 10), std::out_of_range);
     EXPECT_THROW(matrix.set(0, 2, 20), std::out_of_range);
     EXPECT_THROW(matrix.set(2, 2, 30), std::out_of_range);
+}
+
+TEST(TestTriangleMatrix, basic_integer_output) {
+    TriangleMatrix<int> matrix = {
+        {10, 200, 3000},
+        {3, 40},
+        {5}
+    };
+
+    const std::string expected =
+        "| 10 200 3000 |\n"
+        "|  0   3   40 |\n"
+        "|  0   0    5 |\n";
+
+    std::stringstream ss;
+    ss << matrix;
+
+    EXPECT_EQ(expected, ss.str());
+}
+
+TEST(TestTriangleMatrix, floating_point_output) {
+    TriangleMatrix<double> matrix = {
+        {1.23, 10.0, 100.12345},
+        {0.5, 2.7},
+        {3.14}
+    };
+
+    const std::string expected =
+        "| 1.23  10 100.123 |\n"
+        "|    0 0.5     2.7 |\n"
+        "|    0   0    3.14 |\n";
+
+    std::stringstream ss;
+    ss << matrix;
+
+    EXPECT_EQ(expected, ss.str());
+}
+
+TEST(TestTriangleMatrix, empty_matrix_output) {
+    TriangleMatrix<int> matrix;
+
+    const std::string expected = "";
+
+    std::stringstream ss;
+    ss << matrix;
+
+    EXPECT_EQ(expected, ss.str());
+}
+
+TEST(TestTriangleMatrix, basic_correct_input) {
+    TriangleMatrix<int> matrix(3);
+
+    const std::string input_data =
+        "1 2 3\n"
+        "0 4 5\n"
+        "0 0 6";
+
+    std::stringstream ss(input_data);
+
+    ss >> matrix;
+
+    EXPECT_FALSE(ss.fail());
+
+    EXPECT_EQ(3, matrix.dim());
+    EXPECT_EQ(1, matrix.at(0, 0));
+    EXPECT_EQ(2, matrix.at(0, 1));
+    EXPECT_EQ(3, matrix.at(0, 2));
+    EXPECT_EQ(4, matrix.at(1, 1));
+    EXPECT_EQ(5, matrix.at(1, 2));
+    EXPECT_EQ(6, matrix.at(2, 2));
+}
+
+TEST(TestTriangleMatrix, input_with_zeros_below_diagonal) {
+    TriangleMatrix<double> matrix(2);
+
+    const std::string input_data =
+        "1.5 2.5\n"
+        "0.0 3.5";
+
+    std::stringstream ss(input_data);
+
+    ss >> matrix;
+
+    EXPECT_FALSE(ss.fail());
+
+    EXPECT_EQ(2, matrix.dim());
+    EXPECT_DOUBLE_EQ(1.5, matrix.at(0, 0));
+    EXPECT_DOUBLE_EQ(2.5, matrix.at(0, 1));
+    EXPECT_DOUBLE_EQ(3.5, matrix.at(1, 1));
+}
+
+TEST(TestTriangleMatrix, input_rejects_non_zero_below_diagonal) {
+    TriangleMatrix<int> matrix(2);
+
+    const std::string input_data =
+        "1 2\n"
+        "5 3";
+
+    std::stringstream ss(input_data);
+
+    EXPECT_THROW(ss >> matrix, std::invalid_argument);
+}
+
+TEST(TestTriangleMatrix, format_error_handling_input) {
+    TriangleMatrix<double> matrix(2);
+
+    const std::string input_data =
+        "1.1 2.2\n"
+        "0.0 X";
+
+    std::stringstream ss(input_data);
+
+    ss >> matrix;
+
+    EXPECT_TRUE(ss.fail());
+}
+
+TEST(TestTriangleMatrix, end_of_file_handling_input) {
+    TriangleMatrix<int> matrix(3);
+
+    const std::string input_data =
+        "1 2 3\n"
+        "0 4 5";
+
+    std::stringstream ss(input_data);
+
+    ss >> matrix;
+
+    EXPECT_TRUE(ss.eof());
+    EXPECT_TRUE(ss.fail());
 }
