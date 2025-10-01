@@ -468,6 +468,17 @@ TEST(TestMatrix, mult_by_mvector) {
     EXPECT_EQ(17, result[2]);
 }
 
+TEST(TestMatrix, mult_by_mvector_different_size) {
+    Matrix<int> matrix = {
+        {1, 2},
+        {3, 4},
+        {5, 6}
+    };
+    MVector<int> mvector = {1, 2, 3};
+
+    EXPECT_ANY_THROW(MVector<int> result = matrix * mvector);
+}
+
 TEST(TestMatrix, equality_operator_equal) {
     Matrix<int> matrix_1 = {{1, 2}, {3, 4}};
     Matrix<int> matrix_2 = {{1, 2}, {3, 4}};

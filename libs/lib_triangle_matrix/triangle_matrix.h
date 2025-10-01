@@ -236,4 +236,25 @@ TriangleMatrix<T>& TriangleMatrix<T>::operator/=(const T& scalar) {
     return *this;
 }
 
+template<typename T>
+MVector<T> TriangleMatrix<T>::operator*(const MVector<T>& column) const {
+    if (_size != column.size()) {
+        throw std::invalid_argument("TriangleMatrix: Incompatible sizes");
+    }
+
+    MVector<T> result(_size);
+
+    for (size_t i = 0; i < _size; i++) {
+        T sum = T();
+
+        for (size_t j = i; j < _size; j++) {
+            sum += _data[i][j - i] * column[j];
+        }
+
+        result[i] = sum;
+    }
+
+    return result;
+}
+
 #endif  // LIBS_LIB_TRIANGLE_MATRIX_TRIANGLE_MATRIX_H_

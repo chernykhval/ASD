@@ -393,3 +393,25 @@ TEST(TestTriangleMatrix, compound_div_by_zero) {
 
     ASSERT_ANY_THROW(matrix_1 /= 0);
 }
+
+TEST(TestTriangleMatrix, mult_by_mvector) {
+    TriangleMatrix<int> matrix = {
+        {1, 2},
+        {3}
+    };
+    MVector<int> mvector = {1, 2};
+    MVector<int> result = matrix * mvector;
+
+    EXPECT_EQ(5, result[0]);
+    EXPECT_EQ(6, result[1]);
+}
+
+TEST(TestTriangleMatrix, mult_by_mvector_different_size) {
+    TriangleMatrix<int> matrix = {
+        {1, 2},
+        {3}
+    };
+    MVector<int> mvector = {1, 2, 3};
+
+    EXPECT_ANY_THROW(MVector<int> result = matrix * mvector);
+}
