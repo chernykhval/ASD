@@ -9,7 +9,7 @@
 #include <iomanip>
 #include "libs/lib_mvector/mvector.h"
 
-namespace detail {
+namespace triangle_matrix_detail {
 template <typename T>
 size_t get_element_display_width(const T& element) {
     std::stringstream ss;
@@ -322,7 +322,7 @@ std::ostream& operator<<(std::ostream& os, const TriangleMatrix<T>& matrix) {
     for (size_t i = 0; i < dim; ++i) {
         for (size_t j = 0; j < dim; ++j) {
             size_t current_width =
-                detail::get_element_display_width(matrix.at(i, j));
+                triangle_matrix_detail::get_element_display_width(matrix.at(i, j));
 
             if (current_width > max_widths[j]) {
                 max_widths[j] = current_width;

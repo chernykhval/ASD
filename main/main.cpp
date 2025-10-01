@@ -1,6 +1,9 @@
 // Copyright 2024 Marina Usova
 
-#define MATRIX
+#define MATRIX_INTERFACE
+
+#include "libs/lib_matrix/matrix.h"
+#include "libs/lib_triangle_matrix/triangle_matrix.h"
 
 #ifdef EASY_EXAMPLE
 
@@ -41,7 +44,6 @@ int main() {
 #endif  // EASY_EXAMPLE
 
 #ifdef IOMATRIX_EXAMPLE
-#include "libs/lib_matrix/matrix.h"
 
 int main() {
     // Matrix<int> matrix(2, 3);
@@ -106,13 +108,12 @@ int main() {
 
 #endif  // IOMATRIX_EXAMPLE
 
-#ifdef MATRIX
+#ifdef MATRIX_INTERFACE
 
 #include <limits>
 #include <string>
 
 #include "cstdio"
-#include "libs/lib_matrix/matrix.h"
 
 int read_int(const std::string& prompt) {
     int value;
@@ -253,15 +254,15 @@ void start_triangle_matrix_calculator() {
         << dim << "x" << dim << "\n";
 
 
-    Matrix<float> matrix_A(dim, dim);
-    Matrix<float> matrix_B(dim, dim);
+    TriangleMatrix<float> matrix_A(dim);
+    TriangleMatrix<float> matrix_B(dim);
 
     std::cout << "Fill matrix A\n";\
     std::cin >> matrix_A;
     std::cout << "Fill matrix B\n";
     std::cin >> matrix_B;
 
-    Matrix<float> result;
+    TriangleMatrix<float> result;
 
     switch (operation) {
         case '+':
@@ -316,10 +317,11 @@ int main() {
         if (!is_exit) {
             std::cout << "Press any key to continue...\n";
             std::cin.get();
+            std::cin.get();
         }
     }
 
     return 0;
 }
 
-#endif  // MATRIX
+#endif  // MATRIX_INTERFACE
