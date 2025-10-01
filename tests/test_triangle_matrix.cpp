@@ -415,3 +415,82 @@ TEST(TestTriangleMatrix, mult_by_mvector_different_size) {
 
     EXPECT_ANY_THROW(MVector<int> result = matrix * mvector);
 }
+
+TEST(TestTriangleMatrix, at_method_basic_usage) {
+    TriangleMatrix<int> matrix = {
+        {1, 2, 3},
+        {4, 5},
+        {6}
+    };
+
+    EXPECT_EQ(1, matrix.at(0, 0));
+    EXPECT_EQ(2, matrix.at(0, 1));
+    EXPECT_EQ(3, matrix.at(0, 2));
+    EXPECT_EQ(4, matrix.at(1, 1));
+    EXPECT_EQ(5, matrix.at(1, 2));
+    EXPECT_EQ(6, matrix.at(2, 2));
+
+    EXPECT_EQ(0, matrix.at(1, 0));
+    EXPECT_EQ(0, matrix.at(2, 0));
+    EXPECT_EQ(0, matrix.at(2, 1));
+}
+
+TEST(TestTriangleMatrix, at_method_out_of_range) {
+    TriangleMatrix<int> matrix = {
+        {1, 2},
+        {3}
+    };
+
+    EXPECT_THROW(matrix.at(2, 0), std::out_of_range);
+    EXPECT_THROW(matrix.at(0, 2), std::out_of_range);
+    EXPECT_THROW(matrix.at(2, 2), std::out_of_range);
+    EXPECT_THROW(matrix.at(100, 100), std::out_of_range);
+}
+
+TEST(TestTriangleMatrix, set_method_basic_usage) {
+    TriangleMatrix<int> matrix = {
+        {1, 2, 3},
+        {4, 5},
+        {6}
+    };
+
+    matrix.set(0, 1, 10);
+    EXPECT_EQ(10, matrix.at(0, 1));
+
+    matrix.set(1, 2, 20);
+    EXPECT_EQ(20, matrix.at(1, 2));
+
+    matrix.set(2, 2, 30);
+    EXPECT_EQ(30, matrix.at(2, 2));
+
+    EXPECT_EQ(1, matrix.at(0, 0));
+    EXPECT_EQ(4, matrix.at(1, 1));
+}
+
+TEST(TestTriangleMatrix, set_method_lower_triangle_exception) {
+    TriangleMatrix<int> matrix = {
+        {1, 2, 3},
+        {4, 5},
+        {6}
+    };
+
+    EXPECT_THROW(matrix.set(1, 0, 10), std::invalid_argument);
+    EXPECT_THROW(matrix.set(2, 0, 20), std::invalid_argument);
+    EXPECT_THROW(matrix.set(2, 1, 30), std::invalid_argument);
+
+    EXPECT_EQ(1, matrix.at(0, 0));
+    EXPECT_EQ(2, matrix.at(0, 1));
+    EXPECT_EQ(4, matrix.at(1, 1));
+    EXPECT_EQ(0, matrix.at(1, 0));
+}
+
+TEST(TestTriangleMatrix, set_method_out_of_range) {
+    TriangleMatrix<int> matrix = {
+        {1, 2},
+        {3}
+    };
+
+    EXPECT_THROW(matrix.set(2, 0, 10), std::out_of_range);
+    EXPECT_THROW(matrix.set(0, 2, 20), std::out_of_range);
+    EXPECT_THROW(matrix.set(2, 2, 30), std::out_of_range);
+}

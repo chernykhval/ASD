@@ -38,6 +38,9 @@ class TriangleMatrix {
     TriangleMatrix<T>& operator/=(const T&);
 
     MVector<T> operator*(const MVector<T>&) const;
+
+    T at(size_t row, size_t col) const;
+    void set(size_t row, size_t col, const T& value);
 };
 
 template<typename T>
@@ -255,6 +258,32 @@ MVector<T> TriangleMatrix<T>::operator*(const MVector<T>& column) const {
     }
 
     return result;
+}
+
+template<typename T>
+T TriangleMatrix<T>::at(size_t row, size_t col) const {
+    if (row >= _size || col >= _size) {
+        throw std::out_of_range("TriangleMatrix indices out of range");
+    }
+
+    if (col < row) {
+        return T(0);
+    }
+
+    return _data[row][col - row];
+}
+
+template<typename T>
+void TriangleMatrix<T>::set(size_t row, size_t col, const T& value) {
+    if (row >= _size || col >= _size) {
+        throw std::out_of_range("TriangleMatrix indices out of range");
+    }
+
+    if (col < row) {
+        throw std::invalid_argument("Cannot modify lower triangle");
+    }
+
+    _data[row][col - row] = value;
 }
 
 #endif  // LIBS_LIB_TRIANGLE_MATRIX_TRIANGLE_MATRIX_H_
