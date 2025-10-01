@@ -224,4 +224,16 @@ TriangleMatrix<T> TriangleMatrix<T>::operator/(const T& scalar) const {
     return result;
 }
 
+template<typename T>
+TriangleMatrix<T>& TriangleMatrix<T>::operator*=(const T& scalar) {
+    *this = *this * scalar;
+    return *this;
+}
+
+template<typename T>
+TriangleMatrix<T>& TriangleMatrix<T>::operator/=(const T& scalar) {
+    *this = *this / scalar;
+    return *this;
+}
+
 #endif  // LIBS_LIB_TRIANGLE_MATRIX_TRIANGLE_MATRIX_H_
