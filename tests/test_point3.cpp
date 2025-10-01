@@ -1,4 +1,4 @@
-// Copyright 2024 Chernykh Valentin
+// Copyright 2025 Chernykh Valentin
 
 #include <gtest/gtest.h>
 #include "libs/lib_point3/point3.h"

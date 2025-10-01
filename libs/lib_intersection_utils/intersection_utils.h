@@ -1,4 +1,4 @@
-// Copyright 2024 Chernykh Valentin
+// Copyright 2025 Chernykh Valentin
 
 #ifndef LIBS_LIB_INTERSECTION_UTILS_INTERSECTION_UTILS_H_
 #define LIBS_LIB_INTERSECTION_UTILS_INTERSECTION_UTILS_H_
