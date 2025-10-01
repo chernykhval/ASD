@@ -221,9 +221,9 @@ void start_matrix_calculator() {
     Matrix<float> matrix_A(rows_A, columns_A);
     Matrix<float> matrix_B(rows_B, columns_B);
 
-    std::cout << "Fill matrix A\n";\
+    std::cout << "Fill matrix A(" << rows_A << "x" << columns_A << ")\n";
     std::cin >> matrix_A;
-    std::cout << "Fill matrix B\n";
+    std::cout << "Fill matrix B(" << rows_B << "x" << columns_B << ")\n";
     std::cin >> matrix_B;
 
     Matrix<float> result;
@@ -257,9 +257,9 @@ void start_triangle_matrix_calculator() {
     TriangleMatrix<float> matrix_A(dim);
     TriangleMatrix<float> matrix_B(dim);
 
-    std::cout << "Fill matrix A\n";\
+    std::cout << "Fill matrix A(" << dim << "x" << dim << ")\n";
     std::cin >> matrix_A;
-    std::cout << "Fill matrix B\n";
+    std::cout << "Fill matrix B(" << dim << "x" << dim << ")\n";
     std::cin >> matrix_B;
 
     TriangleMatrix<float> result;
