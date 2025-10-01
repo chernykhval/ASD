@@ -9,7 +9,7 @@
 #include "libs/lib_mvector/mvector.h"
 #include "libs/lib_tvector/tvector.h"
 
-namespace detail {
+namespace matrix_detail {
 template <typename T>
 size_t get_element_display_width(const T& element) {
     std::stringstream ss;
@@ -299,7 +299,7 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix) {
     for (size_t i = 0; i < num_rows; ++i) {
         for (size_t j = 0; j < num_cols; ++j) {
             size_t current_width =
-                detail::get_element_display_width(matrix[i][j]);
+                matrix_detail::get_element_display_width(matrix[i][j]);
 
             if (current_width > max_widths[j]) {
                 max_widths[j] = current_width;
