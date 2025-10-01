@@ -58,6 +58,7 @@ class Matrix {
     bool operator!=(const Matrix<T>& other) const;
 
     Matrix<T> transpose() const;
+
     template <typename U>
     friend std::ostream& operator<<(std::ostream& os, const Matrix<U>& matrix);
 
@@ -306,10 +307,10 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix) {
         }
     }
 
-    for (size_t i = 0; i < matrix.rows(); ++i) {
+    for (size_t i = 0; i < num_rows; ++i) {
         os << "| ";
 
-        for (size_t j = 0; j < matrix.cols(); ++j) {
+        for (size_t j = 0; j < num_cols; ++j) {
             os << std::setw(static_cast<int>(max_widths[j]))
                << matrix[i][j] << " ";
         }
