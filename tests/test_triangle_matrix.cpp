@@ -317,3 +317,40 @@ TEST(TestTriangleMatrix, compound_mult_different_size) {
 
     ASSERT_ANY_THROW(matrix_1 *= matrix_2);
 }
+
+TEST(TestTriangleMatrix, mult_by_scalar) {
+    TriangleMatrix<int> matrix_1 = {
+        {1, 2},
+        {3}
+    };
+    TriangleMatrix<int> matrix_2 = matrix_1 * 2;
+    TriangleMatrix<int> result = {
+        {2, 4},
+        {6}
+    };
+
+    EXPECT_TRUE(matrix_2 == result);
+}
+
+TEST(TestTriangleMatrix, div_by_scalar) {
+    TriangleMatrix<int> matrix_1 = {
+        {2, 4},
+        {6}
+    };
+    TriangleMatrix<int> matrix_2 = matrix_1 / 2;
+    TriangleMatrix<int> result = {
+        {1, 2},
+        {3}
+    };
+
+    EXPECT_TRUE(matrix_2 == result);
+}
+
+TEST(TestTriangleMatrix, div_by_zero) {
+    TriangleMatrix<int> matrix_1 = {
+        {2, 4},
+        {6}
+    };
+
+    ASSERT_ANY_THROW(TriangleMatrix<int> matrix_2 = matrix_1 / 0);
+}
