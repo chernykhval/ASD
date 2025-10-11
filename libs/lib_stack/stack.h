@@ -1,0 +1,16 @@
+//
+// Created by chern on 11.10.2025.
+//
+
+#ifndef ALGORITHMS_AND_DATA_STRUCTURES_STACK_H
+#define ALGORITHMS_AND_DATA_STRUCTURES_STACK_H
+
+
+
+class stack {
+
+};
+
+
+
+#endif //ALGORITHMS_AND_DATA_STRUCTURES_STACK_H
