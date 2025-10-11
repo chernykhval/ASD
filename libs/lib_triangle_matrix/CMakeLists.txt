@@ -1,0 +1,2 @@
+create_project_lib(TriangleMatrix)
+add_link(TriangleMatrix MVector)
