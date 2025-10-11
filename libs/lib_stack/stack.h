@@ -1,16 +1,11 @@
-//
-// Created by chern on 11.10.2025.
-//
+// Copyright 2025 Chernykh Valentin
 
-#ifndef ALGORITHMS_AND_DATA_STRUCTURES_STACK_H
-#define ALGORITHMS_AND_DATA_STRUCTURES_STACK_H
+#ifndef LIBS_LIB_STACK_STACK_H_
+#define LIBS_LIB_STACK_STACK_H_
 
-
-
-class stack {
-
+template<typename T>
+class Stack {
+ private:
 };
 
-
-
-#endif //ALGORITHMS_AND_DATA_STRUCTURES_STACK_H
+#endif  // LIBS_LIB_STACK_STACK_H_

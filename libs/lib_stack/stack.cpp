@@ -1,5 +1,3 @@
-//
-// Created by chern on 11.10.2025.
-//
+// Copyright 2025 Chernykh Valentin
 
-#include "stack.h"
+#include "libs/lib_stack/stack.h"
