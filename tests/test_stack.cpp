@@ -9,18 +9,18 @@ TEST(StackTest, ShouldThrowExceptionWhenCreatingStackWithZeroSize) {
     EXPECT_THROW(Stack<int> stack(0), std::invalid_argument);
 }
 
-TEST(StackTest, ShouldCreateIndependentCopyThatUnaffectedByOriginalModifications) {
-    Stack<int> original(5);
+TEST(StackTest, ShouldCreateIndependentCopyUnaffectedByOriginalModifications) {
+    Stack<int> original_stack(5);
 
     for (int i = 0; i < 3; i++) {
-        original.push(i);
+        original_stack.push(i);
     }
 
-    Stack<int> copy(original);
+    Stack<int> copy_stack(original_stack);
 
-    original.pop();
-    original.push(100);
-    EXPECT_EQ(2, copy.top());
+    original_stack.pop();
+    original_stack.push(100);
+    EXPECT_EQ(2, copy_stack.top());
 }
 
 TEST(StackTest, ShouldPreventOverflowByThrowingException) {
