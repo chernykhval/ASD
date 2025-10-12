@@ -118,10 +118,10 @@ class TVector {
 
     inline pointer data() noexcept;
     inline const_pointer data() const noexcept;
-    inline State* states() noexcept;
-    inline const State* states() const noexcept;
+    // inline State* states() noexcept;
+    // inline const State* states() const noexcept;
     inline size_type size() const noexcept;
-    inline size_type used() const noexcept;
+    // inline size_type used() const noexcept;
     inline size_type capacity() const noexcept;
     inline reference front();
     inline reference back();
@@ -144,8 +144,8 @@ class TVector {
     void pop_front();
     Iterator erase(Iterator);
 
-    TVector& assign(const TVector&);
-    reference at(size_type);
+    // TVector& assign(const TVector&);
+    // reference at(size_type);
     inline void clear() noexcept;
     void shrink_to_fit();
     void resize(size_type);
