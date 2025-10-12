@@ -12,7 +12,7 @@ TEST(StackTest, size_init) {
         stack_1.push(i);
 
         if (i == 5) {
-            EXPECT_ANY_THROW(stack_1.push(i));
+            EXPECT_THROW(stack_1.push(i), std::overflow_error);
         }
     }
 
@@ -20,43 +20,115 @@ TEST(StackTest, size_init) {
 }
 
 TEST(StackTest, copy_init) {
-    Stack<int> stack_1(5);
+    Stack<int> original(5);
 
     for (int i = 0; i < 3; i++) {
-        stack_1.push(i);
+        original.push(i);
     }
 
-    Stack<int> stack_2(stack_1);
+    Stack<int> copy(original);
 
-    for (int i = 0; i < 3; i++) {
-        stack_2.push(i);
+    original.pop();
+    original.push(100);
+    EXPECT_EQ(2, copy.top());
+}
 
-        if (i == 2) {
-            EXPECT_ANY_THROW(stack_2.push(i));
-        }
+TEST(StackTest, ShouldPreventOverflowByThrowingException) {
+    size_t size = 5;
+    Stack<int> stack(size);
+
+    for (int i = 0; i < size; i++) {
+        stack.push(i);
     }
+
+    EXPECT_THROW(stack.push(100), std::overflow_error);
+    EXPECT_TRUE(stack.is_full());
+    EXPECT_FALSE(stack.is_empty());
 }
 
-TEST(StackTest, push) {
+TEST(StackTest, ShouldTransitionBetweenEmptyFullStatesDuringPushPopOperations) {
+    size_t size = 5;
+    Stack<int> stack(size);
+
+    EXPECT_FALSE(stack.is_full());
+    EXPECT_TRUE(stack.is_empty());
+
+    stack.push(100);
+
+    EXPECT_FALSE(stack.is_full());
+    EXPECT_FALSE(stack.is_empty());
+
+    for (int i = 0; i < size - 1; i++) {
+        stack.push(i);
+    }
+
+    EXPECT_TRUE(stack.is_full());
+    EXPECT_FALSE(stack.is_empty());
+
+    stack.pop();
+
+    EXPECT_FALSE(stack.is_full());
+    EXPECT_FALSE(stack.is_empty());
+
+    for (int i = 0; i < size - 1; i++) {
+        stack.pop();
+    }
+
+    EXPECT_FALSE(stack.is_full());
+    EXPECT_TRUE(stack.is_empty());
 }
 
-TEST(StackTest, pop) {
+TEST(StackTest, PopEmptyStackWithException) {
+    int size = 1;
+    Stack<int> stack(size);
+
+    EXPECT_THROW(stack.pop(), std::underflow_error);
+    EXPECT_FALSE(stack.is_full());
+    EXPECT_TRUE(stack.is_empty());
 }
 
-TEST(StackTest, top) {
+TEST(StackTest, ShouldAllowModifyingTopElementThroughReference) {
+    Stack<int> stack(5);
+    stack.push(100);
+
+    stack.top() = 200;
+    EXPECT_EQ(stack.top(), 200);
+
+    int& top_ref = stack.top();
+    top_ref = 300;
+    EXPECT_EQ(stack.top(), 300);
 }
 
-TEST(StackTest, const_top) {
+TEST(StackTest, ShouldReturnCopyThatDoesNotAffectStackWhenModified) {
+    int size = 5;
+    Stack<int> stack(size);
+
+    stack.push(100);
+
+    int value = stack.top();
+
+    EXPECT_EQ(value, 100);
+
+    value = 23;
+
+    EXPECT_EQ(stack.top(), 100);
 }
 
-TEST(StackTest, copy_top) {
-}
+TEST(StackTest, ShouldResetStackToEmptyStateAfterClear) {
+    int size = 5;
+    Stack<int> stack(size);
 
-TEST(StackTest, is_empty) {
-}
+    for (int i = 0; i < size - 2; i++) {
+        stack.push(i);
+    }
 
-TEST(StackTest, is_full) {
-}
+    stack.clear();
 
-TEST(StackTest, clear) {
+    EXPECT_FALSE(stack.is_full());
+    EXPECT_TRUE(stack.is_empty());
+
+    stack.push(100);
+
+    EXPECT_EQ(100, stack.top());
+    EXPECT_FALSE(stack.is_empty());
 }

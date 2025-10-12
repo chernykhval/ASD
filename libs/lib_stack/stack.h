@@ -20,8 +20,6 @@ class Stack {
     void push(const T& value);
     void pop();
     T& top();
-    const T& top() const;
-    T copy_top();
     bool is_empty();
     bool is_full();
     void clear();
