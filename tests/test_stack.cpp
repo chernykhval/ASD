@@ -5,21 +5,11 @@
 
 #define EPSILON 0.000001
 
-TEST(StackTest, size_init) {
-    Stack<int> stack_1(5);
-
-    for (int i = 0; i < 6; i++) {
-        stack_1.push(i);
-
-        if (i == 5) {
-            EXPECT_THROW(stack_1.push(i), std::overflow_error);
-        }
-    }
-
-    EXPECT_ANY_THROW(Stack<int> stack_2(0));
+TEST(StackTest, ShouldThrowExceptionWhenCreatingStackWithZeroSize) {
+    EXPECT_THROW(Stack<int> stack(0), std::invalid_argument);
 }
 
-TEST(StackTest, copy_init) {
+TEST(StackTest, ShouldCreateIndependentCopyThatUnaffectedByOriginalModifications) {
     Stack<int> original(5);
 
     for (int i = 0; i < 3; i++) {

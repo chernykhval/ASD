@@ -25,4 +25,47 @@ class Stack {
     void clear();
 };
 
+template<typename T>
+Stack<T>::Stack(size_t size) : _data(new T[size]), _top(-1), _size(size) {}
+
+template<typename T>
+Stack<T>::Stack(const Stack& other) : _top(other._top), _size(other._size) {
+    _data = new T[_size];
+
+    for (size_t i = 0; i < _size; i++)
+        _data[i] = other._data[i];
+}
+
+template<typename T>
+Stack<T>::~Stack() {
+    delete[] _data;
+}
+
+template<typename T>
+void Stack<T>::push(const T& value) {
+}
+
+template<typename T>
+void Stack<T>::pop() {
+}
+
+template<typename T>
+T& Stack<T>::top() {
+    return _data[0];
+}
+
+template<typename T>
+bool Stack<T>::is_empty() {
+    return false;
+}
+
+template<typename T>
+bool Stack<T>::is_full() {
+    return false;
+}
+
+template<typename T>
+void Stack<T>::clear() {
+}
+
 #endif  // LIBS_LIB_STACK_STACK_H_
