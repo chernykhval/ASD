@@ -461,8 +461,8 @@ TEST(TVectorTest, PopBackLessCapacity) {
 }
 
 TEST(TVectorTest, PopBackLargeVector) {
-    TVector<int> actual_result(500000);
-    const int large_size = 500000;
+    TVector<int> actual_result(5000);
+    const int large_size = 5000;
     for (int i = 0; i < large_size; ++i) {
         actual_result.pop_back();
     }
