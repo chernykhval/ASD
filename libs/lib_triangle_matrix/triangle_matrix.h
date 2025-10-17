@@ -28,7 +28,7 @@ class TriangleMatrix {
  public:
     TriangleMatrix();
     explicit TriangleMatrix(size_t size);
-    TriangleMatrix(std::initializer_list<std::initializer_list<T>>);
+    TriangleMatrix(const std::initializer_list<std::initializer_list<T>>&);
     TriangleMatrix(const TriangleMatrix&);
 
     size_t dim() const;
@@ -79,25 +79,53 @@ TriangleMatrix<T>::TriangleMatrix(size_t size) : _size(size) {
 
 template<typename T>
 TriangleMatrix<T>::
-TriangleMatrix(std::initializer_list<std::initializer_list<T>> init) {
+TriangleMatrix(const std::initializer_list<std::initializer_list<T>>& init) {
     _size = init.size();
     size_t expected_length = _size;
+    bool is_triangular_format = true;
+    bool is_square_format = true;
+
+    size_t i = 0;
 
     for (const auto& row : init) {
         if (row.size() != expected_length) {
-            throw std::invalid_argument("TriangleMatrix: All rows must have"
-                                        " a decreasing length from size to 1.");
+            is_triangular_format = false;
+        }
+
+        if (row.size() != _size) {
+            is_square_format = false;
         }
 
         expected_length--;
+        i++;
+    }
+
+    if (!is_triangular_format && !is_square_format) {
+        throw std::invalid_argument("TriangleMatrix: Input must be either"
+                                    " triangular format (decreasing row"
+                                    " lengths) or square format");
     }
 
     _data = MVector<MVector<T>>(_size);
-    size_t i = 0;
+    size_t row_index = 0;
 
     for (const auto& row_list : init) {
-        _data[i] = MVector<T>(row_list);
-        i++;
+        if (is_triangular_format) {
+            _data[row_index] = MVector<T>(row_list);
+        } else {
+            _data[row_index] = MVector<T>(_size - row_index);
+            size_t col_index = 0;
+
+            for (const auto& elem : row_list) {
+                if (col_index >= row_index) {
+                    _data[row_index][col_index - row_index] = elem;
+                }
+
+                col_index++;
+            }
+        }
+
+        row_index++;
     }
 }
 

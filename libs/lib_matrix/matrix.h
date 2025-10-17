@@ -30,6 +30,7 @@ class Matrix {
     Matrix(size_t, size_t);
     Matrix(std::initializer_list<std::initializer_list<T>>);
     Matrix(const Matrix<T>&);
+    explicit Matrix(const MVector<MVector<T>>&);
 
     size_t rows() const;
     size_t cols() const;
@@ -109,6 +110,23 @@ Matrix<T>::Matrix(const Matrix<T>& other) :
 _rows(other._rows), _cols(other._cols), _data(other._data) {}
 
 template<typename T>
+Matrix<T>::Matrix(const MVector<MVector<T>>& other) {
+    _rows = other.size();
+    _cols = other[0].size();
+
+    for (int i = 0; i < _rows; i++) {
+        auto row = MVector<T>(other[i]);
+
+        if (row.size() != _cols) {
+            throw std::invalid_argument("Matrix: All rows"
+                                        " must have the same length");
+        }
+    }
+
+    _data = other;
+}
+
+template<typename T>
 size_t Matrix<T>::rows() const {
     return _rows;
 }
@@ -134,13 +152,7 @@ Matrix<T> Matrix<T>::operator+(const Matrix<T>& other) const {
         throw std::invalid_argument("Matrix: Incompatible sizes");
     }
 
-    Matrix<T> result(_rows, _cols);
-
-    for (size_t i = 0; i < _rows; i++) {
-        result._data[i] = _data[i] + other._data[i];
-    }
-
-    return result;
+    return Matrix<int>(_data + other._data);
 }
 
 template<typename T>
@@ -149,13 +161,7 @@ Matrix<T> Matrix<T>::operator-(const Matrix<T>& other) const {
         throw std::invalid_argument("Matrix: Incompatible sizes");
     }
 
-    Matrix<T> result(_rows, _cols);
-
-    for (size_t i = 0; i < _rows; i++) {
-        result._data[i] = _data[i] - other._data[i];
-    }
-
-    return result;
+    return Matrix<int>(_data - other._data);
 }
 
 template<typename T>

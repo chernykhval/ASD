@@ -46,6 +46,25 @@ TEST(TestMatrix, copy_init) {
     EXPECT_EQ(3, matrix_2.cols());
 }
 
+TEST(TestMatrix, init_by_mvector) {
+    MVector<MVector<int>> vec = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+    Matrix<int> matrix(vec);
+
+    EXPECT_EQ(2, matrix.rows());
+    EXPECT_EQ(3, matrix.cols());
+}
+
+TEST(TestMatrix, init_by_mvector_with_different_sizes) {
+    MVector<MVector<int>> vec = {
+        {1, 2, 3},
+        {4, 5}
+    };
+    ASSERT_ANY_THROW(Matrix<int> matrix(vec));
+}
+
 TEST(TestMatrix, access_operator) {
     Matrix<int> matrix = {
         {1, 2, 3},

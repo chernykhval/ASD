@@ -28,6 +28,23 @@ TEST(TestTriangleMatrix, list_init) {
     EXPECT_EQ(3, matrix.dim());
 }
 
+TEST(TestTriangleMatrix, list_zero_init) {
+    TriangleMatrix<int> matrix_1 = {
+        {1, 2, 3},
+        {0, 4, 5},
+        {0, 0, 6}
+    };
+
+    TriangleMatrix<int> matrix_2 = {
+        {1, 2, 3},
+        {4, 5},
+        {6}
+    };
+
+    EXPECT_EQ(3, matrix_1.dim());
+    EXPECT_TRUE(matrix_1 == matrix_2);
+}
+
 TEST(TestTriangleMatrix, list_init_different_size) {
     ASSERT_ANY_THROW(TriangleMatrix<int> matrix({{1, 2, 3}, {4, 5}}));
     ASSERT_ANY_THROW(TriangleMatrix<int> matrix({{1, 2, 3}, {4, 5}, {6, 7}}));
