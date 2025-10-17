@@ -71,3 +71,24 @@ TEST(QueueTest, ShouldTrackStatesCorrectly) {
     EXPECT_FALSE(queue.is_empty());
     EXPECT_TRUE(queue.is_full());
 }
+
+TEST(QueueTest, ShouldHandleCircularBufferCorrectly) {
+    Queue<int> queue(3);
+
+    queue.enqueue(1);
+    queue.enqueue(2);
+    queue.enqueue(3);
+
+    queue.dequeue();
+
+    queue.enqueue(4);
+
+    EXPECT_EQ(2, queue.front());
+    queue.dequeue();
+    EXPECT_EQ(3, queue.front());
+    queue.dequeue();
+    EXPECT_EQ(4, queue.front());
+
+    EXPECT_FALSE(queue.is_empty());
+    EXPECT_FALSE(queue.is_full());
+}
