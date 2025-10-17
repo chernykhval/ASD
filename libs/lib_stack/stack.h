@@ -14,7 +14,7 @@ class Stack {
     size_t _size;
 
  public:
-    explicit Stack(size_t size);
+    explicit Stack(size_t size = 1);
     Stack(const Stack& other);
     ~Stack() noexcept;
 
