@@ -165,5 +165,14 @@ bool List<T>::Iterator::operator==(const Iterator& other) {
    return _current == other._current;
 }
 
+template<typename T>
+typename List<T>::Iterator& List<T>::Iterator::operator=(const Iterator& other) {
+   if (this != &other) {
+      _current = other._current;
+   }
+
+   return *this;
+}
+
 
 #endif  // LIBS_LIB_LIST_LIST_H_
