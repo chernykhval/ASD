@@ -77,7 +77,7 @@ class List {
         bool operator!=(const ConstIterator&) const noexcept;
         bool operator==(const ConstIterator&) const noexcept;
 
-        ConstIterator& operator=(const ConstIterator&);
+        ConstIterator& operator=(const ConstIterator&) noexcept;
     };
 
     List();
@@ -229,6 +229,15 @@ bool List<T>::ConstIterator::operator!=(const ConstIterator& other) const noexce
 template<typename T>
 bool List<T>::ConstIterator::operator==(const ConstIterator& other) const noexcept {
    return _current == other._current;
+}
+
+template<typename T>
+typename List<T>::ConstIterator & List<T>::ConstIterator::operator=(const ConstIterator& other) noexcept {
+   if (this != &other) {
+      _current = other._current;
+   }
+
+   return *this;
 }
 
 #endif  // LIBS_LIB_LIST_LIST_H_
