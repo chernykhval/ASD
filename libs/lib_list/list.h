@@ -74,8 +74,8 @@ class List {
         ConstIterator& operator++();
         ConstIterator operator++(int);
 
-        bool operator!=(const ConstIterator&);
-        bool operator==(const ConstIterator&);
+        bool operator!=(const ConstIterator&) const noexcept;
+        bool operator==(const ConstIterator&) const noexcept;
 
         ConstIterator& operator=(const ConstIterator&);
     };
@@ -219,6 +219,16 @@ typename List<T>::ConstIterator List<T>::ConstIterator::operator++(int) {
    _current = _current->_next;
 
    return temp;
+}
+
+template<typename T>
+bool List<T>::ConstIterator::operator!=(const ConstIterator& other) const noexcept {
+   return _current != other._current;
+}
+
+template<typename T>
+bool List<T>::ConstIterator::operator==(const ConstIterator& other) const noexcept {
+   return _current == other._current;
 }
 
 #endif  // LIBS_LIB_LIST_LIST_H_
