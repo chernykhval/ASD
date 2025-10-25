@@ -114,4 +114,23 @@ List<T>::Iterator::Iterator(Node* node) : _current(node) {}
 template<typename T>
 List<T>::Iterator::Iterator(const Iterator& other) : _current(other._current) {}
 
+template<typename T>
+typename List<T>::Iterator::reference List<T>::Iterator::operator*() {
+   if (_current == nullptr) {
+      throw std::runtime_error("List::Iterator::operator* - Dereferencing end iterator");
+   }
+
+   return _current->_value;
+}
+
+template<typename T>
+typename List<T>::Iterator::pointer List<T>::Iterator::operator->() {
+   if (_current == nullptr) {
+      throw std::runtime_error("List::Iterator::operator-> - Dereferencing end iterator");
+   }
+
+   return &(_current->_value);
+}
+
+
 #endif  // LIBS_LIB_LIST_LIST_H_
