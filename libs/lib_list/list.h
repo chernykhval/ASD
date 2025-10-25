@@ -108,4 +108,10 @@ class List {
 template<typename T>
 List<T>::Node::Node(const T& value) : _value(value), _next(nullptr) {}
 
+template<typename T>
+List<T>::Iterator::Iterator(Node* node) : _current(node) {}
+
+template<typename T>
+List<T>::Iterator::Iterator(const Iterator& other) : _current(other._current) {}
+
 #endif  // LIBS_LIB_LIST_LIST_H_
