@@ -13,7 +13,7 @@ class List {
         T _value;
         Node* _next;
 
-       explicit Node(const T& value);
+       explicit Node(const T&);
     };
 
     Node *_head, *_tail;
@@ -39,7 +39,7 @@ class List {
         using pointer = List::pointer;
         using difference_type = List::difference_type;
 
-        explicit Iterator(Node* node);
+        explicit Iterator(Node*);
         Iterator(const Iterator&);
 
         reference operator*();
@@ -65,7 +65,7 @@ class List {
         using pointer = List::const_pointer;
         using difference_type = List::difference_type;
 
-        explicit ConstIterator(const Node* node);
+        explicit ConstIterator(const Node*);
         ConstIterator(const ConstIterator&);
 
         reference operator*();
@@ -77,7 +77,7 @@ class List {
         bool operator!=(const ConstIterator&);
         bool operator==(const ConstIterator&);
 
-        ConstIterator& operator=(const ConstIterator& other);
+        ConstIterator& operator=(const ConstIterator&);
     };
 
     List();
@@ -104,5 +104,8 @@ class List {
     ConstIterator begin() const;
     ConstIterator end() const;
 };
+
+template<typename T>
+List<T>::Node::Node(const T& value) : _value(value), _next(nullptr) {}
 
 #endif  // LIBS_LIB_LIST_LIST_H_
