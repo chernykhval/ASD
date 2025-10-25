@@ -13,7 +13,7 @@ class List {
         T _value;
         Node* _next;
 
-       explicit Node(const T&);
+       explicit Node(const T&) noexcept;
     };
 
     Node *_head, *_tail;
@@ -39,19 +39,19 @@ class List {
         using pointer = List::pointer;
         using difference_type = List::difference_type;
 
-        explicit Iterator(Node*);
-        Iterator(const Iterator&);
+        explicit Iterator(Node*) noexcept;
+        Iterator(const Iterator&) noexcept;
 
-        reference operator*();
-        pointer operator->();
+        reference operator*() const;
+        pointer operator->() const;
 
         Iterator& operator++();
         Iterator operator++(int);
 
-        bool operator!=(const Iterator&);
-        bool operator==(const Iterator&);
+        bool operator!=(const Iterator&) const noexcept;
+        bool operator==(const Iterator&) const noexcept;
 
-        Iterator& operator=(const Iterator&);
+        Iterator& operator=(const Iterator&) noexcept;
     };
 
     class ConstIterator {
@@ -106,16 +106,16 @@ class List {
 };
 
 template<typename T>
-List<T>::Node::Node(const T& value) : _value(value), _next(nullptr) {}
+List<T>::Node::Node(const T& value) noexcept : _value(value), _next(nullptr) {}
 
 template<typename T>
-List<T>::Iterator::Iterator(Node* node) : _current(node) {}
+List<T>::Iterator::Iterator(Node* node) noexcept : _current(node) {}
 
 template<typename T>
-List<T>::Iterator::Iterator(const Iterator& other) : _current(other._current) {}
+List<T>::Iterator::Iterator(const Iterator& other) noexcept : _current(other._current) {}
 
 template<typename T>
-typename List<T>::Iterator::reference List<T>::Iterator::operator*() {
+typename List<T>::Iterator::reference List<T>::Iterator::operator*() const {
    if (_current == nullptr) {
       throw std::runtime_error("List::Iterator::operator* - Dereferencing end iterator");
    }
@@ -124,7 +124,7 @@ typename List<T>::Iterator::reference List<T>::Iterator::operator*() {
 }
 
 template<typename T>
-typename List<T>::Iterator::pointer List<T>::Iterator::operator->() {
+typename List<T>::Iterator::pointer List<T>::Iterator::operator->() const {
    if (_current == nullptr) {
       throw std::runtime_error("List::Iterator::operator-> - Dereferencing end iterator");
    }
@@ -156,17 +156,17 @@ typename List<T>::Iterator List<T>::Iterator::operator++(int) {
 }
 
 template<typename T>
-bool List<T>::Iterator::operator!=(const Iterator& other) {
+bool List<T>::Iterator::operator!=(const Iterator& other) const noexcept {
    return _current != other._current;
 }
 
 template<typename T>
-bool List<T>::Iterator::operator==(const Iterator& other) {
+bool List<T>::Iterator::operator==(const Iterator& other) const noexcept {
    return _current == other._current;
 }
 
 template<typename T>
-typename List<T>::Iterator& List<T>::Iterator::operator=(const Iterator& other) {
+typename List<T>::Iterator& List<T>::Iterator::operator=(const Iterator& other) noexcept {
    if (this != &other) {
       _current = other._current;
    }
