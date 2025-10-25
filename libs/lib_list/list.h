@@ -132,5 +132,28 @@ typename List<T>::Iterator::pointer List<T>::Iterator::operator->() {
    return &(_current->_value);
 }
 
+template<typename T>
+typename List<T>::Iterator& List<T>::Iterator::operator++() {
+   if (_current->_next == nullptr) {
+      throw std::runtime_error("List::Iterator::operator++ - Cannot increment end iterator");
+   }
+
+   _current = _current->_next;
+
+   return *this;
+}
+
+template<typename T>
+typename List<T>::Iterator List<T>::Iterator::operator++(int) {
+   if (_current == nullptr) {
+      throw std::runtime_error("List::Iterator::operator++(int) - Cannot increment end iterator");
+   }
+
+   Iterator temp = *this;
+   _current = _current->_next;
+
+   return temp;
+}
+
 
 #endif  // LIBS_LIB_LIST_LIST_H_
