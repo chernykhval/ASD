@@ -68,8 +68,8 @@ class List {
         explicit ConstIterator(const Node*) noexcept;
         ConstIterator(const ConstIterator&) noexcept;
 
-        reference operator*();
-        pointer operator->();
+        reference operator*() const;
+        pointer operator->() const;
 
         ConstIterator& operator++();
         ConstIterator operator++(int);
@@ -179,6 +179,24 @@ List<T>::ConstIterator::ConstIterator(const Node* node) noexcept : _current(node
 
 template<typename T>
 List<T>::ConstIterator::ConstIterator(const ConstIterator& other) noexcept : _current(other._current) {}
+
+template<typename T>
+typename List<T>::ConstIterator::reference List<T>::ConstIterator::operator*() const {
+   if (_current == nullptr) {
+      throw std::runtime_error("List::ConstIterator::operator* - Dereferencing end iterator");
+   }
+
+   return _current->_value;
+}
+
+template<typename T>
+typename List<T>::ConstIterator::pointer List<T>::ConstIterator::operator->() const {
+   if (_current == nullptr) {
+      throw std::runtime_error("List::ConstIterator::operator-> - Dereferencing end iterator");
+   }
+
+   return &(_current->_value);
+}
 
 
 #endif  // LIBS_LIB_LIST_LIST_H_
