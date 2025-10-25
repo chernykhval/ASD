@@ -155,5 +155,15 @@ typename List<T>::Iterator List<T>::Iterator::operator++(int) {
    return temp;
 }
 
+template<typename T>
+bool List<T>::Iterator::operator!=(const Iterator& other) {
+   return _current != other._current;
+}
+
+template<typename T>
+bool List<T>::Iterator::operator==(const Iterator& other) {
+   return _current == other._current;
+}
+
 
 #endif  // LIBS_LIB_LIST_LIST_H_
