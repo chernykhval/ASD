@@ -65,8 +65,8 @@ class List {
         using pointer = List::const_pointer;
         using difference_type = List::difference_type;
 
-        explicit ConstIterator(const Node*);
-        ConstIterator(const ConstIterator&);
+        explicit ConstIterator(const Node*) noexcept;
+        ConstIterator(const ConstIterator&) noexcept;
 
         reference operator*();
         pointer operator->();
@@ -173,6 +173,12 @@ typename List<T>::Iterator& List<T>::Iterator::operator=(const Iterator& other) 
 
    return *this;
 }
+
+template<typename T>
+List<T>::ConstIterator::ConstIterator(const Node* node) noexcept : _current(node) {}
+
+template<typename T>
+List<T>::ConstIterator::ConstIterator(const ConstIterator& other) noexcept : _current(other._current) {}
 
 
 #endif  // LIBS_LIB_LIST_LIST_H_
