@@ -13,7 +13,7 @@ class List {
         T _value;
         Node* _next;
 
-        explicit Node(const T&) noexcept;
+        explicit Node(const T&, Node* next = nullptr) noexcept;
     };
 
     Node *_head, *_tail;
@@ -107,11 +107,12 @@ class List {
 };
 
 template<typename T>
-List<T>::Node::Node(const T &value) noexcept : _value(value), _next(nullptr) {
+List<T>::Node::Node(const T& value, Node* next) noexcept :
+_value(value), _next(next) {
 }
 
 template<typename T>
-List<T>::Iterator::Iterator(Node *node) noexcept : _current(node) {
+List<T>::Iterator::Iterator(Node* node) noexcept : _current(node) {
 }
 
 template<typename T>
@@ -284,6 +285,97 @@ List<T>::~List() {
 template<typename T>
 bool List<T>::is_empty() {
     return _head == nullptr;
+}
+
+template<typename T>
+void List<T>::push_back(const T& value) {
+    Node* node = new Node(value);
+
+    if (is_empty()) {
+        _head = node;
+        _tail = node;
+    } else {
+        _tail->_next = node;
+        _tail = node;
+    }
+
+    ++_size;
+}
+
+template<typename T>
+void List<T>::push_front(const T& value) {
+    Node* node = new Node(value);
+
+    if (is_empty()) {
+        _head = node;
+        _tail = node;
+    } else {
+        node->_next = _head;
+        _head = node;
+    }
+
+    ++_size;
+}
+
+template<typename T>
+void List<T>::insert(size_t pos, const T& value) {
+    if (pos == 0) {
+        push_front(value);
+        return;
+    }
+
+    if (pos == _size) {
+        push_back(value);
+        return;
+    }
+
+    if (pos > _size) {
+        throw std::out_of_range("List::insert pos out of size");
+    }
+
+    if (_head == nullptr) {
+        throw std::runtime_error("List::insert - empty list");
+    }
+
+    Node* current = _head;
+    size_t current_pos = 0;
+
+    while (current != nullptr) {
+        if (current_pos == pos - 1) {
+            break;
+        }
+        current = current->_next;
+        ++current_pos;
+    }
+
+    insert(Iterator(current), value);
+}
+
+template<typename T>
+void List<T>::insert(Node* node, const T& value) {
+    if (node == nullptr || is_empty()) {
+        throw std::runtime_error("List::insert - null pointer or empty list");
+    }
+
+    insert(Iterator(node), value);
+}
+
+template<typename T>
+void List<T>::insert(const Iterator& iterator, const T& value) {
+    if (iterator._current == nullptr || is_empty()) {
+        throw std::runtime_error("List::insert - null iterator or empty list");
+    }
+
+    Node* new_node = new Node(value);
+
+    new_node->_next = iterator._current->_next;
+    iterator._current->_next = new_node;
+
+    if (iterator._current == _tail) {
+        _tail = new_node;
+    }
+
+    ++_size;
 }
 
 template<typename T>
