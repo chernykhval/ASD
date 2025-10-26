@@ -13,7 +13,7 @@ class List {
         T _value;
         Node* _next;
 
-       explicit Node(const T&) noexcept;
+        explicit Node(const T&) noexcept;
     };
 
     Node *_head, *_tail;
@@ -39,7 +39,7 @@ class List {
         using pointer = List::pointer;
         using difference_type = List::difference_type;
 
-        explicit Iterator(Node*) noexcept;
+        explicit Iterator(Node* node) noexcept;
         Iterator(const Iterator&) noexcept;
 
         reference operator*() const;
@@ -106,138 +106,160 @@ class List {
 };
 
 template<typename T>
-List<T>::Node::Node(const T& value) noexcept : _value(value), _next(nullptr) {}
+List<T>::Node::Node(const T &value) noexcept : _value(value), _next(nullptr) {
+}
 
 template<typename T>
-List<T>::Iterator::Iterator(Node* node) noexcept : _current(node) {}
+List<T>::Iterator::Iterator(Node *node) noexcept : _current(node) {
+}
 
 template<typename T>
-List<T>::Iterator::Iterator(const Iterator& other) noexcept : _current(other._current) {}
+List<T>::Iterator::Iterator(const Iterator &other) noexcept :
+_current(other._current) {
+}
 
 template<typename T>
 typename List<T>::Iterator::reference List<T>::Iterator::operator*() const {
-   if (_current == nullptr) {
-      throw std::runtime_error("List::Iterator::operator* - Dereferencing end iterator");
-   }
+    if (_current == nullptr) {
+        throw std::runtime_error("List::Iterator::operator*"
+            " - Dereferencing end iterator");
+    }
 
-   return _current->_value;
+    return _current->_value;
 }
 
 template<typename T>
 typename List<T>::Iterator::pointer List<T>::Iterator::operator->() const {
-   if (_current == nullptr) {
-      throw std::runtime_error("List::Iterator::operator-> - Dereferencing end iterator");
-   }
+    if (_current == nullptr) {
+        throw std::runtime_error("List::Iterator::operator->"
+            " - Dereferencing end iterator");
+    }
 
-   return &(_current->_value);
+    return &(_current->_value);
 }
 
 template<typename T>
-typename List<T>::Iterator& List<T>::Iterator::operator++() {
-   if (_current->_next == nullptr) {
-      throw std::runtime_error("List::Iterator::operator++ - Cannot increment end iterator");
-   }
+typename List<T>::Iterator &List<T>::Iterator::operator++() {
+    if (_current->_next == nullptr) {
+        throw std::runtime_error("List::Iterator::operator++"
+                                 " - Cannot increment end iterator");
+    }
 
-   _current = _current->_next;
+    _current = _current->_next;
 
-   return *this;
+    return *this;
 }
 
 template<typename T>
 typename List<T>::Iterator List<T>::Iterator::operator++(int) {
-   if (_current == nullptr) {
-      throw std::runtime_error("List::Iterator::operator++(int) - Cannot increment end iterator");
-   }
+    if (_current == nullptr) {
+        throw std::runtime_error("List::Iterator::operator++(int)"
+                                 " - Cannot increment end iterator");
+    }
 
-   Iterator temp = *this;
-   _current = _current->_next;
+    Iterator temp = *this;
+    _current = _current->_next;
 
-   return temp;
+    return temp;
 }
 
 template<typename T>
 bool List<T>::Iterator::operator!=(const Iterator& other) const noexcept {
-   return _current != other._current;
+    return _current != other._current;
 }
 
 template<typename T>
 bool List<T>::Iterator::operator==(const Iterator& other) const noexcept {
-   return _current == other._current;
+    return _current == other._current;
 }
 
 template<typename T>
-typename List<T>::Iterator& List<T>::Iterator::operator=(const Iterator& other) noexcept {
-   if (this != &other) {
-      _current = other._current;
-   }
+typename List<T>::Iterator& List<T>::Iterator::operator=(const Iterator& other)
+noexcept {
+    if (this != &other) {
+        _current = other._current;
+    }
 
-   return *this;
+    return *this;
 }
 
 template<typename T>
-List<T>::ConstIterator::ConstIterator(const Node* node) noexcept : _current(node) {}
-
-template<typename T>
-List<T>::ConstIterator::ConstIterator(const ConstIterator& other) noexcept : _current(other._current) {}
-
-template<typename T>
-typename List<T>::ConstIterator::reference List<T>::ConstIterator::operator*() const {
-   if (_current == nullptr) {
-      throw std::runtime_error("List::ConstIterator::operator* - Dereferencing end iterator");
-   }
-
-   return _current->_value;
+List<T>::ConstIterator::ConstIterator(const Node* node) noexcept :
+_current(node) {
 }
 
 template<typename T>
-typename List<T>::ConstIterator::pointer List<T>::ConstIterator::operator->() const {
-   if (_current == nullptr) {
-      throw std::runtime_error("List::ConstIterator::operator-> - Dereferencing end iterator");
-   }
+List<T>::ConstIterator::ConstIterator(const ConstIterator &other) noexcept :
+_current(other._current) {
+}
 
-   return &(_current->_value);
+template<typename T>
+typename List<T>::ConstIterator::reference List<T>::ConstIterator::operator*()
+const {
+    if (_current == nullptr) {
+        throw std::runtime_error("List::ConstIterator::operator*"
+                                 " - Dereferencing end iterator");
+    }
+
+    return _current->_value;
+}
+
+template<typename T>
+typename List<T>::ConstIterator::pointer List<T>::ConstIterator::operator->()
+const {
+    if (_current == nullptr) {
+        throw std::runtime_error("List::ConstIterator::operator->"
+                                 " - Dereferencing end iterator");
+    }
+
+    return &(_current->_value);
 }
 
 template<typename T>
 typename List<T>::ConstIterator& List<T>::ConstIterator::operator++() {
-   if (_current == nullptr) {
-      throw std::runtime_error("List::ConstIterator::operator++ - Cannot increment end iterator");
-   }
+    if (_current == nullptr) {
+        throw std::runtime_error("List::ConstIterator::operator++"
+                                 " - Cannot increment end iterator");
+    }
 
-   _current = _current->_next;
+    _current = _current->_next;
 
-   return *this;
+    return *this;
 }
 
 template<typename T>
 typename List<T>::ConstIterator List<T>::ConstIterator::operator++(int) {
-   if (_current == nullptr) {
-      throw std::runtime_error("List::ConstIterator::operator++(int) - Cannot increment end iterator");
-   }
+    if (_current == nullptr) {
+        throw std::runtime_error("List::ConstIterator::operator++(int)"
+                                 " - Cannot increment end iterator");
+    }
 
-   ConstIterator temp = *this;
-   _current = _current->_next;
+    ConstIterator temp = *this;
+    _current = _current->_next;
 
-   return temp;
+    return temp;
 }
 
 template<typename T>
-bool List<T>::ConstIterator::operator!=(const ConstIterator& other) const noexcept {
-   return _current != other._current;
+bool List<T>::ConstIterator::operator!=(const ConstIterator &other)
+const noexcept {
+    return _current != other._current;
 }
 
 template<typename T>
-bool List<T>::ConstIterator::operator==(const ConstIterator& other) const noexcept {
-   return _current == other._current;
+bool List<T>::ConstIterator::operator==(const ConstIterator &other)
+const noexcept {
+    return _current == other._current;
 }
 
 template<typename T>
-typename List<T>::ConstIterator & List<T>::ConstIterator::operator=(const ConstIterator& other) noexcept {
-   if (this != &other) {
-      _current = other._current;
-   }
+typename List<T>::ConstIterator& List<T>::ConstIterator::
+operator=(const ConstIterator &other) noexcept {
+    if (this != &other) {
+        _current = other._current;
+    }
 
-   return *this;
+    return *this;
 }
 
 #endif  // LIBS_LIB_LIST_LIST_H_
