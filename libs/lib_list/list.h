@@ -262,4 +262,22 @@ operator=(const ConstIterator &other) noexcept {
     return *this;
 }
 
+template<typename T>
+List<T>::List() : _head(nullptr), _tail(nullptr), _size(0) {
+}
+
+template<typename T>
+List<T>::List(const List& other) : _head(other._head),
+_tail(other._tail), _size(other._size) {
+}
+
+template<typename T>
+List<T>::~List() {
+    while (_head != nullptr) {
+        Node* temp = _head;
+        _head = _head->_next;
+        delete temp;
+    }
+}
+
 #endif  // LIBS_LIB_LIST_LIST_H_
