@@ -344,6 +344,7 @@ void List<T>::insert(size_t pos, const T& value) {
         if (current_pos == pos - 1) {
             break;
         }
+
         current = current->_next;
         ++current_pos;
     }
@@ -376,6 +377,122 @@ void List<T>::insert(const Iterator& iterator, const T& value) {
     }
 
     ++_size;
+}
+
+template<typename T>
+void List<T>::pop_back() {
+    if (is_empty()) {
+        throw std::runtime_error("List::pop_back - empty list");
+    }
+
+    if (_head == _tail) {
+        delete _head;
+        _head = nullptr;
+        _tail = nullptr;
+        _size = 0;
+        return;
+    }
+
+    Node* current = _head;
+
+    while (current->_next != _tail) {
+        current = current->_next;
+    }
+
+    delete _tail;
+    _tail = current;
+    current->_next = nullptr;
+    --_size;
+}
+
+template<typename T>
+void List<T>::pop_front() {
+    if (is_empty()) {
+        throw std::runtime_error("List::pop_front - empty list");
+    }
+
+    if (_head == _tail) {
+        delete _head;
+        _head = nullptr;
+        _tail = nullptr;
+        _size = 0;
+        return;
+    }
+
+    Node* current = _head;
+    _head = _head->_next;
+    delete current;
+    --_size;
+}
+
+template<typename T>
+void List<T>::erase(size_t pos) {
+    if (pos == 0) {
+        pop_front();
+        return;
+    }
+
+    if (pos == _size - 1) {
+        pop_back();
+        return;
+    }
+
+    if (pos >= _size) {
+        throw std::out_of_range("List::erase pos out of size");
+    }
+
+    if (_head == nullptr) {
+        throw std::runtime_error("List::erase - empty list");
+    }
+
+    Node* current = _head;
+    size_t current_pos = 0;
+
+    while (current != nullptr) {
+        if (current_pos == pos - 1) {
+            break;
+        }
+
+        current = current->_next;
+        ++current_pos;
+    }
+
+    erase(Iterator(current));
+}
+
+template<typename T>
+void List<T>::erase(Node* node) {
+    if (node == nullptr || is_empty()) {
+        throw std::runtime_error("List::erase - null pointer or empty list");
+    }
+
+    erase(Iterator(node));
+}
+
+template<typename T>
+void List<T>::erase(const Iterator& iterator) {
+    if (iterator._current == nullptr || is_empty()) {
+        throw std::runtime_error("List::erase - null iterator or empty list");
+    }
+
+    if (iterator._current == _head) {
+        pop_front();
+        return;
+    }
+
+    Node* current = _head;
+
+    while (current->_next != iterator._current) {
+        current = current->_next;
+    }
+
+    if (iterator._current == _tail) {
+        _tail = current;
+    }
+
+    current->_next = iterator._current->_next;
+    delete iterator._current;
+    --_size;
 }
 
 template<typename T>
