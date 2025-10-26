@@ -281,6 +281,17 @@ List<T>::~List() {
 }
 
 template<typename T>
+void List<T>::clear() {
+    while (_head != nullptr) {
+        Node* temp = _head;
+        _head = _head->_next;
+        delete temp;
+    }
+
+    _tail = nullptr;
+}
+
+template<typename T>
 typename List<T>::Iterator List<T>::begin() {
     return Iterator(_head);
 }
