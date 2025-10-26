@@ -52,6 +52,8 @@ class List {
         bool operator==(const Iterator&) const noexcept;
 
         Iterator& operator=(const Iterator&) noexcept;
+
+        friend class List<T>;
     };
 
     class ConstIterator {
@@ -142,7 +144,7 @@ typename List<T>::Iterator::pointer List<T>::Iterator::operator->() const {
 
 template<typename T>
 typename List<T>::Iterator &List<T>::Iterator::operator++() {
-    if (_current->_next == nullptr) {
+    if (_current == nullptr) {
         throw std::runtime_error("List::Iterator::operator++"
                                  " - Cannot increment end iterator");
     }
@@ -449,7 +451,7 @@ void List<T>::erase(size_t pos) {
     size_t current_pos = 0;
 
     while (current != nullptr) {
-        if (current_pos == pos - 1) {
+        if (current_pos == pos) {
             break;
         }
 
