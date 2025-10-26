@@ -85,6 +85,7 @@ class List {
     ~List();
 
     bool is_empty();
+
     void push_back(const T&);
     void push_front(const T&);
     void insert(size_t, const T&);
@@ -278,6 +279,11 @@ List<T>::~List() {
         _head = _head->_next;
         delete temp;
     }
+}
+
+template<typename T>
+bool List<T>::is_empty() {
+    return _head == nullptr;
 }
 
 template<typename T>
