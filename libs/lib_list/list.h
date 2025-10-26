@@ -280,4 +280,24 @@ List<T>::~List() {
     }
 }
 
+template<typename T>
+typename List<T>::Iterator List<T>::begin() {
+    return Iterator(_head);
+}
+
+template<typename T>
+typename List<T>::Iterator List<T>::end() {
+    return Iterator(nullptr);
+}
+
+template<typename T>
+typename List<T>::ConstIterator List<T>::begin() const {
+    return ConstIterator(_head);
+}
+
+template<typename T>
+typename List<T>::ConstIterator List<T>::end() const {
+    return ConstIterator(nullptr);
+}
+
 #endif  // LIBS_LIB_LIST_LIST_H_
