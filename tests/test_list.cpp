@@ -146,4 +146,123 @@ TEST(TestList, IsEmpty_AfterPopLastElement_ShouldReturnTrue) {
     EXPECT_TRUE(list.is_empty());
 }
 
+TEST(TestList, PushBack_ShouldAddElementToEnd) {
+    List<int> list;
+    list.push_back(1);
+    EXPECT_EQ(*list.begin(), 1);
+
+    list.push_back(2);
+    auto it = list.begin();
+    ++it;
+    EXPECT_EQ(*it, 2);
+}
+
+TEST(TestList, PushFront_ShouldAddElementToBeginning) {
+    List<int> list;
+    list.push_back(2);
+
+    list.push_front(1);
+    EXPECT_EQ(*list.begin(), 1);
+
+    auto it = list.begin();
+    EXPECT_EQ(*it, 1);
+    ++it;
+    EXPECT_EQ(*it, 2);
+}
+
+TEST(TestList, PushFront_OnEmptyList_ShouldAddSingleElement) {
+    List<int> list;
+    list.push_front(42);
+    EXPECT_EQ(*list.begin(), 42);
+    EXPECT_FALSE(list.is_empty());
+}
+
+TEST(TestList, InsertByPosition_AtBeginning_ShouldWorkLikePushFront) {
+    List<int> list;
+    list.push_back(2);
+    list.push_back(3);
+
+    size_t pos = 0;
+
+    list.insert(pos, 1);
+    EXPECT_EQ(*list.begin(), 1);
+}
+
+TEST(TestList, InsertByPosition_AtEnd_ShouldWorkLikePushBack) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+
+    list.insert(2, 3);
+    auto it = list.begin();
+    ++it; ++it;
+    EXPECT_EQ(*it, 3);
+}
+
+TEST(TestList, InsertByPosition_InMiddle_ShouldMaintainOrder) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(3);
+
+    list.insert(1, 2);
+    auto it = list.begin();
+    EXPECT_EQ(*it, 1);
+    ++it;
+    EXPECT_EQ(*it, 2);
+    ++it;
+    EXPECT_EQ(*it, 3);
+}
+
+TEST(TestList, InsertByPosition_OutOfRange_ShouldThrowException) {
+    List<int> list;
+    list.push_back(1);
+
+    EXPECT_THROW(list.insert(5, 2), std::out_of_range);
+}
+
+TEST(TestList, InsertByIterator_ShouldAddElementAfterIterator) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(3);
+
+    auto it = list.begin();
+    list.insert(it, 2);
+
+    auto result_it = list.begin();
+    EXPECT_EQ(*result_it, 1);
+    ++result_it;
+    EXPECT_EQ(*result_it, 2);
+    ++result_it;
+    EXPECT_EQ(*result_it, 3);
+}
+
+TEST(TestList, InsertByIterator_AtTail_ShouldUpdateTail) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+
+    auto it = list.begin();
+    ++it;
+    list.insert(it, 3);
+
+    // Verify new element is at the end
+    auto last_it = list.begin();
+    ++last_it; ++last_it;
+    EXPECT_EQ(*last_it, 3);
+}
+
+TEST(TestList, InsertByIterator_WithNullIterator_ShouldThrowException) {
+    List<int> list;
+    list.push_back(1);
+
+    List<int>::Iterator null_iterator(nullptr);
+    EXPECT_THROW(list.insert(null_iterator, 2), std::runtime_error);
+}
+
+TEST(TestList, InsertByIterator_OnEmptyList_ShouldThrowException) {
+    List<int> list;
+    auto it = list.begin();
+
+    EXPECT_THROW(list.insert(it, 1), std::runtime_error);
+}
 
