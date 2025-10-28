@@ -439,3 +439,80 @@ TEST(TestList, Clear_ShouldAllowReuseOfList) {
     EXPECT_FALSE(list.is_empty());
     EXPECT_EQ(*list.begin(), 3);
 }
+
+
+
+TEST(TestList, AssignmentOperator_ShouldCreateIndependentCopy) {
+    List<int> original;
+    original.push_back(1);
+    original.push_back(2);
+
+    List<int> copy;
+    copy = original;  // Assignment operator
+
+    // Verify copy has same elements
+    auto orig_it = original.begin();
+    auto copy_it = copy.begin();
+    while (orig_it != original.end() && copy_it != copy.end()) {
+        EXPECT_EQ(*orig_it, *copy_it);
+        ++orig_it;
+        ++copy_it;
+    }
+
+    // Verify independence
+    *original.begin() = 100;
+    EXPECT_EQ(*copy.begin(), 1);
+}
+
+TEST(TestList, AssignmentOperator_ToNonEmptyList_ShouldClearOldData) {
+    List<int> list1;
+    list1.push_back(10);
+    list1.push_back(20);
+
+    List<int> list2;
+    list2.push_back(30);
+    list2.push_back(40);
+    list2.push_back(50);
+
+    list1 = list2;  // Assign shorter to longer
+
+    // Verify list1 now has list2's data
+    auto it = list1.begin();
+    EXPECT_EQ(*it, 30);
+    ++it;
+    EXPECT_EQ(*it, 40);
+    ++it;
+    EXPECT_EQ(*it, 50);
+}
+
+TEST(TestList, AssignmentOperator_FromEmptyList_ShouldMakeTargetEmpty) {
+    List<int> non_empty;
+    non_empty.push_back(1);
+    non_empty.push_back(2);
+
+    List<int> empty;
+    non_empty = empty;  // Assign empty to non-empty
+
+    EXPECT_TRUE(non_empty.is_empty());
+}
+
+TEST(TestList, AssignmentOperator_ChainedAssignment_ShouldWork) {
+    List<int> a, b, c;
+    c.push_back(1);
+    c.push_back(2);
+
+    a = b = c;  // Chained assignment
+
+    EXPECT_EQ(*a.begin(), 1);
+    EXPECT_EQ(*b.begin(), 1);
+    EXPECT_EQ(*c.begin(), 1);
+}
+
+TEST(TestList, AssignmentOperator_ShouldReturnReference) {
+    List<int> a, b, c;
+    c.push_back(42);
+
+    // Verify operator= returns reference that can be used
+    (a = b) = c;
+    EXPECT_EQ(*a.begin(), 42);
+}
