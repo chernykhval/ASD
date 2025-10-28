@@ -271,8 +271,10 @@ List<T>::List() : _head(nullptr), _tail(nullptr), _size(0) {
 }
 
 template<typename T>
-List<T>::List(const List& other) : _head(other._head),
-_tail(other._tail), _size(other._size) {
+List<T>::List(const List& other) : _head(nullptr), _tail(nullptr), _size(0) {
+    for (auto it = other.begin(); it != other.end(); ++it) {
+        push_back(*it);
+    }
 }
 
 template<typename T>

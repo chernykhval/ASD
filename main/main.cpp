@@ -391,6 +391,8 @@ int main() {
         return 1;
     }
 
+    List<int> simple_;
+
     return 0;
 }
 
