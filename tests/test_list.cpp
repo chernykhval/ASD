@@ -113,3 +113,37 @@ TEST(TestList, ConstIterator_OnCopiedList_ShouldPreserveOriginalData) {
         expected_value++;
     }
 }
+
+TEST(TestList, IsEmpty_OnNewList_ShouldReturnTrue) {
+    List<int> list;
+    EXPECT_TRUE(list.is_empty());
+}
+
+TEST(TestList, IsEmpty_AfterPushBack_ShouldReturnFalse) {
+    List<int> list;
+    list.push_back(42);
+    EXPECT_FALSE(list.is_empty());
+}
+
+TEST(TestList, IsEmpty_AfterPushFront_ShouldReturnFalse) {
+    List<int> list;
+    list.push_front(42);
+    EXPECT_FALSE(list.is_empty());
+}
+
+TEST(TestList, IsEmpty_AfterClear_ShouldReturnTrue) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.clear();
+    EXPECT_TRUE(list.is_empty());
+}
+
+TEST(TestList, IsEmpty_AfterPopLastElement_ShouldReturnTrue) {
+    List<int> list;
+    list.push_back(42);
+    list.pop_back();
+    EXPECT_TRUE(list.is_empty());
+}
+
+
