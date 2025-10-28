@@ -266,3 +266,176 @@ TEST(TestList, InsertByIterator_OnEmptyList_ShouldThrowException) {
     EXPECT_THROW(list.insert(it, 1), std::runtime_error);
 }
 
+TEST(TestList, PopBack_OnEmptyList_ShouldThrowException) {
+    List<int> list;
+    EXPECT_THROW(list.pop_back(), std::runtime_error);
+}
+
+TEST(TestList, PopFront_OnEmptyList_ShouldThrowException) {
+    List<int> list;
+    EXPECT_THROW(list.pop_front(), std::runtime_error);
+}
+
+TEST(TestList, PopBack_OnSingleElement_ShouldMakeListEmpty) {
+    List<int> list;
+    list.push_back(42);
+    list.pop_back();
+    EXPECT_TRUE(list.is_empty());
+}
+
+TEST(TestList, PopFront_OnSingleElement_ShouldMakeListEmpty) {
+    List<int> list;
+    list.push_back(42);
+    list.pop_front();
+    EXPECT_TRUE(list.is_empty());
+}
+
+TEST(TestList, PopBack_OnMultipleElements_ShouldRemoveLastElement) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    list.pop_back();
+
+    auto it = list.begin();
+    EXPECT_EQ(*it, 1);
+    ++it;
+    EXPECT_EQ(*it, 2);
+    ++it;
+    EXPECT_EQ(it, list.end());
+}
+
+TEST(TestList, PopFront_OnMultipleElements_ShouldRemoveFirstElement) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    list.pop_front();
+    EXPECT_EQ(*list.begin(), 2);
+}
+
+TEST(TestList, EraseByPosition_AtBeginning_ShouldRemoveFirstElement) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    list.erase(0);
+    EXPECT_EQ(*list.begin(), 2);
+}
+
+TEST(TestList, EraseByPosition_AtEnd_ShouldRemoveLastElement) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    list.erase(2);
+
+    auto it = list.begin();
+    ++it;
+    EXPECT_EQ(*it, 2);
+    ++it;
+    EXPECT_EQ(it, list.end());
+}
+
+TEST(TestList, EraseByPosition_InMiddle_ShouldRemoveCorrectElement) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    list.erase(1);
+
+    auto it = list.begin();
+    EXPECT_EQ(*it, 1);
+    ++it;
+    EXPECT_EQ(*it, 3);
+}
+
+TEST(TestList, EraseByPosition_OutOfRange_ShouldThrowException) {
+    List<int> list;
+    list.push_back(1);
+
+    EXPECT_THROW(list.erase(5), std::out_of_range);
+}
+
+TEST(TestList, EraseByIterator_ShouldRemoveTargetElement) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    auto it = list.begin();
+    ++it;
+    list.erase(it);
+
+    auto result_it = list.begin();
+    EXPECT_EQ(*result_it, 1);
+    ++result_it;
+    EXPECT_EQ(*result_it, 3);
+}
+
+TEST(TestList, EraseByIterator_AtBeginning_ShouldUpdateHead) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+
+    list.erase(list.begin());
+    EXPECT_EQ(*list.begin(), 2);
+}
+
+TEST(TestList, EraseByIterator_AtEnd_ShouldUpdateTail) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    auto it = list.begin();
+    ++it; ++it;
+    list.erase(it);
+
+    auto last_it = list.begin();
+    ++last_it;
+    EXPECT_EQ(*last_it, 2);
+    ++last_it;
+    EXPECT_EQ(last_it, list.end());
+}
+
+TEST(TestList, EraseByIterator_WithNullIterator_ShouldThrowException) {
+    List<int> list;
+    list.push_back(1);
+
+    List<int>::Iterator null_it(nullptr);
+    EXPECT_THROW(list.erase(null_it), std::runtime_error);
+}
+
+TEST(TestList, Clear_OnEmptyList_ShouldDoNothing) {
+    List<int> list;
+    list.clear();
+    EXPECT_TRUE(list.is_empty());
+}
+
+TEST(TestList, Clear_OnNonEmptyList_ShouldRemoveAllElements) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    list.clear();
+    EXPECT_TRUE(list.is_empty());
+    EXPECT_EQ(list.begin(), list.end());
+}
+
+TEST(TestList, Clear_ShouldAllowReuseOfList) {
+    List<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.clear();
+
+    list.push_back(3);
+    EXPECT_FALSE(list.is_empty());
+    EXPECT_EQ(*list.begin(), 3);
+}
