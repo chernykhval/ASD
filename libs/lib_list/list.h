@@ -102,6 +102,8 @@ class List {
 
     void clear();
 
+    List& operator=(const List<T>&);
+
     Iterator begin();
     Iterator end();
     ConstIterator begin() const;
@@ -508,6 +510,19 @@ void List<T>::clear() {
     }
 
     _tail = nullptr;
+}
+
+template<typename T>
+List<T>& List<T>::operator=(const List<T>& other) {
+    if (this != &other) {
+        clear();
+
+        for (auto it = other.begin(); it != other.end(); ++it) {
+            push_back(*it);
+        }
+    }
+
+    return *this;
 }
 
 template<typename T>
