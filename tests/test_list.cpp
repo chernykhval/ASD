@@ -5,47 +5,74 @@
 
 #define EPSILON 0.000001
 
-TEST(TestList, EmptyListIteratorBeginShouldEqEnd) {
+TEST(TestList, EmptyList_IteratorBegin_ShouldEqualEnd) {
     List<int> list;
-
     EXPECT_EQ(list.begin(), list.end());
 }
 
-TEST(TestList, EmptyListConstIteratorBeginShouldEqEnd) {
+TEST(TestList, EmptyList_ConstIteratorBegin_ShouldEqualEnd) {
     const List<int> list;
-
     EXPECT_EQ(list.begin(), list.end());
 }
 
-TEST(TestList, ListIterationWithIterator) {
+TEST(TestList, Iterator_ShouldTraverseElementsInOrder) {
     List<int> list;
-
     for (int i = 0; i < 3; i++) {
         list.push_back(i);
     }
 
-    int i = 0;
+    int expected_value = 0;
     for (auto it = list.begin(); it != list.end(); ++it) {
-        EXPECT_EQ(*it, i);
-        i++;
+        EXPECT_EQ(*it, expected_value);
+        expected_value++;
     }
 }
 
-TEST(TestList, ListConstIterationWithIterator) {
+TEST(TestList, Iterator_ShouldAllowElementModification) {
     List<int> list;
-
     for (int i = 0; i < 3; i++) {
         list.push_back(i);
     }
 
-    List<int> clist = list;
+    for (auto it = list.begin(); it != list.end(); ++it) {
+        *it = 11;
+    }
 
-    EXPECT_EQ(*list.begin(), 0);
+    for (auto it = list.begin(); it != list.end(); ++it) {
+        EXPECT_EQ(*it, 11);
+    }
+}
 
-    // int i = 0;
+TEST(TestList, ConstIterator_ShouldTraverseWithoutModification) {
+    List<int> list;
+    for (int i = 0; i < 3; i++) {
+        list.push_back(i);
+    }
 
-    // for (List<int>::ConstIterator it = clist.begin(); it != clist.end(); ++it) {
-    //     EXPECT_EQ(*it, i);
-    //     i++;
-    // }
+    const List<int>& const_list = list;
+    int expected_value = 0;
+    for (auto it = const_list.begin(); it != const_list.end(); ++it) {
+        EXPECT_EQ(*it, expected_value);
+        expected_value++;
+    }
+}
+
+TEST(TestList, ConstIterator_OnCopiedList_ShouldPreserveOriginalData) {
+    List<int> original;
+    for (int i = 0; i < 3; i++) {
+        original.push_back(i);
+    }
+
+    const List<int> copied = original;
+    int expected_value = 0;
+    for (auto it = copied.begin(); it != copied.end(); ++it) {
+        EXPECT_EQ(*it, expected_value);
+        expected_value++;
+    }
+
+    expected_value = 0;
+    for (auto it = original.begin(); it != original.end(); ++it) {
+        EXPECT_EQ(*it, expected_value);
+        expected_value++;
+    }
 }
