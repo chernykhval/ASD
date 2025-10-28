@@ -91,13 +91,11 @@ class List {
     void push_back(const T&);
     void push_front(const T&);
     void insert(size_t, const T&);
-    void insert(Node*, const T&);
     void insert(const Iterator&, const T&);
 
     void pop_back();
     void pop_front();
     void erase(size_t);
-    void erase(Node*);
     void erase(const Iterator&);
 
     void clear();
@@ -359,15 +357,6 @@ void List<T>::insert(size_t pos, const T& value) {
 }
 
 template<typename T>
-void List<T>::insert(Node* node, const T& value) {
-    if (node == nullptr || is_empty()) {
-        throw std::runtime_error("List::insert - null pointer or empty list");
-    }
-
-    insert(Iterator(node), value);
-}
-
-template<typename T>
 void List<T>::insert(const Iterator& iterator, const T& value) {
     if (iterator._current == nullptr || is_empty()) {
         throw std::runtime_error("List::insert - null iterator or empty list");
@@ -464,15 +453,6 @@ void List<T>::erase(size_t pos) {
     }
 
     erase(Iterator(current));
-}
-
-template<typename T>
-void List<T>::erase(Node* node) {
-    if (node == nullptr || is_empty()) {
-        throw std::runtime_error("List::erase - null pointer or empty list");
-    }
-
-    erase(Iterator(node));
 }
 
 template<typename T>
