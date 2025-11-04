@@ -90,11 +90,11 @@ public:
         ConstIterator& operator=(const ConstIterator&) noexcept;
     };
 
-    LinkedList();
+    LinkedList() noexcept;
     LinkedList(const LinkedList&);
-    ~LinkedList();
+    ~LinkedList() noexcept;
 
-    bool is_empty();
+    bool is_empty() const noexcept;
 
     void push_back(const T&);
     void push_front(const T&);
@@ -106,14 +106,14 @@ public:
     void erase(size_t);
     void erase(const Iterator&);
 
-    void clear();
+    void clear() noexcept;
 
     LinkedList& operator=(const LinkedList<T>&);
 
-    Iterator begin();
-    Iterator end();
-    ConstIterator begin() const;
-    ConstIterator end() const;
+    Iterator begin() noexcept;
+    Iterator end() noexcept;
+    ConstIterator begin() const noexcept;
+    ConstIterator end() const noexcept;
 };
 
 template<typename T>
@@ -325,7 +325,7 @@ operator=(const ConstIterator &other) noexcept {
 }
 
 template<typename T>
-LinkedList<T>::LinkedList() : _head(nullptr), _tail(nullptr), _size(0) {
+LinkedList<T>::LinkedList() noexcept : _head(nullptr), _tail(nullptr), _size(0) {
 }
 
 template<typename T>
@@ -336,7 +336,7 @@ LinkedList<T>::LinkedList(const LinkedList& other) : _head(nullptr), _tail(nullp
 }
 
 template<typename T>
-LinkedList<T>::~LinkedList() {
+LinkedList<T>::~LinkedList() noexcept {
     while (_head != nullptr) {
         Node* temp = _head;
         _head = _head->_next;
@@ -345,7 +345,7 @@ LinkedList<T>::~LinkedList() {
 }
 
 template<typename T>
-bool LinkedList<T>::is_empty() {
+bool LinkedList<T>::is_empty() const noexcept {
     return _head == nullptr;
 }
 
@@ -571,7 +571,7 @@ void LinkedList<T>::erase(const Iterator& iterator) {
 }
 
 template<typename T>
-void LinkedList<T>::clear() {
+void LinkedList<T>::clear() noexcept {
     while (_head != nullptr) {
         Node* temp = _head;
         _head = _head->_next;
@@ -595,22 +595,22 @@ LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& other) {
 }
 
 template<typename T>
-typename LinkedList<T>::Iterator LinkedList<T>::begin() {
+typename LinkedList<T>::Iterator LinkedList<T>::begin() noexcept {
     return Iterator(_head);
 }
 
 template<typename T>
-typename LinkedList<T>::Iterator LinkedList<T>::end() {
+typename LinkedList<T>::Iterator LinkedList<T>::end() noexcept {
     return Iterator(nullptr);
 }
 
 template<typename T>
-typename LinkedList<T>::ConstIterator LinkedList<T>::begin() const {
+typename LinkedList<T>::ConstIterator LinkedList<T>::begin() const noexcept {
     return ConstIterator(_head);
 }
 
 template<typename T>
-typename LinkedList<T>::ConstIterator LinkedList<T>::end() const {
+typename LinkedList<T>::ConstIterator LinkedList<T>::end() const noexcept {
     return ConstIterator(nullptr);
 }
 
