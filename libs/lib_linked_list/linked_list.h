@@ -441,12 +441,13 @@ void LinkedList<T>::insert(const Iterator& iterator, const T& value) {
     Node* new_node = new Node(value);
 
     new_node->_next = iterator._current->_next;
-    new_node->prev = iterator._current;
-    iterator._current->_next->_prev = new_node;
-    iterator._current->_next = new_node;
+    new_node->_prev = iterator._current;
+    new_node->_prev->_next = new_node;
 
     if (iterator._current == _tail) {
         _tail = new_node;
+    } else {
+        new_node->_next->_prev = new_node;
     }
 
     ++_size;
@@ -556,11 +557,12 @@ void LinkedList<T>::erase(const Iterator& iterator) {
         return;
     }
 
-    Node* prev = iterator._current->_prev;
-
     if (iterator._current == _tail) {
-        _tail = prev;
+        pop_back();
+        return;
     }
+
+    Node* prev = iterator._current->_prev;
 
     prev->_next = iterator._current->_next;
     iterator._current->_next->_prev = prev;
