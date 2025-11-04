@@ -14,7 +14,8 @@ class LinkedList {
         Node* _next;
         Node* _prev;
 
-        explicit Node(const T&, Node* next = nullptr) noexcept;
+        explicit Node(const T&, Node* next = nullptr,
+            Node* prev = nullptr) noexcept;
     };
 
     Node *_head, *_tail;
@@ -114,5 +115,501 @@ public:
     ConstIterator begin() const;
     ConstIterator end() const;
 };
+
+template<typename T>
+LinkedList<T>::Node::Node(const T& value, Node* next, Node* prev) noexcept :
+_value(value), _next(next), _prev(prev) {
+}
+
+template<typename T>
+LinkedList<T>::Iterator::Iterator(Node* node) noexcept : _current(node) {
+}
+
+template<typename T>
+LinkedList<T>::Iterator::Iterator(const Iterator &other) noexcept :
+_current(other._current) {
+}
+
+template<typename T>
+typename LinkedList<T>::Iterator::reference LinkedList<T>::Iterator::operator*() const {
+    if (_current == nullptr) {
+        throw std::runtime_error("List::Iterator::operator*"
+            " - Dereferencing end iterator");
+    }
+
+    return _current->_value;
+}
+
+template<typename T>
+typename LinkedList<T>::Iterator::pointer LinkedList<T>::Iterator::operator->() const {
+    if (_current == nullptr) {
+        throw std::runtime_error("List::Iterator::operator->"
+            " - Dereferencing end iterator");
+    }
+
+    return &(_current->_value);
+}
+
+template<typename T>
+typename LinkedList<T>::Iterator &LinkedList<T>::Iterator::operator++() {
+    if (_current == nullptr) {
+        throw std::runtime_error("List::Iterator::operator++"
+                                 " - Cannot increment end iterator");
+    }
+
+    _current = _current->_next;
+
+    return *this;
+}
+
+template<typename T>
+typename LinkedList<T>::Iterator LinkedList<T>::Iterator::operator++(int) {
+    if (_current == nullptr) {
+        throw std::runtime_error("List::Iterator::operator++(int)"
+                                 " - Cannot increment end iterator");
+    }
+
+    Iterator temp = *this;
+    _current = _current->_next;
+
+    return temp;
+}
+
+template<typename T>
+typename LinkedList<T>::Iterator & LinkedList<T>::Iterator::operator--() {
+    if (_current->_prev == nullptr) {
+        throw std::runtime_error("List::Iterator::operator--"
+                                 " - Cannot decrement begin iterator");
+    }
+
+    _current = _current->_prev;
+
+    return *this;
+}
+
+template<typename T>
+typename LinkedList<T>::Iterator LinkedList<T>::Iterator::operator--(int) {
+    if (_current->_prev == nullptr) {
+        throw std::runtime_error("List::Iterator::operator--(int)"
+                                 " - Cannot decrement begin iterator");
+    }
+
+    Iterator temp = *this;
+    _current = _current->_prev;
+
+    return temp;
+}
+
+template<typename T>
+bool LinkedList<T>::Iterator::operator!=(const Iterator& other) const noexcept {
+    return _current != other._current;
+}
+
+template<typename T>
+bool LinkedList<T>::Iterator::operator==(const Iterator& other) const noexcept {
+    return _current == other._current;
+}
+
+template<typename T>
+typename LinkedList<T>::Iterator& LinkedList<T>::Iterator::operator=(const Iterator& other)
+noexcept {
+    if (this != &other) {
+        _current = other._current;
+    }
+
+    return *this;
+}
+
+template<typename T>
+LinkedList<T>::ConstIterator::ConstIterator(const Node* node) noexcept :
+_current(node) {
+}
+
+template<typename T>
+LinkedList<T>::ConstIterator::ConstIterator(const ConstIterator &other) noexcept :
+_current(other._current) {
+}
+
+template<typename T>
+typename LinkedList<T>::ConstIterator::reference LinkedList<T>::ConstIterator::operator*()
+const {
+    if (_current == nullptr) {
+        throw std::runtime_error("List::ConstIterator::operator*"
+                                 " - Dereferencing end iterator");
+    }
+
+    return _current->_value;
+}
+
+template<typename T>
+typename LinkedList<T>::ConstIterator::pointer LinkedList<T>::ConstIterator::operator->()
+const {
+    if (_current == nullptr) {
+        throw std::runtime_error("List::ConstIterator::operator->"
+                                 " - Dereferencing end iterator");
+    }
+
+    return &(_current->_value);
+}
+
+template<typename T>
+typename LinkedList<T>::ConstIterator& LinkedList<T>::ConstIterator::operator++() {
+    if (_current == nullptr) {
+        throw std::runtime_error("List::ConstIterator::operator++"
+                                 " - Cannot increment end iterator");
+    }
+
+    _current = _current->_next;
+
+    return *this;
+}
+
+template<typename T>
+typename LinkedList<T>::ConstIterator LinkedList<T>::ConstIterator::operator++(int) {
+    if (_current == nullptr) {
+        throw std::runtime_error("List::ConstIterator::operator++(int)"
+                                 " - Cannot increment end iterator");
+    }
+
+    ConstIterator temp = *this;
+    _current = _current->_next;
+
+    return temp;
+}
+
+template<typename T>
+typename LinkedList<T>::ConstIterator & LinkedList<T>::ConstIterator::operator--() {
+    if (_current->_prev == nullptr) {
+        throw std::runtime_error("List::ConstIterator::operator--"
+                                 " - Cannot decrement begin iterator");
+    }
+
+    _current = _current->_prev;
+
+    return *this;
+}
+
+template<typename T>
+typename LinkedList<T>::ConstIterator LinkedList<T>::ConstIterator::operator--(int) {
+    if (_current->_prev == nullptr) {
+        throw std::runtime_error("List::ConstIterator::operator--(int)"
+                                 " - Cannot decrement begin iterator");
+    }
+
+    ConstIterator temp = *this;
+    _current = _current->_prev;
+
+    return temp;
+}
+
+template<typename T>
+bool LinkedList<T>::ConstIterator::operator!=(const ConstIterator &other)
+const noexcept {
+    return _current != other._current;
+}
+
+template<typename T>
+bool LinkedList<T>::ConstIterator::operator==(const ConstIterator &other)
+const noexcept {
+    return _current == other._current;
+}
+
+template<typename T>
+typename LinkedList<T>::ConstIterator& LinkedList<T>::ConstIterator::
+operator=(const ConstIterator &other) noexcept {
+    if (this != &other) {
+        _current = other._current;
+    }
+
+    return *this;
+}
+
+template<typename T>
+LinkedList<T>::LinkedList() : _head(nullptr), _tail(nullptr), _size(0) {
+}
+
+template<typename T>
+LinkedList<T>::LinkedList(const LinkedList& other) : _head(nullptr), _tail(nullptr), _size(0) {
+    for (auto it = other.begin(); it != other.end(); ++it) {
+        push_back(*it);
+    }
+}
+
+template<typename T>
+LinkedList<T>::~LinkedList() {
+    while (_head != nullptr) {
+        Node* temp = _head;
+        _head = _head->_next;
+        delete temp;
+    }
+}
+
+template<typename T>
+bool LinkedList<T>::is_empty() {
+    return _head == nullptr;
+}
+
+template<typename T>
+void LinkedList<T>::push_back(const T& value) {
+    Node* node = new Node(value);
+
+    if (is_empty()) {
+        _head = node;
+        _tail = node;
+    } else {
+        _tail->_next = node;
+        node->_prev = _tail;
+        _tail = node;
+    }
+
+    ++_size;
+}
+
+template<typename T>
+void LinkedList<T>::push_front(const T& value) {
+    Node* node = new Node(value);
+
+    if (is_empty()) {
+        _head = node;
+        _tail = node;
+    } else {
+        node->_next = _head;
+        _head->_prev = node;
+        _head = node;
+    }
+
+    ++_size;
+}
+
+template<typename T>
+void LinkedList<T>::insert(size_t pos, const T& value) {
+    if (pos == 0) {
+        push_front(value);
+        return;
+    }
+
+    if (pos == _size) {
+        push_back(value);
+        return;
+    }
+
+    if (pos > _size) {
+        throw std::out_of_range("List::insert pos out of size");
+    }
+
+    if (_head == nullptr) {
+        throw std::runtime_error("List::insert - empty list");
+    }
+
+    if (pos - 1 <= _size - pos) {
+        Node* current = _head;
+        size_t current_pos = 0;
+
+        while (current != nullptr) {
+            if (current_pos == pos - 1) {
+                break;
+            }
+
+            current = current->_next;
+            ++current_pos;
+        }
+
+        insert(Iterator(current), value);
+    } else {
+        Node* current = _tail;
+        size_t current_pos = _size - 1;
+
+        while (current != nullptr) {
+            if (current_pos == pos - 1) {
+                break;
+            }
+
+            current = current->_prev;
+            --current_pos;
+        }
+
+        insert(Iterator(current), value);
+    }
+}
+
+template<typename T>
+void LinkedList<T>::insert(const Iterator& iterator, const T& value) {
+    if (iterator._current == nullptr || is_empty()) {
+        throw std::runtime_error("List::insert - null iterator or empty list");
+    }
+
+    Node* new_node = new Node(value);
+
+    new_node->_next = iterator._current->_next;
+    new_node->prev = iterator._current;
+    iterator._current->_next->_prev = new_node;
+    iterator._current->_next = new_node;
+
+    if (iterator._current == _tail) {
+        _tail = new_node;
+    }
+
+    ++_size;
+}
+
+template<typename T>
+void LinkedList<T>::pop_back() {
+    if (is_empty()) {
+        throw std::runtime_error("List::pop_back - empty list");
+    }
+
+    if (_head == _tail) {
+        delete _head;
+        _head = nullptr;
+        _tail = nullptr;
+        _size = 0;
+        return;
+    }
+
+    Node* node = _tail->_prev;
+    delete _tail;
+    _tail = node;
+    _tail->_next = nullptr;
+    --_size;
+}
+
+template<typename T>
+void LinkedList<T>::pop_front() {
+    if (is_empty()) {
+        throw std::runtime_error("List::pop_front - empty list");
+    }
+
+    if (_head == _tail) {
+        delete _head;
+        _head = nullptr;
+        _tail = nullptr;
+        _size = 0;
+        return;
+    }
+
+    Node* node = _head->_next;
+    delete _head;
+    _head = node;
+    _head->_prev = nullptr;
+    --_size;
+}
+
+template<typename T>
+void LinkedList<T>::erase(size_t pos) {
+    if (pos == 0) {
+        pop_front();
+        return;
+    }
+
+    if (pos == _size - 1) {
+        pop_back();
+        return;
+    }
+
+    if (pos >= _size) {
+        throw std::out_of_range("List::erase pos out of size");
+    }
+
+    if (_head == nullptr) {
+        throw std::runtime_error("List::erase - empty list");
+    }
+
+    if (pos <= _size - pos - 1) {
+        Node* current = _head;
+        size_t current_pos = 0;
+
+        while (current != nullptr) {
+            if (current_pos == pos) {
+                break;
+            }
+
+            current = current->_next;
+            ++current_pos;
+        }
+
+        erase(Iterator(current));
+    } else {
+        Node* current = _tail;
+        size_t current_pos = _size - 1;
+
+        while (current != nullptr) {
+            if (current_pos == pos) {
+                break;
+            }
+
+            current = current->_prev;
+            --current_pos;
+        }
+
+        erase(Iterator(current));
+    }
+}
+
+template<typename T>
+void LinkedList<T>::erase(const Iterator& iterator) {
+    if (iterator._current == nullptr || is_empty()) {
+        throw std::runtime_error("List::erase - null iterator or empty list");
+    }
+
+    if (iterator._current == _head) {
+        pop_front();
+        return;
+    }
+
+    Node* prev = iterator._current->_prev;
+
+    if (iterator._current == _tail) {
+        _tail = prev;
+    }
+
+    prev->_next = iterator._current->_next;
+    iterator._current->_next->_prev = prev;
+    delete iterator._current;
+    --_size;
+}
+
+template<typename T>
+void LinkedList<T>::clear() {
+    while (_head != nullptr) {
+        Node* temp = _head;
+        _head = _head->_next;
+        delete temp;
+    }
+
+    _tail = nullptr;
+}
+
+template<typename T>
+LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& other) {
+    if (this != &other) {
+        clear();
+
+        for (auto it = other.begin(); it != other.end(); ++it) {
+            push_back(*it);
+        }
+    }
+
+    return *this;
+}
+
+template<typename T>
+typename LinkedList<T>::Iterator LinkedList<T>::begin() {
+    return Iterator(_head);
+}
+
+template<typename T>
+typename LinkedList<T>::Iterator LinkedList<T>::end() {
+    return Iterator(nullptr);
+}
+
+template<typename T>
+typename LinkedList<T>::ConstIterator LinkedList<T>::begin() const {
+    return ConstIterator(_head);
+}
+
+template<typename T>
+typename LinkedList<T>::ConstIterator LinkedList<T>::end() const {
+    return ConstIterator(nullptr);
+}
 
 #endif  // LIBS_LIB_LINKED_LIST_LINKED_LIST_H_
