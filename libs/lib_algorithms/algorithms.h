@@ -7,4 +7,6 @@
 
 int find_local_minimum_gradient_descent(const Matrix<int>& matrix);
 
+int calculate_islands_count(const Matrix<int>& matrix);
+
 #endif  // LIBS_LIB_ALGORITHMS_ALGORITHMS_H_

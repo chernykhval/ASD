@@ -3,6 +3,7 @@
 #include <random>
 #include "libs/lib_algorithms/algorithms.h"
 #include "libs/lib_matrix/matrix.h"
+#include "libs/lib_dsu/dsu.h"
 
 int find_local_minimum_gradient_descent(const Matrix<int>& matrix) {
     std::random_device rd;
@@ -55,4 +56,36 @@ int find_local_minimum_gradient_descent(const Matrix<int>& matrix) {
     }
 
     return min;
+}
+
+int calculate_islands_count(const Matrix<int>& matrix) {
+    size_t rows = matrix.rows();
+    size_t cols = matrix.cols();
+    DSU islands(rows * cols);
+    int water_count = 0;
+
+    for (size_t i = 0; i < rows; i++) {
+        for (size_t j = 0; j < cols; j++) {
+            if (matrix[i][j] == 0) {
+                water_count++;
+                continue;
+            }
+
+            if (matrix[i][j] != 1) {
+                throw std::invalid_argument("Matrix contains wrong elements");
+            }
+
+            int current_index = i * cols + j;
+
+            if (j + 1 < cols && matrix[i][j + 1] == 1) {
+                islands.unite(current_index, i * cols + (j + 1));
+            }
+
+            if (i + 1 < rows && matrix[i + 1][j] == 1) {
+                islands.unite(current_index, (i + 1) * cols + j);
+            }
+        }
+    }
+
+    return islands.count() - water_count;
 }
