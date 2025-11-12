@@ -8,14 +8,15 @@
 class DSU {
  private:
     int *_parents, *_ranks;
-    size_t _size;
+    size_t _size, _count;
 
  public:
     explicit DSU(size_t);
-    ~DSU();
+    ~DSU() noexcept;
 
     void unite(int, int);
     int find(int);
+    int count() const noexcept;
 
  private:
     int find_recursive(int);

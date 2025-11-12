@@ -4,7 +4,7 @@
 
 #include <stdexcept>
 
-DSU::DSU(size_t size) : _size(size) {
+DSU::DSU(size_t size) : _size(size), _count(size) {
     _parents = new int[size];
     _ranks = new int[size];
 
@@ -14,7 +14,7 @@ DSU::DSU(size_t size) : _size(size) {
     }
 }
 
-DSU::~DSU() {
+DSU::~DSU() noexcept {
     delete[] _parents;
     delete[] _ranks;
 }
@@ -27,6 +27,10 @@ void DSU::unite(int x, int y) {
     int parent_x = find(x);
     int parent_y = find(y);
 
+    if (parent_x == parent_y) {
+        return;
+    }
+
     if (_ranks[parent_x] >= _ranks[parent_y]) {
         _parents[parent_y] = parent_x;
     } else {
@@ -36,6 +40,8 @@ void DSU::unite(int x, int y) {
     if (_ranks[parent_x] == _ranks[parent_y]) {
         _ranks[parent_x]++;
     }
+
+    _count--;
 }
 
 int DSU::find(int x) {
@@ -44,6 +50,10 @@ int DSU::find(int x) {
     }
 
     return find_recursive(x);
+}
+
+int DSU::count() const noexcept {
+    return _count;
 }
 
 int DSU::find_recursive(int x) {
