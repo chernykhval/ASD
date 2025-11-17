@@ -594,7 +594,7 @@ TEST(TestLinkedList, Iterator_IncrementEnd_ShouldThrowException) {
 }
 
 TEST(TestLinkedList, ConstIterator_ReverseTraversal) {
-    const LinkedList<int> list = []{
+    const LinkedList<int> list = [] {
         LinkedList<int> temp;
         temp.push_back(1);
         temp.push_back(2);
@@ -613,7 +613,7 @@ TEST(TestLinkedList, ConstIterator_ReverseTraversal) {
 }
 
 TEST(TestLinkedList, ConstIterator_DecrementBegin_ShouldBecomeNull) {
-    const LinkedList<int> list = []{
+    const LinkedList<int> list = [] {
         LinkedList<int> temp;
         temp.push_back(1);
         return temp;

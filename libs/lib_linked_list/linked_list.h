@@ -21,7 +21,7 @@ class LinkedList {
     Node *_head, *_tail;
     size_t _size;
 
-public:
+ public:
     using value_type = T;
     using reference = T&;
     using const_reference = const T&;
@@ -62,10 +62,10 @@ public:
     };
 
     class ConstIterator {
-    private:
+     private:
         const Node* _current;
 
-    public:
+     public:
         using iterator_category = std::bidirectional_iterator_tag;
         using value_type = LinkedList::value_type;
         using reference = LinkedList::const_reference;
@@ -131,7 +131,8 @@ _current(other._current) {
 }
 
 template<typename T>
-typename LinkedList<T>::Iterator::reference LinkedList<T>::Iterator::operator*() const {
+typename LinkedList<T>::Iterator::reference
+LinkedList<T>::Iterator::operator*() const {
     if (_current == nullptr) {
         throw std::runtime_error("List::Iterator::operator*"
             " - Dereferencing null iterator");
@@ -141,7 +142,8 @@ typename LinkedList<T>::Iterator::reference LinkedList<T>::Iterator::operator*()
 }
 
 template<typename T>
-typename LinkedList<T>::Iterator::pointer LinkedList<T>::Iterator::operator->() const {
+typename LinkedList<T>::Iterator::pointer
+LinkedList<T>::Iterator::operator->() const {
     if (_current == nullptr) {
         throw std::runtime_error("List::Iterator::operator->"
             " - Dereferencing null iterator");
@@ -211,8 +213,8 @@ bool LinkedList<T>::Iterator::operator==(const Iterator& other) const noexcept {
 }
 
 template<typename T>
-typename LinkedList<T>::Iterator& LinkedList<T>::Iterator::operator=(const Iterator& other)
-noexcept {
+typename LinkedList<T>::Iterator&
+    LinkedList<T>::Iterator::operator=(const Iterator& other) noexcept {
     if (this != &other) {
         _current = other._current;
     }
@@ -226,13 +228,13 @@ _current(node) {
 }
 
 template<typename T>
-LinkedList<T>::ConstIterator::ConstIterator(const ConstIterator& other) noexcept :
-_current(other._current) {
+LinkedList<T>::ConstIterator::ConstIterator(const ConstIterator& other)
+noexcept : _current(other._current) {
 }
 
 template<typename T>
-typename LinkedList<T>::ConstIterator::reference LinkedList<T>::ConstIterator::operator*()
-const {
+typename LinkedList<T>::ConstIterator::reference
+LinkedList<T>::ConstIterator::operator*() const {
     if (_current == nullptr) {
         throw std::runtime_error("List::ConstIterator::operator*"
                                  " - Dereferencing null iterator");
@@ -242,8 +244,8 @@ const {
 }
 
 template<typename T>
-typename LinkedList<T>::ConstIterator::pointer LinkedList<T>::ConstIterator::operator->()
-const {
+typename LinkedList<T>::ConstIterator::pointer
+LinkedList<T>::ConstIterator::operator->() const {
     if (_current == nullptr) {
         throw std::runtime_error("List::ConstIterator::operator->"
                                  " - Dereferencing null iterator");
@@ -253,7 +255,8 @@ const {
 }
 
 template<typename T>
-typename LinkedList<T>::ConstIterator& LinkedList<T>::ConstIterator::operator++() {
+typename LinkedList<T>::ConstIterator&
+    LinkedList<T>::ConstIterator::operator++() {
     if (_current == nullptr) {
         throw std::runtime_error("List::ConstIterator::operator++"
                                  " - Cannot increment null iterator");
@@ -265,7 +268,8 @@ typename LinkedList<T>::ConstIterator& LinkedList<T>::ConstIterator::operator++(
 }
 
 template<typename T>
-typename LinkedList<T>::ConstIterator LinkedList<T>::ConstIterator::operator++(int) {
+typename LinkedList<T>::ConstIterator
+LinkedList<T>::ConstIterator::operator++(int) {
     if (_current == nullptr) {
         throw std::runtime_error("List::ConstIterator::operator++(int)"
                                  " - Cannot increment null iterator");
@@ -278,7 +282,8 @@ typename LinkedList<T>::ConstIterator LinkedList<T>::ConstIterator::operator++(i
 }
 
 template<typename T>
-typename LinkedList<T>::ConstIterator& LinkedList<T>::ConstIterator::operator--() {
+typename LinkedList<T>::ConstIterator&
+    LinkedList<T>::ConstIterator::operator--() {
     if (_current == nullptr) {
         throw std::runtime_error("List::ConstIterator::operator--"
                                  " - Cannot decrement null iterator");
@@ -290,7 +295,8 @@ typename LinkedList<T>::ConstIterator& LinkedList<T>::ConstIterator::operator--(
 }
 
 template<typename T>
-typename LinkedList<T>::ConstIterator LinkedList<T>::ConstIterator::operator--(int) {
+typename LinkedList<T>::ConstIterator
+LinkedList<T>::ConstIterator::operator--(int) {
     if (_current == nullptr) {
         throw std::runtime_error("List::ConstIterator::operator--(int)"
                                  " - Cannot decrement null iterator");
@@ -325,11 +331,13 @@ operator=(const ConstIterator& other) noexcept {
 }
 
 template<typename T>
-LinkedList<T>::LinkedList() noexcept : _head(nullptr), _tail(nullptr), _size(0) {
+LinkedList<T>::LinkedList()
+noexcept : _head(nullptr), _tail(nullptr), _size(0) {
 }
 
 template<typename T>
-LinkedList<T>::LinkedList(const LinkedList& other) : _head(nullptr), _tail(nullptr), _size(0) {
+LinkedList<T>::LinkedList(const LinkedList& other)
+: _head(nullptr), _tail(nullptr), _size(0) {
     for (auto it = other.begin(); it != other.end(); ++it) {
         push_back(*it);
     }
