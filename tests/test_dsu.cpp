@@ -70,7 +70,7 @@ TEST(TestDSU, RepeatedUnion) {
 
     dsu.unite(0, 1);
     int original_parent = dsu.find(0);
-    
+
     dsu.unite(0, 1);
     dsu.unite(1, 0);
 
