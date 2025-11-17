@@ -245,7 +245,6 @@ TEST(TestLinkedList, InsertByIterator_AtTail_ShouldUpdateTail) {
     ++it;
     list.insert(it, 3);
 
-    // Verify new element is at the end
     auto last_it = list.begin();
     ++last_it; ++last_it;
     EXPECT_EQ(*last_it, 3);
@@ -511,4 +510,185 @@ TEST(TestLinkedList, AssignmentOperator_ShouldReturnReference) {
 
     (a = b) = c;
     EXPECT_EQ(*a.begin(), 42);
+}
+
+
+TEST(TestLinkedList, Iterator_ReverseTraversalFromLastElement) {
+    LinkedList<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    auto it = list.begin();
+    ++it; ++it;
+
+    EXPECT_EQ(*it, 3);
+    --it;
+    EXPECT_EQ(*it, 2);
+    --it;
+    EXPECT_EQ(*it, 1);
+}
+
+TEST(TestLinkedList, Iterator_BidirectionalTraversal) {
+    LinkedList<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+
+    auto it = list.begin();
+    EXPECT_EQ(*it, 1);
+    ++it;
+    EXPECT_EQ(*it, 2);
+    --it;
+    EXPECT_EQ(*it, 1);
+    ++it; ++it;
+    EXPECT_EQ(*it, 3);
+    --it;
+    EXPECT_EQ(*it, 2);
+}
+
+TEST(TestLinkedList, Iterator_DecrementBegin_ShouldBecomeNull) {
+    LinkedList<int> list;
+    list.push_back(1);
+
+    auto it = list.begin();
+    --it;
+
+    EXPECT_EQ(it, list.end());
+}
+
+TEST(TestLinkedList, Iterator_DecrementEmptyListEnd_ShouldThrowException) {
+    LinkedList<int> list;
+    auto it = list.end();
+
+    EXPECT_THROW(--it, std::runtime_error);
+}
+
+TEST(TestLinkedList, Iterator_DecrementNonEmptyListEnd_ShouldThrowException) {
+    LinkedList<int> list;
+    list.push_back(1);
+    list.push_back(2);
+
+    auto it = list.end();
+    EXPECT_THROW(--it, std::runtime_error);
+}
+
+TEST(TestLinkedList, Iterator_IncrementLastElement_ShouldGoToEnd) {
+    LinkedList<int> list;
+    list.push_back(1);
+    list.push_back(2);
+
+    auto it = list.begin();
+    ++it;
+    ++it;
+
+    EXPECT_EQ(it, list.end());
+}
+
+TEST(TestLinkedList, Iterator_IncrementEnd_ShouldThrowException) {
+    LinkedList<int> list;
+    list.push_back(1);
+
+    auto it = list.end();
+    EXPECT_THROW(++it, std::runtime_error);
+}
+
+TEST(TestLinkedList, ConstIterator_ReverseTraversal) {
+    const LinkedList<int> list = []{
+        LinkedList<int> temp;
+        temp.push_back(1);
+        temp.push_back(2);
+        temp.push_back(3);
+        return temp;
+    }();
+
+    auto it = list.begin();
+    ++it; ++it;
+
+    EXPECT_EQ(*it, 3);
+    --it;
+    EXPECT_EQ(*it, 2);
+    --it;
+    EXPECT_EQ(*it, 1);
+}
+
+TEST(TestLinkedList, ConstIterator_DecrementBegin_ShouldBecomeNull) {
+    const LinkedList<int> list = []{
+        LinkedList<int> temp;
+        temp.push_back(1);
+        return temp;
+    }();
+
+    auto it = list.begin();
+    --it;
+
+    EXPECT_EQ(it, list.end());
+}
+
+TEST(TestLinkedList, Iterator_ComplexBidirectionalOperations) {
+    LinkedList<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+    list.push_back(4);
+
+    auto it = list.begin();
+    ++it;
+    --it;
+    ++it; ++it;
+    --it;
+    ++it;
+    ++it;
+    --it; --it; --it;
+
+    EXPECT_EQ(*it, 1);
+    EXPECT_EQ(it, list.begin());
+}
+
+TEST(TestLinkedList, EmptyList_IteratorOperations_ShouldThrowExceptions) {
+    LinkedList<int> list;
+
+    auto begin_it = list.begin();
+    auto end_it = list.end();
+
+    EXPECT_THROW(++begin_it, std::runtime_error);
+    EXPECT_THROW(--begin_it, std::runtime_error);
+    EXPECT_THROW(++end_it, std::runtime_error);
+    EXPECT_THROW(--end_it, std::runtime_error);
+}
+
+
+TEST(TestLinkedList, ReverseTraversal_AfterInsertOperations) {
+    LinkedList<int> list;
+    list.push_front(2);
+    list.push_front(1);
+    list.push_back(3);
+
+    auto it = list.begin();
+    ++it; ++it;
+    EXPECT_EQ(*it, 3);
+    --it;
+    EXPECT_EQ(*it, 2);
+    --it;
+    EXPECT_EQ(*it, 1);
+}
+
+TEST(TestLinkedList, ReverseTraversal_AfterEraseOperations) {
+    LinkedList<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+    list.push_back(4);
+
+    auto it = list.begin();
+    ++it;
+    list.erase(it);
+
+    auto last_it = list.begin();
+    ++last_it; ++last_it;
+    EXPECT_EQ(*last_it, 4);
+    --last_it;
+    EXPECT_EQ(*last_it, 3);
+    --last_it;
+    EXPECT_EQ(*last_it, 1);
 }
