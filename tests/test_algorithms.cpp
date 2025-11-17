@@ -49,6 +49,14 @@ TEST(TestCalculateIslandsCount, MapWithTwoIslands) {
     EXPECT_EQ(calculate_islands_count(matrix), 2);
 }
 
+TEST(TestCalculateIslandsCount, WrongMap) {
+    Matrix<int> matrix = {
+        {0, 1},
+        {2, 3}
+    };
+    EXPECT_THROW(calculate_islands_count(matrix), std::invalid_argument);
+}
+
 TEST(TestCalculateIslandsCount, EmptyMap) {
     Matrix<int> matrix = {};
     EXPECT_EQ(calculate_islands_count(matrix), 0);
