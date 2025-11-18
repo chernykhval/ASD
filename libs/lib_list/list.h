@@ -82,11 +82,11 @@ class List {
         ConstIterator& operator=(const ConstIterator&) noexcept;
     };
 
-    List();
+    List() noexcept;
     List(const List&);
-    ~List();
+    ~List() noexcept;
 
-    bool is_empty();
+    bool is_empty() const noexcept;
 
     void push_back(const T&);
     void push_front(const T&);
@@ -98,14 +98,14 @@ class List {
     void erase(size_t);
     void erase(const Iterator&);
 
-    void clear();
+    void clear() noexcept;
 
     List& operator=(const List<T>&);
 
-    Iterator begin();
-    Iterator end();
-    ConstIterator begin() const;
-    ConstIterator end() const;
+    Iterator begin() noexcept;
+    Iterator end() noexcept;
+    ConstIterator begin() const noexcept;
+    ConstIterator end() const noexcept;
 };
 
 template<typename T>
@@ -267,7 +267,7 @@ operator=(const ConstIterator &other) noexcept {
 }
 
 template<typename T>
-List<T>::List() : _head(nullptr), _tail(nullptr), _size(0) {
+List<T>::List() noexcept : _head(nullptr), _tail(nullptr), _size(0) {
 }
 
 template<typename T>
@@ -278,7 +278,7 @@ List<T>::List(const List& other) : _head(nullptr), _tail(nullptr), _size(0) {
 }
 
 template<typename T>
-List<T>::~List() {
+List<T>::~List() noexcept{
     while (_head != nullptr) {
         Node* temp = _head;
         _head = _head->_next;
@@ -287,7 +287,7 @@ List<T>::~List() {
 }
 
 template<typename T>
-bool List<T>::is_empty() {
+bool List<T>::is_empty() const noexcept{
     return _head == nullptr;
 }
 
@@ -482,7 +482,7 @@ void List<T>::erase(const Iterator& iterator) {
 }
 
 template<typename T>
-void List<T>::clear() {
+void List<T>::clear() noexcept {
     while (_head != nullptr) {
         Node* temp = _head;
         _head = _head->_next;
@@ -506,22 +506,22 @@ List<T>& List<T>::operator=(const List<T>& other) {
 }
 
 template<typename T>
-typename List<T>::Iterator List<T>::begin() {
+typename List<T>::Iterator List<T>::begin() noexcept {
     return Iterator(_head);
 }
 
 template<typename T>
-typename List<T>::Iterator List<T>::end() {
+typename List<T>::Iterator List<T>::end() noexcept {
     return Iterator(nullptr);
 }
 
 template<typename T>
-typename List<T>::ConstIterator List<T>::begin() const {
+typename List<T>::ConstIterator List<T>::begin() const noexcept {
     return ConstIterator(_head);
 }
 
 template<typename T>
-typename List<T>::ConstIterator List<T>::end() const {
+typename List<T>::ConstIterator List<T>::end() const noexcept {
     return ConstIterator(nullptr);
 }
 
