@@ -278,7 +278,7 @@ List<T>::List(const List& other) : _head(nullptr), _tail(nullptr), _size(0) {
 }
 
 template<typename T>
-List<T>::~List() noexcept{
+List<T>::~List() noexcept {
     while (_head != nullptr) {
         Node* temp = _head;
         _head = _head->_next;
@@ -287,7 +287,7 @@ List<T>::~List() noexcept{
 }
 
 template<typename T>
-bool List<T>::is_empty() const noexcept{
+bool List<T>::is_empty() const noexcept {
     return _head == nullptr;
 }
 
