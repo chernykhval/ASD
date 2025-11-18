@@ -1,6 +1,6 @@
 // Copyright 2024 Marina Usova
 
-#define MATRIX_INTERFACE
+#define LIST_TEST
 
 #include "libs/lib_matrix/matrix.h"
 #include "libs/lib_triangle_matrix/triangle_matrix.h"
@@ -325,3 +325,75 @@ int main() {
 }
 
 #endif  // MATRIX_INTERFACE
+
+#ifdef LIST_TEST
+
+#include "libs/lib_list/list.h"
+
+int main() {
+    try {
+        List<int> list;
+        std::cout << "Create emoty list. empty: " << list.is_empty()
+        << std::endl;
+
+        list.push_back(1);
+        list.push_back(2);
+        list.push_back(3);
+        std::cout << "After push_back(1,2,3): ";
+        for (auto it = list.begin(); it != list.end(); ++it) {
+            std::cout << *it << " ";
+        }
+        std::cout << std::endl;
+
+        list.push_front(0);
+        list.push_front(-1);
+        std::cout << "After push_front(0,-1): ";
+        for (auto it = list.begin(); it != list.end(); ++it) {
+            std::cout << *it << " ";
+        }
+        std::cout << std::endl;
+
+        list.insert(2, 999);
+        std::cout << "After insert(2, 999): ";
+        for (auto it = list.begin(); it != list.end(); ++it) {
+            std::cout << *it << " ";
+        }
+        std::cout << std::endl;
+
+        list.pop_front();
+        list.pop_back();
+        std::cout << "After pop_front() and pop_back(): ";
+        for (auto it = list.begin(); it != list.end(); ++it) {
+            std::cout << *it << " ";
+        }
+        std::cout << std::endl;
+
+        list.erase(1);
+        std::cout << "After erase(1): ";
+        for (auto it = list.begin(); it != list.end(); ++it) {
+            std::cout << *it << " ";
+        }
+        std::cout << std::endl;
+
+        const List<int>& const_list = list;
+        std::cout << "Const Iterator: ";
+        for (auto it = const_list.begin(); it != const_list.end(); ++it) {
+            std::cout << *it << " ";
+        }
+        std::cout << std::endl;
+
+        list.clear();
+        std::cout << "After clear(): empty: " << list.is_empty() << std::endl;
+
+        std::cout << "All tests complete!" << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1;
+    }
+
+    List<int> simple_;
+
+    return 0;
+}
+
+#endif  // LIST_TEST
