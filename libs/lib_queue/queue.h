@@ -53,7 +53,7 @@ Queue<T>::~Queue() noexcept {
 }
 
 template<typename T>
-void Queue<T>::enqueue(const T &value) {
+void Queue<T>::enqueue(const T& value) {
     if (is_full()) {
         throw std::overflow_error("Queue is full");
     }
