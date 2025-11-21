@@ -79,3 +79,81 @@ TEST(ListQueueTest, ShouldHandleCircularBufferCorrectly) {
 
     EXPECT_FALSE(queue.is_empty());
 }
+
+TEST(TestListQueue, CopyConstructor) {
+    // Создаем и заполняем исходную очередь
+    ListQueue<int> original;
+    original.enqueue(1);
+    original.enqueue(2);
+    original.enqueue(3);
+
+    // Создаем копию через конструктор копирования
+    ListQueue<int> copy_queue(original);
+
+    // Проверяем, что копия содержит те же элементы
+    EXPECT_EQ(copy_queue.front(), 1);
+    copy_queue.dequeue();
+    EXPECT_EQ(copy_queue.front(), 2);
+    copy_queue.dequeue();
+    EXPECT_EQ(copy_queue.front(), 3);
+
+    // Проверяем, что исходная очередь не изменилась
+    EXPECT_EQ(original.front(), 1);
+    original.dequeue();
+    EXPECT_EQ(original.front(), 2);
+    original.dequeue();
+    EXPECT_EQ(original.front(), 3);
+    original.dequeue();
+    EXPECT_TRUE(original.is_empty());
+}
+
+TEST(TestListQueue, CopyConstructorDeepCopy) {
+    // Создаем исходную очередь
+    ListQueue<int> original;
+    original.enqueue(1);
+    original.enqueue(2);
+    original.enqueue(3);
+
+    // Создаем две независимые копии
+    ListQueue<int> copy1(original);
+    ListQueue<int> copy2(original);
+
+    // Модифицируем первую копию
+    copy1.enqueue(4);
+
+    // Модифицируем вторую копию
+    copy2.enqueue(5);
+    copy2.enqueue(6);
+
+    // Проверяем, что изменения в копиях независимы
+    EXPECT_EQ(copy1.front(), 1);
+    copy1.dequeue();
+    EXPECT_EQ(copy1.front(), 2);
+    copy1.dequeue();
+    EXPECT_EQ(copy1.front(), 3);
+    copy1.dequeue();
+    EXPECT_EQ(copy1.front(), 4);
+    copy1.dequeue();
+    EXPECT_TRUE(copy1.is_empty());
+
+    EXPECT_EQ(copy2.front(), 1);
+    copy2.dequeue();
+    EXPECT_EQ(copy2.front(), 2);
+    copy2.dequeue();
+    EXPECT_EQ(copy2.front(), 3);
+    copy2.dequeue();
+    EXPECT_EQ(copy2.front(), 5);
+    copy2.dequeue();
+    EXPECT_EQ(copy2.front(), 6);
+    copy2.dequeue();
+    EXPECT_TRUE(copy2.is_empty());
+
+    // Проверяем, что исходная очередь не изменилась
+    EXPECT_EQ(original.front(), 1);
+    original.dequeue();
+    EXPECT_EQ(original.front(), 2);
+    original.dequeue();
+    EXPECT_EQ(original.front(), 3);
+    original.dequeue();
+    EXPECT_TRUE(original.is_empty());
+}

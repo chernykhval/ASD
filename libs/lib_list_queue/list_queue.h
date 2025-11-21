@@ -26,7 +26,7 @@ ListQueue<T>::ListQueue() : _data() {
 }
 
 template<typename T>
-ListQueue<T>::ListQueue(const ListQueue& other) : _data(other) {
+ListQueue<T>::ListQueue(const ListQueue& other) : _data(other._data) {
 }
 
 template<typename T>
@@ -44,7 +44,7 @@ void ListQueue<T>::dequeue() {
 }
 
 template<typename T>
-T & ListQueue<T>::front() {
+T& ListQueue<T>::front() {
     if (is_empty()) {
         throw std::underflow_error("Queue is empty");
     }
@@ -61,6 +61,5 @@ template<typename T>
 void ListQueue<T>::clear() noexcept {
     _data.clear();
 }
-
 
 #endif  // LIBS_LIB_LIST_QUEUE_LIST_QUEUE_H_
