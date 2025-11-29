@@ -15,15 +15,15 @@ struct Variable {
 };
 
 class VarTable {
-private:
+ private:
     TVector<Variable> _vars;
 
-public:
+ public:
     void add(const std::string& name, double value);
     double get(const std::string& name) const;
     bool contains(const std::string& name) const;
 
-private:
+ private:
     int find_index(const std::string& name) const;
 };
 

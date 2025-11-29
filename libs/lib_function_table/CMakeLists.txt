@@ -1,0 +1,2 @@
+create_project_lib(FunctionTable)
+add_link(FunctionTable TVector)

@@ -1,8 +1,9 @@
 // Copyright 2025 Chernykh Valentin
 
+#include <string>
 #include "libs/lib_var_table/var_table.h"
 
-Variable::Variable() : value(0.0){
+Variable::Variable() : value(0.0) {
 }
 
 Variable::Variable(const std::string &_name, double _value)
