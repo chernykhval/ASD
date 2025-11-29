@@ -92,3 +92,59 @@ void Expression::init_lexemes() {
         }
     }
 }
+
+void Expression::to_postfix() {
+    LexemeType prev = LexemeType::Start;
+
+    for (auto it = _lexemes.begin(); it != _lexemes.end(); it++) {
+        if (prev == LexemeType::Identifier) {
+            switch (it->_type) {
+                case LexemeType::LeftBracket:
+                    (--it) -> _type = LexemeType::Function;
+                    break;
+
+                case LexemeType::End:
+                case LexemeType::RightBracket:
+                case LexemeType::Separator:
+                case LexemeType::BinaryOperator:
+                    (--it) -> _type = LexemeType::Variable;
+                    break;
+                break;
+
+                default:
+                    throw std::invalid_argument("Unknown identifier");
+            }
+        }
+
+        if (it->_type == LexemeType::Operator && prev != LexemeType::Start) {
+            switch (prev) {
+                case LexemeType::Number:
+                case LexemeType::RightBracket:
+                case LexemeType::Variable:
+                    it->_type = LexemeType::BinaryOperator;
+                    break;
+
+                case LexemeType::Start:
+                case LexemeType::LeftBracket:
+                case LexemeType::Separator:
+                    it->_type = LexemeType::UnaryOperator;
+                    break;
+
+                default:
+                    throw std::invalid_argument("Unknown operator type");;
+            }
+        }
+
+        if (!can_transition(prev, it->_type)) {
+            throw std::runtime_error("Error parsing...");
+        }
+
+        // Перевод в ОПН
+
+        prev = it->_type;
+    }
+}
+
+bool Expression::can_transition(LexemeType from, LexemeType to) {
+    return Transitions[static_cast<int>(from)][static_cast<int>(to)];
+}

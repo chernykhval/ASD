@@ -11,12 +11,29 @@ class Expression {
  private:
     std::string _expression;
     LinkedList<Lexeme> _lexemes;
+    static constexpr int TypeCount = static_cast<int>(LexemeType::Count);
+    static constexpr bool Transitions[TypeCount][TypeCount] = {
+       { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
+       { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+       { 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 },
+       { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
+       { 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 },
+       { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
+       { 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0 },
+       { 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0 },
+       { 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 },
+       { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
+       { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+       { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+    };
 
  public:
     explicit Expression(const std::string& expression);
 
  private:
     void init_lexemes();
+    void to_postfix();
+    bool can_transition(LexemeType from, LexemeType to);
 };
 
 #endif  // LIBS_LIB_EXPRESSION_EXPRESSION_H_
