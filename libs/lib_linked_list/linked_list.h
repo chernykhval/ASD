@@ -107,6 +107,7 @@ class LinkedList {
     void erase(const Iterator&);
 
     void clear() noexcept;
+    size_t size() const noexcept;
 
     LinkedList& operator=(const LinkedList<T>&);
 
@@ -587,6 +588,11 @@ void LinkedList<T>::clear() noexcept {
     }
 
     _tail = nullptr;
+}
+
+template<typename T>
+size_t LinkedList<T>::size() const noexcept{
+    return _size;
 }
 
 template<typename T>
