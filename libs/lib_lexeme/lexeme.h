@@ -6,12 +6,23 @@
 #include <string>
 
 enum class LexemeType {
-    Constant,
-    BinaryOperator,
+    Start,
+    End,
+
+    Number,
     LeftBracket,
     RightBracket,
+    Separator,
+
+    BinaryOperator,
+    UnaryOperator,
+    Variable,
+    Function,
+
     Identifier,
-    Variable
+    Operator,
+
+    Count
 };
 
 struct Lexeme {
@@ -19,6 +30,7 @@ struct Lexeme {
     std::string _value;
 
     Lexeme(LexemeType type, std::string value) : _type(type), _value(value) {}
+    Lexeme(LexemeType type, char value) : _type(type), _value{value} {}
 };
 
 #endif  // LIBS_LIB_LEXEME_LEXEME_H_

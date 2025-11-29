@@ -8,6 +8,87 @@ _expression(expression) {
 }
 
 void Expression::init_lexemes() {
-    for (char c : _expression) {
+    size_t i = 0;
+    size_t len = _expression.length();
+
+    while (i < len) {
+        char current = _expression[i];
+
+        if (current == ' ') {
+            i++;
+            continue;
+        }
+
+        if (current >= '0' && current <= '9') {
+            std::string buffer;
+            bool hasDot = false;
+
+            while (i < len) {
+                char c = _expression[i];
+
+                if (c >= '0' && c <= '9') {
+                    buffer += c;
+                    i++;
+                } else if (c == '.') {
+                    if (hasDot) {
+                        break;
+                    }
+
+                    hasDot = true;
+                    buffer += c;
+                    i++;
+                } else {
+                    break;
+                }
+            }
+
+            _lexemes.push_back(Lexeme(LexemeType::Number, buffer));
+            continue;
+        }
+
+        if (current >= 'a' && current <= 'z'
+            || current >= 'A' && current <= 'Z' || current == '_') {
+            std::string buffer;
+
+            while (i < len && (_expression[i] >= 'a' && _expression[i] <= 'z'
+                || _expression[i] >= 'A' && _expression[i] <= 'Z'
+                || _expression[i] >= '0' && _expression[i] <= '9'||
+                _expression[i] == '_')) {
+                buffer += _expression[i];
+                i++;
+            }
+
+            _lexemes.push_back(Lexeme(LexemeType::Identifier, buffer));
+
+            continue;
+        }
+
+        switch (current) {
+            case '(':
+                _lexemes.push_back(Lexeme(LexemeType::LeftBracket, current));
+                i++;
+                break;
+
+            case ')':
+                _lexemes.push_back(Lexeme(LexemeType::RightBracket, current));
+                i++;
+                break;
+
+            case ',':
+                _lexemes.push_back(Lexeme(LexemeType::Separator, current));
+                i++;
+                break;
+
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+                _lexemes.push_back(Lexeme(LexemeType::Operator, current));
+                i++;
+                break;
+
+            default:
+                throw std::invalid_argument("Invalid symbol");
+        }
     }
 }

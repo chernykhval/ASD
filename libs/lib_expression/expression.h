@@ -14,6 +14,8 @@ class Expression {
 
  public:
     explicit Expression(const std::string& expression);
+
+ private:
     void init_lexemes();
 };
 
