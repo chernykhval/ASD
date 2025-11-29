@@ -29,9 +29,9 @@ struct Lexeme {
     LexemeType _type;
     std::string _value;
 
-    Lexeme();
+    Lexeme() : _type(LexemeType::Start), _value("") {}
     Lexeme(LexemeType type, std::string value) : _type(type), _value(value) {}
-    Lexeme(LexemeType type, char value) : _type(type), _value{value} {}
+    Lexeme(LexemeType type, char value) : _type(type), _value(1, value) {}
 };
 
 #endif  // LIBS_LIB_LEXEME_LEXEME_H_

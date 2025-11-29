@@ -4,8 +4,26 @@
 #include "libs/lib_expression/expression.h"
 #include "libs/lib_stack/stack.h"
 
-Expression::Expression(const std::string& expression) :
+const bool Expression::Transitions[TypeCount][TypeCount] = {
+    { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 },
+    { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
+    { 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 },
+    { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
+    { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
+    { 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0 },
+    { 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+};
+
+Expression::Expression(const std::string& expression,
+ const VarTable& vars, const FunctionTable& funcs) :
 _expression(expression) {
+    tokenize();
+    parse(vars, funcs);
 }
 
 bool Expression::can_transition(LexemeType from, LexemeType to) {
@@ -30,7 +48,7 @@ int Expression::get_priority(const Lexeme& lexeme) const {
     return 0;
 }
 
-void Expression::init_lexemes() {
+void Expression::tokenize() {
     size_t i = 0;
     size_t len = _expression.length();
 
@@ -116,7 +134,7 @@ void Expression::init_lexemes() {
     }
 }
 
-void Expression::to_postfix(const VarTable& vars, const FunctionTable& funcs) {
+void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
     LexemeType prev = LexemeType::Start;
     LinkedList<Lexeme> result_postfix;
     Stack<Lexeme> stack(_lexemes.size());

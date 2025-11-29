@@ -14,29 +14,20 @@ class Expression {
     std::string _expression;
     LinkedList<Lexeme> _lexemes;
     static constexpr int TypeCount = static_cast<int>(LexemeType::Count);
-    static constexpr bool Transitions[TypeCount][TypeCount] = {
-       { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
-       { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-       { 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 },
-       { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
-       { 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 },
-       { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
-       { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
-       { 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0 },
-       { 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 },
-       { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
-       { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-       { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-    };
+    static const bool Transitions[TypeCount][TypeCount];
 
  public:
-    explicit Expression(const std::string& expression);
+    Expression() = default;
+    Expression(const std::string& expression,
+       const VarTable& vars, const FunctionTable& funcs);
+    Expression(const Expression&) = default;
+    Expression& operator=(const Expression&) = default;
 
  private:
     bool can_transition(LexemeType from, LexemeType to);
     int get_priority(const Lexeme& lexeme) const;
-    void init_lexemes();
-    void to_postfix(const VarTable& vars, const FunctionTable& funcs);
+    void tokenize();
+    void parse(const VarTable& vars, const FunctionTable& funcs);
 };
 
 #endif  // LIBS_LIB_EXPRESSION_EXPRESSION_H_
