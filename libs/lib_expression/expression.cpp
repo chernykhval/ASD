@@ -2,9 +2,32 @@
 
 #include <string>
 #include "libs/lib_expression/expression.h"
+#include "libs/lib_stack/stack.h"
 
 Expression::Expression(const std::string& expression) :
 _expression(expression) {
+}
+
+bool Expression::can_transition(LexemeType from, LexemeType to) {
+    return Transitions[static_cast<int>(from)][static_cast<int>(to)];
+}
+
+int Expression::get_priority(const Lexeme& lexeme) const {
+    if (lexeme._type == LexemeType::Function) {
+        return 5;
+    }
+
+    if (lexeme._type == LexemeType::UnaryOperator) {
+        return 4;
+    }
+
+    if (lexeme._type == LexemeType::BinaryOperator) {
+        if (lexeme._value == "^") return 3;
+        if (lexeme._value == "*" || lexeme._value == "/") return 2;
+        if (lexeme._value == "+" || lexeme._value == "-") return 1;
+    }
+
+    return 0;
 }
 
 void Expression::init_lexemes() {
@@ -93,58 +116,121 @@ void Expression::init_lexemes() {
     }
 }
 
-void Expression::to_postfix() {
+void Expression::to_postfix(const VarTable& vars, const FunctionTable& funcs) {
     LexemeType prev = LexemeType::Start;
+    LinkedList<Lexeme> result_postfix;
+    Stack<Lexeme> stack(_lexemes.size());
 
-    for (auto it = _lexemes.begin(); it != _lexemes.end(); it++) {
-        if (prev == LexemeType::Identifier) {
-            switch (it->_type) {
-                case LexemeType::LeftBracket:
-                    (--it) -> _type = LexemeType::Function;
-                    break;
+    for (auto& lex : _lexemes) {
+        if (lex._type == LexemeType::Identifier) {
+            if (funcs.contains(lex._value)) {
+                lex._type = LexemeType::Function;
+            } else if (vars.contains(lex._value)) {
+                lex._type = LexemeType::Variable;
+            } else {
+                throw std::runtime_error("Unknown identifier: " + lex._value);
+            }
+        }
 
-                case LexemeType::End:
-                case LexemeType::RightBracket:
-                case LexemeType::Separator:
-                case LexemeType::BinaryOperator:
-                    (--it) -> _type = LexemeType::Variable;
-                    break;
+        if (lex._type == LexemeType::Operator) {
+            if (prev == LexemeType::Start ||
+                prev == LexemeType::LeftBracket ||
+                prev == LexemeType::Separator ||
+                prev == LexemeType::BinaryOperator)
+            {
+                lex._type = LexemeType::UnaryOperator;
+            } else {
+                lex._type = LexemeType::BinaryOperator;
+            }
+        }
+
+        if (!can_transition(prev, lex._type)) {
+            throw std::runtime_error("Syntax Error after" + lex._value);
+        }
+
+        switch (lex._type) {
+            case LexemeType::Number:
+            case LexemeType::Variable:
+                result_postfix.push_back(lex);
                 break;
 
-                default:
-                    throw std::invalid_argument("Unknown identifier");
+            case LexemeType::LeftBracket:
+            case LexemeType::Function:
+                stack.push(lex);
+                break;
+
+            case LexemeType::Separator:
+                while (!stack.is_empty() && stack.top()._type != LexemeType::LeftBracket) {
+                    result_postfix.push_back(stack.top());
+                    stack.pop();
+                }
+
+                if (stack.is_empty()) throw std::runtime_error("Separator outside of brackets");
+                break;
+
+            case LexemeType::RightBracket:
+                while (!stack.is_empty() && stack.top()._type != LexemeType::LeftBracket) {
+                    result_postfix.push_back(stack.top());
+                    stack.pop();
+                }
+                if (stack.is_empty()) throw std::runtime_error("Mismatched brackets");
+
+                stack.pop();
+
+                if (!stack.is_empty() && stack.top()._type == LexemeType::Function) {
+                    result_postfix.push_back(stack.top());
+                    stack.pop();
+                }
+                break;
+
+            case LexemeType::BinaryOperator:
+            case LexemeType::UnaryOperator:
+            {
+                bool is_right_associative = (lex._value == "^" ||
+                    lex._type == LexemeType::UnaryOperator);
+
+                while (!stack.is_empty() && stack.top()._type != LexemeType::LeftBracket) {
+                    int top_priority = get_priority(stack.top());
+                    int curr_priority = get_priority(lex);
+
+                    if (is_right_associative) {
+                        if (top_priority > curr_priority) {
+                            result_postfix.push_back(stack.top());
+                            stack.pop();
+                        } else {
+                            break;
+                        }
+                    } else {
+                        if (top_priority >= curr_priority) {
+                            result_postfix.push_back(stack.top());
+                            stack.pop();
+                        } else {
+                            break;
+                        }
+                    }
+                }
+
+                stack.push(lex);
             }
+                break;
+
+            default: ;
         }
 
-        if (it->_type == LexemeType::Operator && prev != LexemeType::Start) {
-            switch (prev) {
-                case LexemeType::Number:
-                case LexemeType::RightBracket:
-                case LexemeType::Variable:
-                    it->_type = LexemeType::BinaryOperator;
-                    break;
-
-                case LexemeType::Start:
-                case LexemeType::LeftBracket:
-                case LexemeType::Separator:
-                    it->_type = LexemeType::UnaryOperator;
-                    break;
-
-                default:
-                    throw std::invalid_argument("Unknown operator type");;
-            }
-        }
-
-        if (!can_transition(prev, it->_type)) {
-            throw std::runtime_error("Error parsing...");
-        }
-
-        // Перевод в ОПН
-
-        prev = it->_type;
+        prev = lex._type;
     }
-}
 
-bool Expression::can_transition(LexemeType from, LexemeType to) {
-    return Transitions[static_cast<int>(from)][static_cast<int>(to)];
+    while (!stack.is_empty()) {
+        if (stack.top()._type == LexemeType::LeftBracket || stack.top()._type == LexemeType::Function) {
+            throw std::runtime_error("Mismatched brackets (missing right bracket)");
+        }
+        result_postfix.push_back(stack.top());
+        stack.pop();
+    }
+
+    if (!can_transition(prev, LexemeType::End)) {
+        throw std::runtime_error("Unexpected end of expression");
+    }
+
+    _lexemes = result_postfix;
 }

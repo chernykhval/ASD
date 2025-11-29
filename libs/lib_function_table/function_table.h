@@ -19,11 +19,11 @@ class FunctionTable {
 
  public:
     void add(const std::string& name, UnaryFunc func_ptr);
-    UnaryFunc get(const std::string& name);
-    bool contains(const std::string& name);
+    UnaryFunc get(const std::string& name) const;
+    bool contains(const std::string& name) const;
 
  private:
-    int find_index(const std::string& name);
+    int find_index(const std::string& name) const;
 };
 
 #endif  // LIBS_LIB_FUNCTION_TABLE_FUNCTION_TABLE_H_

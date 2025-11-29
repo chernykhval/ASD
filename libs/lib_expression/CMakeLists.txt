@@ -1,3 +1,6 @@
 create_project_lib(Expression)
 add_link(Expression Lexeme)
 add_link(Expression LinkedList)
+add_link(Expression VarTable)
+add_link(Expression FunctionTable)
+add_link(Expression Stack)
