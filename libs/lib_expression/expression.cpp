@@ -12,7 +12,7 @@ const bool Expression::Transitions[TypeCount][TypeCount] = {
     { 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 },
     { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
     { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
-    { 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0 },
+    { 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0 },
     { 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0 },
     { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -24,6 +24,24 @@ Expression::Expression(const std::string& expression,
 _expression(expression) {
     tokenize();
     parse(vars, funcs);
+}
+
+std::string Expression::to_postfix_string() const noexcept {
+    std::string result = "RPN: [ ";
+    for (const auto& lex : _lexemes) {
+        if (lex._type == LexemeType::UnaryOperator) {
+            result += "u";
+            result += lex._value;
+            result += " ";
+        } else {
+            result += lex._value;
+            result += " ";
+        }
+    }
+
+    result += "]";
+
+    return result;
 }
 
 bool Expression::can_transition(LexemeType from, LexemeType to) {
@@ -151,11 +169,15 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
         }
 
         if (lex._type == LexemeType::Operator) {
-            if (prev == LexemeType::Start ||
-                prev == LexemeType::LeftBracket ||
-                prev == LexemeType::Separator ||
-                prev == LexemeType::BinaryOperator)
-            {
+            bool is_unary_context = (prev == LexemeType::Start ||
+                           prev == LexemeType::LeftBracket ||
+                           prev == LexemeType::Separator ||
+                           prev == LexemeType::BinaryOperator ||
+                           prev == LexemeType::UnaryOperator);
+
+            bool can_be_unary = lex._value == "-";
+
+            if (is_unary_context && can_be_unary) {
                 lex._type = LexemeType::UnaryOperator;
             } else {
                 lex._type = LexemeType::BinaryOperator;
@@ -232,7 +254,8 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
             }
                 break;
 
-            default: ;
+            default:
+                break;
         }
 
         prev = lex._type;

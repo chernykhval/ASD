@@ -591,7 +591,7 @@ void LinkedList<T>::clear() noexcept {
 }
 
 template<typename T>
-size_t LinkedList<T>::size() const noexcept{
+size_t LinkedList<T>::size() const noexcept {
     return _size;
 }
 

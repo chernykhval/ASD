@@ -1,6 +1,6 @@
 // Copyright 2024 Marina Usova
 
-#define LIST_TEST
+#define EXPRESSION_TEST
 
 #include "libs/lib_matrix/matrix.h"
 #include "libs/lib_triangle_matrix/triangle_matrix.h"
@@ -397,3 +397,14 @@ int main() {
 }
 
 #endif  // LIST_TEST
+
+#ifdef EXPRESSION_TEST
+
+#include "libs/lib_expression/expression.h"
+
+int main() {
+    // Expression expr("29 + y * sin(x)");
+    return 0;
+}
+
+#endif  // EXPRESSION_TEST

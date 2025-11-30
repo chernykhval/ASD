@@ -23,6 +23,8 @@ class Expression {
     Expression(const Expression&) = default;
     Expression& operator=(const Expression&) = default;
 
+    std::string to_postfix_string() const noexcept;
+
  private:
     bool can_transition(LexemeType from, LexemeType to);
     int get_priority(const Lexeme& lexeme) const;
