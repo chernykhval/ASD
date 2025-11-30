@@ -1,0 +1,6 @@
+create_project_lib(Calculator)
+add_link(Calculator VarTable)
+add_link(Calculator FunctionTable)
+add_link(Calculator TVector)
+add_link(Calculator Expression)
+add_link(Calculator Math)
