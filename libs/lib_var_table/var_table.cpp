@@ -23,7 +23,7 @@ void VarTable::add(const std::string& name, double value) {
 double VarTable::get(const std::string& name) const {
     int index = find_index(name);
 
-    if (index != 1) {
+    if (index != -1) {
         return _vars[index].value;
     }
 

@@ -1,5 +1,6 @@
 // Copyright 2025 Chernykh Valentin
 
+#include <cmath>
 #include <string>
 #include <sstream>
 #include "libs/lib_expression/expression.h"
@@ -25,6 +26,103 @@ Expression::Expression(const std::string& expression,
 _expression(expression) {
     tokenize();
     parse(vars, funcs);
+}
+
+double Expression::calculate(const VarTable& vars, const FunctionTable& funcs) const {
+    Stack<double> stack(_lexemes.size());
+
+    for (const auto& lex : _lexemes) {
+        switch (lex._type) {
+            case LexemeType::Number:
+                stack.push(std::stod(lex._value));
+                break;
+
+            case LexemeType::Variable:
+                stack.push(vars.get(lex._value));
+                break;
+
+            case LexemeType::Function:
+            {
+                if (stack.is_empty())
+                    throw std::runtime_error("Missing argument for function " + lex._value);
+
+                double arg = stack.top();
+                stack.pop();
+                double result = funcs.get(lex._value)(arg);
+
+                stack.push(result);
+            }
+            break;
+
+            case LexemeType::UnaryOperator:
+                {
+                    if (stack.is_empty())
+                        throw std::runtime_error("Missing operand for unary operator");
+
+                    double val = stack.top();
+                    stack.pop();
+
+                    if (lex._value == "-") {
+                        stack.push(-val);
+                    } else {
+                        stack.push(val);
+                    }
+                }
+                break;
+
+            case LexemeType::BinaryOperator:
+                {
+                    if (stack.is_empty())
+                        throw std::runtime_error("Missing operand for binary operator");
+                    double right = stack.top();
+                    stack.pop();
+
+                    if (stack.is_empty())
+                        throw std::runtime_error("Missing operand for binary operator");
+                    double left = stack.top();
+                    stack.pop();
+
+                    if (lex._value == "+") {
+                        stack.push(left + right);
+                    }
+                    else if (lex._value == "-") {
+                        stack.push(left - right);
+                    }
+                    else if (lex._value == "*") {
+                        stack.push(left * right);
+                    }
+                    else if (lex._value == "/") {
+                        if (right == 0.0)
+                            throw std::runtime_error("Division by zero");
+                        stack.push(left / right);
+                    }
+                    else if (lex._value == "^") {
+                        stack.push(std::pow(left, right));
+                    }
+                    else {
+                        throw std::runtime_error("Unknown binary operator: " + lex._value);
+                    }
+                }
+                break;
+
+            default:
+                throw std::runtime_error("Unexpected token in RPN evaluation: " + lex._value);
+                break;
+        }
+    }
+
+    if (stack.is_empty()) {
+        throw std::runtime_error("Empty expression result");
+    }
+
+    double result = stack.top();
+    stack.pop();
+
+    if (!stack.is_empty()) {
+        throw std::runtime_error("Error: Extra operands left in stack (invalid expression structure)");
+    }
+
+    return result;
 }
 
 std::string Expression::to_postfix_string() const noexcept {

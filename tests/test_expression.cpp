@@ -162,3 +162,31 @@ TEST_F(ExpressionTest, ThrowsOnFunctionWithoutBrackets) {
         EXPECT_TRUE(msg.find("^") != std::string::npos);
     }
 }
+
+TEST_F(ExpressionTest, CalculateSimple) {
+    Expression expr("2 + 2 * 2", vars, funcs);
+    // double нужно сравнивать через ASSERT_DOUBLE_EQ или ASSERT_NEAR
+    ASSERT_DOUBLE_EQ(expr.calculate(vars, funcs), 6.0);
+}
+
+TEST_F(ExpressionTest, CalculateDivision) {
+    Expression expr("10 / 2", vars, funcs);
+    ASSERT_DOUBLE_EQ(expr.calculate(vars, funcs), 5.0);
+}
+
+TEST_F(ExpressionTest, CalculateVariables) {
+    // x=10, y=20
+    Expression expr("x + y", vars, funcs);
+    ASSERT_DOUBLE_EQ(expr.calculate(vars, funcs), 30.0);
+}
+
+TEST_F(ExpressionTest, CalculateFunctions) {
+    // sin(0) = 0
+    Expression expr("sin(0)", vars, funcs);
+    ASSERT_NEAR(expr.calculate(vars, funcs), 0.0, 1e-9);
+}
+
+TEST_F(ExpressionTest, CalculateDivisionByZero) {
+    Expression expr("5 / 0", vars, funcs);
+    EXPECT_THROW(expr.calculate(vars, funcs), std::runtime_error);
+}

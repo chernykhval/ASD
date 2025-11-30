@@ -23,6 +23,8 @@ class Expression {
     Expression(const Expression&) = default;
     Expression& operator=(const Expression&) = default;
 
+    double calculate(const VarTable& vars, const FunctionTable& funcs) const;
+
     std::string to_postfix_string() const noexcept;
 
  private:
