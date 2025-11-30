@@ -12,7 +12,8 @@
 class Expression {
  private:
     std::string _expression;
-    LinkedList<Lexeme> _lexemes;
+    LinkedList<Lexeme> _infix;
+    LinkedList<Lexeme> _postfix;
     static constexpr int TypeCount = static_cast<int>(LexemeType::Count);
     static const bool Transitions[TypeCount][TypeCount];
 
@@ -20,12 +21,14 @@ class Expression {
     Expression() = default;
     Expression(const std::string& expression,
        const VarTable& vars, const FunctionTable& funcs);
-    Expression(const Expression&) = default;
+    explicit Expression(const Expression&) = default;
     Expression& operator=(const Expression&) = default;
 
     double calculate(const VarTable& vars, const FunctionTable& funcs) const;
 
     std::string to_postfix_string() const noexcept;
+    std::string to_infix_string() const noexcept;
+    std::string to_substituted_string(const VarTable& vars) const noexcept;
 
  private:
     bool can_transition(LexemeType from, LexemeType to);

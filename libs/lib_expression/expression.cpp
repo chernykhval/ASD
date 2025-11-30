@@ -29,9 +29,9 @@ _expression(expression) {
 }
 
 double Expression::calculate(const VarTable& vars, const FunctionTable& funcs) const {
-    Stack<double> stack(_lexemes.size());
+    Stack<double> stack(_postfix.size());
 
-    for (const auto& lex : _lexemes) {
+    for (const auto& lex : _postfix) {
         switch (lex._type) {
             case LexemeType::Number:
                 stack.push(std::stod(lex._value));
@@ -131,7 +131,7 @@ std::string Expression::to_postfix_string() const noexcept {
     std::stringstream ss;
     ss << "RPN: [ ";
 
-    for (const auto& lex : _lexemes) {
+    for (const auto& lex : _postfix) {
         if (lex._type == LexemeType::UnaryOperator) {
             if (lex._value == "-") {
                 ss << "u- ";
@@ -145,6 +145,49 @@ std::string Expression::to_postfix_string() const noexcept {
 
     ss << "]";
     return ss.str();
+}
+
+std::string Expression::to_infix_string() const noexcept {
+    std::stringstream ss;
+
+    for (const auto& lex : _infix) {
+        ss << lex._value << " ";
+    }
+
+    std::string result = ss.str();
+
+    if (!result.empty()) {
+        result.pop_back();
+    }
+
+    return result;
+}
+
+std::string Expression::to_substituted_string(const VarTable& vars) const noexcept {
+    std::stringstream ss;
+
+    for (const auto& lex : _infix) {
+        if (lex._type == LexemeType::Variable) {
+            if (vars.contains(lex._value)) {
+                double val = vars.get(lex._value);
+
+                ss << val;
+            } else {
+                ss << lex._value;
+            }
+        } else {
+            ss << lex._value;
+        }
+
+        ss << " ";
+    }
+
+    std::string result = ss.str();
+    if (!result.empty()) {
+        result.pop_back();
+    }
+
+    return result;
 }
 
 bool Expression::can_transition(LexemeType from, LexemeType to) {
@@ -228,7 +271,7 @@ void Expression::tokenize() {
                 }
             }
 
-            _lexemes.push_back(Lexeme(LexemeType::Number, buffer, start_pos));
+            _infix.push_back(Lexeme(LexemeType::Number, buffer, start_pos));
             continue;
         }
 
@@ -244,7 +287,7 @@ void Expression::tokenize() {
                 i++;
             }
 
-            _lexemes.push_back(Lexeme(LexemeType::Identifier, buffer, start_pos));
+            _infix.push_back(Lexeme(LexemeType::Identifier, buffer, start_pos));
 
             continue;
         }
@@ -253,19 +296,19 @@ void Expression::tokenize() {
             case '(':
             case '[':
             case '{':
-                _lexemes.push_back(Lexeme(LexemeType::LeftBracket, current, start_pos));
+                _infix.push_back(Lexeme(LexemeType::LeftBracket, current, start_pos));
                 i++;
                 break;
 
             case ')':
             case ']':
             case '}':
-                _lexemes.push_back(Lexeme(LexemeType::RightBracket, current, start_pos));
+                _infix.push_back(Lexeme(LexemeType::RightBracket, current, start_pos));
                 i++;
                 break;
 
             case ',':
-                _lexemes.push_back(Lexeme(LexemeType::Separator, current, start_pos));
+                _infix.push_back(Lexeme(LexemeType::Separator, current, start_pos));
                 i++;
                 break;
 
@@ -275,7 +318,7 @@ void Expression::tokenize() {
             case '/':
             case '^':
             case '|':
-                _lexemes.push_back(Lexeme(LexemeType::Operator, current, start_pos));
+                _infix.push_back(Lexeme(LexemeType::Operator, current, start_pos));
                 i++;
                 break;
 
@@ -288,9 +331,9 @@ void Expression::tokenize() {
 void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
     LexemeType prev = LexemeType::Start;
     LinkedList<Lexeme> result_postfix;
-    Stack<Lexeme> stack(_lexemes.size());
+    Stack<Lexeme> stack(_infix.size());
 
-    for (auto& lex : _lexemes) {
+    for (auto& lex : _infix) {
         if (lex._type == LexemeType::Identifier) {
             if (funcs.contains(lex._value)) {
                 lex._type = LexemeType::Function;
@@ -448,5 +491,5 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
             "Unexpected end of expression"));
     }
 
-    _lexemes = result_postfix;
+    _postfix = result_postfix;
 }
