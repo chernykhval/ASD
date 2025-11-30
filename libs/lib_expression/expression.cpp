@@ -1,6 +1,7 @@
 // Copyright 2025 Chernykh Valentin
 
 #include <string>
+#include <sstream>
 #include "libs/lib_expression/expression.h"
 #include "libs/lib_stack/stack.h"
 
@@ -66,6 +67,21 @@ int Expression::get_priority(const Lexeme& lexeme) const {
     return 0;
 }
 
+std::string Expression::create_error_message(size_t pos, const std::string& message) const {
+    std::stringstream ss;
+
+    ss << message << "\n";
+    ss << _expression << "\n";
+
+    for (size_t i = 0; i < pos; ++i) {
+        ss << " ";
+    }
+
+    ss << "^";
+
+    return ss.str();
+}
+
 void Expression::tokenize() {
     size_t i = 0;
     size_t len = _expression.length();
@@ -77,6 +93,8 @@ void Expression::tokenize() {
             i++;
             continue;
         }
+
+        size_t start_pos = i;
 
         if (current >= '0' && current <= '9') {
             std::string buffer;
@@ -101,7 +119,7 @@ void Expression::tokenize() {
                 }
             }
 
-            _lexemes.push_back(Lexeme(LexemeType::Number, buffer));
+            _lexemes.push_back(Lexeme(LexemeType::Number, buffer, start_pos));
             continue;
         }
 
@@ -117,24 +135,24 @@ void Expression::tokenize() {
                 i++;
             }
 
-            _lexemes.push_back(Lexeme(LexemeType::Identifier, buffer));
+            _lexemes.push_back(Lexeme(LexemeType::Identifier, buffer, start_pos));
 
             continue;
         }
 
         switch (current) {
             case '(':
-                _lexemes.push_back(Lexeme(LexemeType::LeftBracket, current));
+                _lexemes.push_back(Lexeme(LexemeType::LeftBracket, current, start_pos));
                 i++;
                 break;
 
             case ')':
-                _lexemes.push_back(Lexeme(LexemeType::RightBracket, current));
+                _lexemes.push_back(Lexeme(LexemeType::RightBracket, current, start_pos));
                 i++;
                 break;
 
             case ',':
-                _lexemes.push_back(Lexeme(LexemeType::Separator, current));
+                _lexemes.push_back(Lexeme(LexemeType::Separator, current, start_pos));
                 i++;
                 break;
 
@@ -142,12 +160,12 @@ void Expression::tokenize() {
             case '-':
             case '*':
             case '/':
-                _lexemes.push_back(Lexeme(LexemeType::Operator, current));
+                _lexemes.push_back(Lexeme(LexemeType::Operator, current, start_pos));
                 i++;
                 break;
 
             default:
-                throw std::invalid_argument("Invalid symbol");
+                throw std::runtime_error("Unknown symbol at pos " + std::to_string(i));
         }
     }
 }
@@ -164,7 +182,8 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
             } else if (vars.contains(lex._value)) {
                 lex._type = LexemeType::Variable;
             } else {
-                throw std::runtime_error("Unknown identifier: " + lex._value);
+                throw std::runtime_error(create_error_message(lex._pos,
+                    "Unknown identifier: '" + lex._value + "'"));
             }
         }
 
@@ -185,7 +204,8 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
         }
 
         if (!can_transition(prev, lex._type)) {
-            throw std::runtime_error("Syntax Error after" + lex._value);
+            throw std::runtime_error(create_error_message(lex._pos,
+                "Syntax Error: Unexpected lexeme '" + lex._value + "'"));
         }
 
         switch (lex._type) {
@@ -205,7 +225,9 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
                     stack.pop();
                 }
 
-                if (stack.is_empty()) throw std::runtime_error("Separator outside of brackets");
+                if (stack.is_empty())
+                    throw std::runtime_error(create_error_message(lex._pos,
+                        "Separator outside of brackets: '" + lex._value + "'"));
                 break;
 
             case LexemeType::RightBracket:
@@ -213,7 +235,10 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
                     result_postfix.push_back(stack.top());
                     stack.pop();
                 }
-                if (stack.is_empty()) throw std::runtime_error("Mismatched brackets");
+
+                if (stack.is_empty())
+                    throw std::runtime_error(create_error_message(lex._pos,
+                        "Mismatched brackets: unexpected ')'"));
 
                 stack.pop();
 
@@ -262,15 +287,20 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
     }
 
     while (!stack.is_empty()) {
-        if (stack.top()._type == LexemeType::LeftBracket || stack.top()._type == LexemeType::Function) {
-            throw std::runtime_error("Mismatched brackets (missing right bracket)");
+        Lexeme top = stack.top();
+
+        if (top._type == LexemeType::LeftBracket || top._type == LexemeType::Function) {
+            throw std::runtime_error(create_error_message(top._pos,
+                "Mismatched brackets: missing ')'"));
         }
+
         result_postfix.push_back(stack.top());
         stack.pop();
     }
 
     if (!can_transition(prev, LexemeType::End)) {
-        throw std::runtime_error("Unexpected end of expression");
+        throw std::runtime_error(create_error_message(_expression.length(),
+            "Unexpected end of expression"));
     }
 
     _lexemes = result_postfix;

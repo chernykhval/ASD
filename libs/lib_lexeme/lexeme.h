@@ -28,10 +28,13 @@ enum class LexemeType {
 struct Lexeme {
     LexemeType _type;
     std::string _value;
+    size_t _pos;
 
-    Lexeme() : _type(LexemeType::Start), _value("") {}
-    Lexeme(LexemeType type, std::string value) : _type(type), _value(value) {}
-    Lexeme(LexemeType type, char value) : _type(type), _value(1, value) {}
+    Lexeme() : _type(LexemeType::Start), _value(""), _pos(0) {}
+    Lexeme(LexemeType type, std::string value, size_t pos) :
+    _type(type), _value(value), _pos(pos) {}
+    Lexeme(LexemeType type, char value, size_t pos) :
+    _type(type), _value(1, value), _pos(pos) {}
 };
 
 #endif  // LIBS_LIB_LEXEME_LEXEME_H_

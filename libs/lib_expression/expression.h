@@ -28,6 +28,7 @@ class Expression {
  private:
     bool can_transition(LexemeType from, LexemeType to);
     int get_priority(const Lexeme& lexeme) const;
+    std::string create_error_message(size_t pos, const std::string& message) const;
     void tokenize();
     void parse(const VarTable& vars, const FunctionTable& funcs);
 };
