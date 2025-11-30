@@ -190,3 +190,92 @@ TEST_F(ExpressionTest, CalculateDivisionByZero) {
     Expression expr("5 / 0", vars, funcs);
     EXPECT_THROW(expr.calculate(vars, funcs), std::runtime_error);
 }
+
+// 1. Простой модуль: |x| -> x abs
+TEST_F(ExpressionTest, SimpleModuleRPN) {
+    Expression expr("| x |", vars, funcs);
+    // Проверяем, что палки превратились в оператор abs
+    ASSERT_EQ("RPN: [ x abs ]", expr.to_postfix_string());
+}
+
+// 2. Вычисление простого модуля
+TEST_F(ExpressionTest, SimpleModuleCalculation) {
+    // | -5 | = 5
+    Expression expr("| -5 |", vars, funcs);
+    ASSERT_DOUBLE_EQ(expr.calculate(vars, funcs), 5.0);
+}
+
+// 3. Модуль от выражения: | 2 - 5 | -> 2 5 - abs
+TEST_F(ExpressionTest, ModuleOfExpression) {
+    // | 2 - 5 | = |-3| = 3
+    Expression expr("| 2 - 5 |", vars, funcs);
+    ASSERT_EQ("RPN: [ 2 5 - abs ]", expr.to_postfix_string());
+    ASSERT_DOUBLE_EQ(expr.calculate(vars, funcs), 3.0);
+}
+
+// 4. Вложенный модуль: ||x|| -> x abs abs
+TEST_F(ExpressionTest, NestedModuleRPN) {
+    Expression expr("| | x | |", vars, funcs);
+    ASSERT_EQ("RPN: [ x abs abs ]", expr.to_postfix_string());
+}
+
+// 5. Сложный вложенный модуль
+TEST_F(ExpressionTest, ComplexNestedModuleCalculation) {
+    // Вычисляем: | 3 - | 10 - 20 | |
+    // 1. | 10 - 20 | = |-10| = 10
+    // 2. | 3 - 10 | = |-7| = 7
+    Expression expr("| 3 - | 10 - 20 | |", vars, funcs);
+    ASSERT_DOUBLE_EQ(expr.calculate(vars, funcs), 7.0);
+}
+
+// 6. Модуль в составе формулы
+TEST_F(ExpressionTest, ModuleMixedWithOperators) {
+    // 2 * |-3| = 2 * 3 = 6
+    Expression expr("2 * | -3 |", vars, funcs);
+    ASSERT_DOUBLE_EQ(expr.calculate(vars, funcs), 6.0);
+}
+
+// 7. Незакрытый модуль (открывающая палка есть, закрывающей нет)
+TEST_F(ExpressionTest, ErrorMissingClosingPipe) {
+    // | 5
+    // ^
+    try {
+        Expression expr("| 5", vars, funcs);
+        FAIL() << "Expected error for missing closing pipe";
+    } catch (const std::runtime_error& e) {
+        std::string msg = e.what();
+        EXPECT_TRUE(msg.find("Mismatched brackets") != std::string::npos);
+        // Должен указывать на начало
+        EXPECT_TRUE(msg.find("^") != std::string::npos);
+    }
+}
+
+// 8. Пересечение скобок (начали круглой, закончили палкой)
+TEST_F(ExpressionTest, ErrorMixedBracketsRoundToPipe) {
+    // ( 5 |
+    //     ^
+    try {
+        Expression expr("( 5 |", vars, funcs);
+        FAIL() << "Expected error for mixed brackets";
+    } catch (const std::runtime_error& e) {
+        std::string msg = e.what();
+        EXPECT_TRUE(msg.find("Mismatched brackets") != std::string::npos);
+        // Сообщение должно говорить, что ожидали ')', а нашли '|'
+        EXPECT_TRUE(msg.find("'('") != std::string::npos);
+    }
+}
+
+// 9. Пересечение скобок (начали палкой, закончили круглой)
+TEST_F(ExpressionTest, ErrorMixedBracketsPipeToRound) {
+    // | 5 )
+    //     ^
+    try {
+        Expression expr("| 5 )", vars, funcs);
+        FAIL() << "Expected error for mixed brackets";
+    } catch (const std::runtime_error& e) {
+        std::string msg = e.what();
+        EXPECT_TRUE(msg.find("Mismatched brackets") != std::string::npos);
+        // Сообщение должно говорить, что ожидали '|', а нашли ')'
+        EXPECT_TRUE(msg.find("'|'") != std::string::npos);
+    }
+}

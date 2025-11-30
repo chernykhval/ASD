@@ -64,6 +64,8 @@ double Expression::calculate(const VarTable& vars, const FunctionTable& funcs) c
 
                     if (lex._value == "-") {
                         stack.push(-val);
+                    } else if (lex._value == "abs") {
+                        stack.push(std::abs(val));
                     } else {
                         stack.push(val);
                     }
@@ -126,21 +128,23 @@ double Expression::calculate(const VarTable& vars, const FunctionTable& funcs) c
 }
 
 std::string Expression::to_postfix_string() const noexcept {
-    std::string result = "RPN: [ ";
+    std::stringstream ss;
+    ss << "RPN: [ ";
+
     for (const auto& lex : _lexemes) {
         if (lex._type == LexemeType::UnaryOperator) {
-            result += "u";
-            result += lex._value;
-            result += " ";
+            if (lex._value == "-") {
+                ss << "u- ";
+            } else {
+                ss << lex._value << " ";
+            }
         } else {
-            result += lex._value;
-            result += " ";
+            ss << lex._value << " ";
         }
     }
 
-    result += "]";
-
-    return result;
+    ss << "]";
+    return ss.str();
 }
 
 bool Expression::can_transition(LexemeType from, LexemeType to) {
@@ -168,7 +172,8 @@ int Expression::get_priority(const Lexeme& lexeme) const {
 bool Expression::is_matching_pair(char open, char close) {
     return (open == '(' && close == ')') ||
            (open == '[' && close == ']') ||
-           (open == '{' && close == '}');
+           (open == '{' && close == '}') ||
+           (open == '|' && close == '|');
 }
 
 std::string Expression::create_error_message(size_t pos, const std::string& message) const {
@@ -269,6 +274,7 @@ void Expression::tokenize() {
             case '*':
             case '/':
             case '^':
+            case '|':
                 _lexemes.push_back(Lexeme(LexemeType::Operator, current, start_pos));
                 i++;
                 break;
@@ -303,12 +309,20 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
                            prev == LexemeType::BinaryOperator ||
                            prev == LexemeType::UnaryOperator);
 
-            bool can_be_unary = lex._value == "-";
-
-            if (is_unary_context && can_be_unary) {
-                lex._type = LexemeType::UnaryOperator;
+            if (lex._value == "|") {
+                if (is_unary_context) {
+                    lex._type = LexemeType::LeftBracket;
+                } else {
+                    lex._type = LexemeType::RightBracket;
+                }
             } else {
-                lex._type = LexemeType::BinaryOperator;
+                bool can_be_unary = lex._value == "-";
+
+                if (is_unary_context && can_be_unary) {
+                    lex._type = LexemeType::UnaryOperator;
+                } else {
+                    lex._type = LexemeType::BinaryOperator;
+                }
             }
         }
 
@@ -367,6 +381,10 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
                 }
 
                 stack.pop();
+
+                if (close_сhar == '|') {
+                    result_postfix.push_back(Lexeme(LexemeType::UnaryOperator, "abs", lex._pos));
+                }
 
                 if (!stack.is_empty() && stack.top()._type == LexemeType::Function) {
                     result_postfix.push_back(stack.top());
