@@ -12,6 +12,9 @@ struct Variable {
 
     Variable();
     Variable(const std::string& _name, double _value);
+    Variable(const Variable& other) = default;
+
+    std::string info() const;
 };
 
 class VarTable {
@@ -19,9 +22,15 @@ class VarTable {
     TVector<Variable> _vars;
 
  public:
+    VarTable() = default;
+    VarTable(const VarTable& other) = default;
+
     void add(const std::string& name, double value);
+    void remove(const std::string& name);
     double get(const std::string& name) const;
     bool contains(const std::string& name) const;
+
+    std::string info() const;
 
  private:
     int find_index(const std::string& name) const;
