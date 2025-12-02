@@ -401,9 +401,18 @@ int main() {
 #ifdef EXPRESSION_TEST
 
 #include "libs/lib_expression/expression.h"
+#include "libs/lib_calculator/calculator.h"
+#include "libs/lib_calculator_app/calculator_app.h"
 
 int main() {
-    // Expression expr("29 + y * sin(x)");
+    Calculator calculator;
+    CalculatorApp app(calculator);
+
+    app.run();
+
+    std::cout << "Application finished. Press Enter to close...";
+    std::cin.get();
+
     return 0;
 }
 
