@@ -53,6 +53,10 @@ bool VarTable::contains(const std::string& name) const {
     return find_index(name) != -1;
 }
 
+bool VarTable::is_empty() const {
+    return _vars.is_empty();
+}
+
 std::string VarTable::info() const {
     std::stringstream ss;
 

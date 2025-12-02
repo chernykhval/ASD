@@ -190,6 +190,33 @@ std::string Expression::to_substituted_string(const VarTable& vars) const noexce
     return result;
 }
 
+bool Expression::is_valid_identifier(const std::string& name) {
+    if (name.empty()) {
+        return false;
+    }
+
+    char first = name[0];
+    bool is_first_alpha = (first >= 'a' && first <= 'z') ||
+                          (first >= 'A' && first <= 'Z');
+
+    if (!is_first_alpha && first != '_') {
+        return false;
+    }
+
+    for (size_t i = 1; i < name.length(); ++i) {
+        char c = name[i];
+
+        bool is_alpha = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+        bool is_digit = (c >= '0' && c <= '9');
+
+        if (!is_alpha && !is_digit && c != '_') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool Expression::can_transition(LexemeType from, LexemeType to) {
     return Transitions[static_cast<int>(from)][static_cast<int>(to)];
 }

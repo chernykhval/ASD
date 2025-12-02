@@ -26,6 +26,10 @@ _vars(other._vars), _functions(other._functions) {
 }
 
 void Calculator::add_variable(const std::string& name, double value) {
+    if (!Expression::is_valid_identifier(name)) {
+        throw std::runtime_error("Invalid variable name");
+    }
+
     _vars.add(name, value);
 }
 
@@ -94,4 +98,16 @@ std::string Calculator::expressions_info() const {
     }
 
     return ss.str();
+}
+
+std::string Calculator::get_substituted_expression(size_t index) const {
+    return _expressions[index].to_substituted_string(_vars);
+}
+
+bool Calculator::has_vars() const {
+    return !_vars.is_empty();
+}
+
+bool Calculator::has_expressions() const {
+    return !_expressions.is_empty();
 }

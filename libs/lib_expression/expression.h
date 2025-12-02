@@ -30,6 +30,8 @@ class Expression {
     std::string to_infix_string() const noexcept;
     std::string to_substituted_string(const VarTable& vars) const noexcept;
 
+   static bool is_valid_identifier(const std::string& name);
+
  private:
     bool can_transition(LexemeType from, LexemeType to);
     int get_priority(const Lexeme& lexeme) const;

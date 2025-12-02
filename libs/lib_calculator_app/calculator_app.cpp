@@ -65,6 +65,7 @@ void CalculatorApp::run() {
             }
         }
         catch (const std::exception& e) {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "\n[ERROR]: " << e.what() << "\n" << std::endl;
         }
 
@@ -107,6 +108,11 @@ void CalculatorApp::add_variable() {
 }
 
 void CalculatorApp::remove_variable() {
+    if (!_calculator.has_vars()) {
+        std::cout << "List of variables is empty. Nothing to remove." << std::endl;
+        return;
+    }
+
     std::string name;
 
     std::cout <<  _calculator.vars_info() << "=== REMOVING VAR ===\n" << "Enter name: ";
@@ -121,58 +127,61 @@ void CalculatorApp::add_expression() {
     std::string expression;
 
     std::cout << "=== ADDING EXPRESSION ===\nEnter expression: ";
-    std::cin >> expression;
+    std::getline(std::cin, expression);
 
-    try {
-        _calculator.add_expression(expression);
-    }
-    catch (std::exception& e) {
-        std::cout << "Variable " << expression << " addition failed." << std::endl;
-        throw;
-    }
+    if (expression.empty()) return;
 
-    std::cout << "Expression " << expression << " added successfully.\nCheck info." << std::endl;
+    _calculator.add_expression(expression);
+    std::cout << "Expression added successfully." << std::endl;
 }
 
 void CalculatorApp::remove_expression() {
+    if (!_calculator.has_expressions()) {
+        std::cout << "List of expressions is empty. Nothing to remove." << std::endl;
+        return;
+    }
+
     int expr_num;
 
-    std::cout << "=== REMOVING EXPRESSION ===\n" << _calculator.expressions_info() << "Enter expression num: ";
-    std::cin >> expr_num;
+    std::cout << _calculator.expressions_info() << "=== REMOVING EXPRESSION ===\n" << "Enter expression num: ";
 
-    try {
+    if (std::cin >> expr_num) {
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        if (expr_num < 1)
+            throw std::out_of_range("Number must be >= 1");
+
         _calculator.remove_expression(expr_num - 1);
+        std::cout << "Expression number " << expr_num << " removed successfully." << std::endl;
+    } else {
+        throw std::runtime_error("Invalid number format");
     }
-    catch (std::exception& e) {
-        std::cout << "Expression number " << expr_num << " removing failed." << std::endl;
-        throw std::out_of_range("Number to delete out of range");
-    }
-
-    std::cout << "Expression number " << expr_num << " remove successfully.\nCheck info." << std::endl;
 }
 
 void CalculatorApp::calculate_expression() {
     int expr_num;
-    double result;
 
-    std::cout << "=== CALCULATING EXPRESSION ===\n" << _calculator.expressions_info() << "Enter expression num: ";
-    std::cin >> expr_num;
+    std::cout << _calculator.expressions_info() << "=== CALCULATING EXPRESSION ===\n" << "Enter expression num: ";
 
-    try {
-        result = _calculator.calculate(expr_num - 1);
-    }
-    catch (std::exception& e) {
-        std::cout << "Expression number " << expr_num << " calculating failed." << std::endl;
-        throw std::out_of_range("Number to delete out of range");
+    if (!(std::cin >> expr_num)) {
+        throw std::runtime_error("Invalid input");
     }
 
-    std::cout << "Expression number " << expr_num << " calculated successfully.\nExpression: "
-    << "<to be developed>" <<"\nResult: " << result << std::endl;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    if (expr_num < 1)
+        throw std::out_of_range("Number must be >= 1");
+
+    size_t index = expr_num - 1;
+    double result = _calculator.calculate(index);
+
+    std::cout << "Expression " << expr_num << " calculated successfully.\n";
+    std::cout << "Formula: " << _calculator.get_substituted_expression(index) << "\n";
+    std::cout << "Result: " << result << std::endl;
 }
 
 void CalculatorApp::wait_for_enter() {
     std::cout << "\nPress Enter to continue...";
-    std::cin.get();
     std::cin.get();
 }
 

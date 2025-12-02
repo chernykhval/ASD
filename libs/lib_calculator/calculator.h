@@ -29,6 +29,9 @@ class Calculator {
     std::string vars_info() const;
     std::string functions_info() const;
     std::string expressions_info() const;
+    std::string get_substituted_expression(size_t index) const;
+    bool has_vars() const;
+    bool has_expressions() const;
 };
 
 #endif  // LIBS_LIB_CALCULATOR_CALCULATOR_H_

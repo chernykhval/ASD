@@ -29,6 +29,7 @@ class VarTable {
     void remove(const std::string& name);
     double get(const std::string& name) const;
     bool contains(const std::string& name) const;
+    bool is_empty() const;
 
     std::string info() const;
 
