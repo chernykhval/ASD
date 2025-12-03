@@ -30,13 +30,14 @@ class Expression {
     std::string to_infix_string() const noexcept;
     std::string to_substituted_string(const VarTable& vars) const noexcept;
 
-   static bool is_valid_identifier(const std::string& name);
+    static bool is_valid_identifier(const std::string& name);
 
  private:
     bool can_transition(LexemeType from, LexemeType to);
     int get_priority(const Lexeme& lexeme) const;
     bool is_matching_pair(char open, char close);
-    std::string create_error_message(size_t pos, const std::string& message) const;
+    std::string create_error_message(size_t pos,
+       const std::string& message) const;
     void tokenize();
     void parse(const VarTable& vars, const FunctionTable& funcs);
 };

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <limits>
+#include <iostream>
 #include "libs/lib_calculator_app/calculator_app.h"
 
 CalculatorApp::CalculatorApp(Calculator& calculator) : _calculator(calculator) {
@@ -10,7 +11,7 @@ CalculatorApp::CalculatorApp(Calculator& calculator) : _calculator(calculator) {
 void CalculatorApp::run() {
     bool is_exit = false;
 
-    while(!is_exit) {
+    while (!is_exit) {
         clear_screen();
         print_menu();
 
@@ -75,11 +76,16 @@ void CalculatorApp::run() {
 void CalculatorApp::print_menu() {
     std::cout << "\n=== CALCULATOR MENU ===" << std::endl;
     std::cout << static_cast<int>(Command::Info) << ". Show Info" << std::endl;
-    std::cout << static_cast<int>(Command::AddVariable) << ". Add Variable" << std::endl;
-    std::cout << static_cast<int>(Command::RemoveVariable) << ". Remove Variable" << std::endl;
-    std::cout << static_cast<int>(Command::AddExpression) << ". Add Expression" << std::endl;
-    std::cout << static_cast<int>(Command::RemoveExpression) << ". Remove Expression" << std::endl;
-    std::cout << static_cast<int>(Command::CalculateExpression) << ". Calculate Expression" << std::endl;
+    std::cout << static_cast<int>(Command::AddVariable)
+    << ". Add Variable" << std::endl;
+    std::cout << static_cast<int>(Command::RemoveVariable)
+    << ". Remove Variable" << std::endl;
+    std::cout << static_cast<int>(Command::AddExpression)
+    << ". Add Expression" << std::endl;
+    std::cout << static_cast<int>(Command::RemoveExpression)
+    << ". Remove Expression" << std::endl;
+    std::cout << static_cast<int>(Command::CalculateExpression)
+    << ". Calculate Expression" << std::endl;
     std::cout << static_cast<int>(Command::Exit) << ". Exit" << std::endl;
     std::cout << "=======================" << std::endl;
 }
@@ -99,7 +105,8 @@ void CalculatorApp::add_variable() {
     if (std::cin >> value) {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         _calculator.add_variable(name, value);
-        std::cout << "Variable " << name << " = " << value << " added successfully." << std::endl;
+        std::cout << "Variable " << name << " = " <<
+            value << " added successfully." << std::endl;
     } else {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -109,13 +116,15 @@ void CalculatorApp::add_variable() {
 
 void CalculatorApp::remove_variable() {
     if (!_calculator.has_vars()) {
-        std::cout << "List of variables is empty. Nothing to remove." << std::endl;
+        std::cout << "List of variables is empty." <<
+            " Nothing to remove." << std::endl;
         return;
     }
 
     std::string name;
 
-    std::cout <<  _calculator.vars_info() << "=== REMOVING VAR ===\n" << "Enter name: ";
+    std::cout <<  _calculator.vars_info() <<
+        "=== REMOVING VAR ===\n" <<"Enter name: ";
     std::cin >> name;
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -137,13 +146,15 @@ void CalculatorApp::add_expression() {
 
 void CalculatorApp::remove_expression() {
     if (!_calculator.has_expressions()) {
-        std::cout << "List of expressions is empty. Nothing to remove." << std::endl;
+        std::cout << "List of expressions is empty." <<
+            " Nothing to remove." << std::endl;
         return;
     }
 
     int expr_num;
 
-    std::cout << _calculator.expressions_info() << "=== REMOVING EXPRESSION ===\n" << "Enter expression num: ";
+    std::cout << _calculator.expressions_info() <<
+        "=== REMOVING EXPRESSION ===\n" << "Enter expression num: ";
 
     if (std::cin >> expr_num) {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -152,7 +163,8 @@ void CalculatorApp::remove_expression() {
             throw std::out_of_range("Number must be >= 1");
 
         _calculator.remove_expression(expr_num - 1);
-        std::cout << "Expression number " << expr_num << " removed successfully." << std::endl;
+        std::cout << "Expression number " << expr_num
+        << " removed successfully." << std::endl;
     } else {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -163,7 +175,8 @@ void CalculatorApp::remove_expression() {
 void CalculatorApp::calculate_expression() {
     int expr_num;
 
-    std::cout << _calculator.expressions_info() << "=== CALCULATING EXPRESSION ===\n" << "Enter expression num: ";
+    std::cout << _calculator.expressions_info() <<
+        "=== CALCULATING EXPRESSION ===\n" << "Enter expression num: ";
 
     if (!(std::cin >> expr_num)) {
         std::cin.clear();
@@ -180,7 +193,8 @@ void CalculatorApp::calculate_expression() {
     double result = _calculator.calculate(index);
 
     std::cout << "Expression " << expr_num << " calculated successfully.\n";
-    std::cout << "Formula: " << _calculator.get_substituted_expression(index) << "\n";
+    std::cout << "Formula: " <<
+        _calculator.get_substituted_expression(index) << "\n";
     std::cout << "Result: " << result << std::endl;
 }
 

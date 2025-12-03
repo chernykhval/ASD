@@ -28,7 +28,8 @@ _expression(expression) {
     parse(vars, funcs);
 }
 
-double Expression::calculate(const VarTable& vars, const FunctionTable& funcs) const {
+double Expression::calculate(const VarTable& vars,
+    const FunctionTable& funcs) const {
     Stack<double> stack(_postfix.size());
 
     for (const auto& lex : _postfix) {
@@ -44,7 +45,8 @@ double Expression::calculate(const VarTable& vars, const FunctionTable& funcs) c
             case LexemeType::Function:
             {
                 if (stack.is_empty())
-                    throw std::runtime_error("Missing argument for function " + lex._value);
+                    throw std::runtime_error("Missing argument for function "
+                        + lex._value);
 
                 double arg = stack.top();
                 stack.pop();
@@ -57,7 +59,8 @@ double Expression::calculate(const VarTable& vars, const FunctionTable& funcs) c
             case LexemeType::UnaryOperator:
                 {
                     if (stack.is_empty())
-                        throw std::runtime_error("Missing operand for unary operator");
+                        throw std::runtime_error("Missing operand"
+                                                 " for unary operator");
 
                     double val = stack.top();
                     stack.pop();
@@ -75,40 +78,42 @@ double Expression::calculate(const VarTable& vars, const FunctionTable& funcs) c
             case LexemeType::BinaryOperator:
                 {
                     if (stack.is_empty())
-                        throw std::runtime_error("Missing operand for binary operator");
+                        throw std::runtime_error("Missing operand"
+                                                 " for binary operator");
+
                     double right = stack.top();
                     stack.pop();
 
                     if (stack.is_empty())
-                        throw std::runtime_error("Missing operand for binary operator");
+                        throw std::runtime_error("Missing operand"
+                                                 " for binary operator");
+
                     double left = stack.top();
                     stack.pop();
 
                     if (lex._value == "+") {
                         stack.push(left + right);
-                    }
-                    else if (lex._value == "-") {
+                    } else if (lex._value == "-") {
                         stack.push(left - right);
-                    }
-                    else if (lex._value == "*") {
+                    } else if (lex._value == "*") {
                         stack.push(left * right);
-                    }
-                    else if (lex._value == "/") {
+                    } else if (lex._value == "/") {
                         if (right == 0.0)
                             throw std::runtime_error("Division by zero");
+
                         stack.push(left / right);
-                    }
-                    else if (lex._value == "^") {
+                    } else if (lex._value == "^") {
                         stack.push(std::pow(left, right));
-                    }
-                    else {
-                        throw std::runtime_error("Unknown binary operator: " + lex._value);
+                    } else {
+                        throw std::runtime_error("Unknown binary operator: "
+                            + lex._value);
                     }
                 }
                 break;
 
             default:
-                throw std::runtime_error("Unexpected token in RPN evaluation: " + lex._value);
+                throw std::runtime_error("Unexpected token in RPN evaluation: "
+                    + lex._value);
                 break;
         }
     }
@@ -121,7 +126,8 @@ double Expression::calculate(const VarTable& vars, const FunctionTable& funcs) c
     stack.pop();
 
     if (!stack.is_empty()) {
-        throw std::runtime_error("Error: Extra operands left in stack (invalid expression structure)");
+        throw std::runtime_error("Error: Extra operands left in"
+                                 " stack (invalid expression structure)");
     }
 
     return result;
@@ -144,6 +150,7 @@ std::string Expression::to_postfix_string() const noexcept {
     }
 
     ss << "]";
+
     return ss.str();
 }
 
@@ -163,7 +170,8 @@ std::string Expression::to_infix_string() const noexcept {
     return result;
 }
 
-std::string Expression::to_substituted_string(const VarTable& vars) const noexcept {
+std::string Expression::to_substituted_string(const VarTable& vars)
+const noexcept {
     std::stringstream ss;
 
     for (const auto& lex : _infix) {
@@ -246,7 +254,8 @@ bool Expression::is_matching_pair(char open, char close) {
            (open == '|' && close == '|');
 }
 
-std::string Expression::create_error_message(size_t pos, const std::string& message) const {
+std::string Expression::create_error_message(size_t pos,
+    const std::string& message) const {
     std::stringstream ss;
 
     ss << message << "\n";
@@ -323,19 +332,22 @@ void Expression::tokenize() {
             case '(':
             case '[':
             case '{':
-                _infix.push_back(Lexeme(LexemeType::LeftBracket, current, start_pos));
+                _infix.push_back(Lexeme(LexemeType::LeftBracket,
+                    current, start_pos));
                 i++;
                 break;
 
             case ')':
             case ']':
             case '}':
-                _infix.push_back(Lexeme(LexemeType::RightBracket, current, start_pos));
+                _infix.push_back(Lexeme(LexemeType::RightBracket,
+                    current, start_pos));
                 i++;
                 break;
 
             case ',':
-                _infix.push_back(Lexeme(LexemeType::Separator, current, start_pos));
+                _infix.push_back(Lexeme(LexemeType::Separator,
+                    current, start_pos));
                 i++;
                 break;
 
@@ -345,12 +357,14 @@ void Expression::tokenize() {
             case '/':
             case '^':
             case '|':
-                _infix.push_back(Lexeme(LexemeType::Operator, current, start_pos));
+                _infix.push_back(Lexeme(LexemeType::Operator,
+                    current, start_pos));
                 i++;
                 break;
 
             default:
-                throw std::runtime_error("Unknown symbol at pos " + std::to_string(i));
+                throw std::runtime_error("Unknown symbol at pos "
+                    + std::to_string(i));
         }
     }
 }
@@ -401,10 +415,12 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
                 "Syntax Error: Unexpected lexeme '" + lex._value + "'"));
         }
 
-        if (prev == LexemeType::Function && lex._type == LexemeType::LeftBracket) {
+        if (prev == LexemeType::Function &&
+            lex._type == LexemeType::LeftBracket) {
             if (lex._value != "(") {
                 throw std::runtime_error(create_error_message(lex._pos,
-                    "Syntax Error: Functions must be called using '(', but found '" + lex._value + "'"));
+                    "Syntax Error: Functions must be"
+                    " called using '(', but found '" + lex._value + "'"));
             }
         }
 
@@ -420,7 +436,8 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
                 break;
 
             case LexemeType::Separator:
-                while (!stack.is_empty() && stack.top()._type != LexemeType::LeftBracket) {
+                while (!stack.is_empty() &&
+                    stack.top()._type != LexemeType::LeftBracket) {
                     result_postfix.push_back(stack.top());
                     stack.pop();
                 }
@@ -432,31 +449,36 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
 
             case LexemeType::RightBracket:
             {
-                while (!stack.is_empty() && stack.top()._type != LexemeType::LeftBracket) {
+                while (!stack.is_empty() &&
+                    stack.top()._type != LexemeType::LeftBracket) {
                     result_postfix.push_back(stack.top());
                     stack.pop();
                 }
 
                 if (stack.is_empty())
                     throw std::runtime_error(create_error_message(lex._pos,
-                        "Mismatched brackets: unexpected '" + lex._value + "'"));\
+                        "Mismatched brackets: unexpected '"
+                        + lex._value + "'"));
 
                 char open_сhar = stack.top()._value[0];
                 char close_сhar = lex._value[0];
 
                 if (!is_matching_pair(open_сhar, close_сhar)) {
                     throw std::runtime_error(create_error_message(lex._pos,
-                        "Mismatched brackets: expected matching for '" + std::string(1, open_сhar) +
-                        "', but found '" + std::string(1, close_сhar) + "'"));
+                        "Mismatched brackets: expected matching for '" +
+                        std::string(1, open_сhar) + "', but found '" +
+                        std::string(1, close_сhar) + "'"));
                 }
 
                 stack.pop();
 
                 if (close_сhar == '|') {
-                    result_postfix.push_back(Lexeme(LexemeType::UnaryOperator, "abs", lex._pos));
+                    result_postfix.push_back(Lexeme(LexemeType::UnaryOperator,
+                        "abs", lex._pos));
                 }
 
-                if (!stack.is_empty() && stack.top()._type == LexemeType::Function) {
+                if (!stack.is_empty() &&
+                    stack.top()._type == LexemeType::Function) {
                     result_postfix.push_back(stack.top());
                     stack.pop();
                 }
@@ -469,7 +491,8 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
                 bool is_right_associative = (lex._value == "^" ||
                     lex._type == LexemeType::UnaryOperator);
 
-                while (!stack.is_empty() && stack.top()._type != LexemeType::LeftBracket) {
+                while (!stack.is_empty() &&
+                    stack.top()._type != LexemeType::LeftBracket) {
                     int top_priority = get_priority(stack.top());
                     int curr_priority = get_priority(lex);
 
@@ -504,7 +527,8 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
     while (!stack.is_empty()) {
         Lexeme top = stack.top();
 
-        if (top._type == LexemeType::LeftBracket || top._type == LexemeType::Function) {
+        if (top._type == LexemeType::LeftBracket ||
+            top._type == LexemeType::Function) {
             throw std::runtime_error(create_error_message(top._pos,
                 "Mismatched brackets: missing ')'"));
         }

@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 #include <cmath>
+#include <string>
 #include "libs/lib_expression/expression.h"
 #include "libs/lib_var_table/var_table.h"
 #include "libs/lib_function_table/function_table.h"

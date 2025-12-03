@@ -5,7 +5,7 @@
 #include "libs/lib_function_table/function_table.h"
 
 Function::Function(const std::string& _name, UnaryFunc _func_ptr) :
-name(_name), func_ptr(_func_ptr){
+name(_name), func_ptr(_func_ptr) {
 }
 
 std::string Function::info() const {
@@ -48,7 +48,6 @@ std::string FunctionTable::info() const {
     }
 
     return ss.str();
-
 }
 
 int FunctionTable::find_index(const std::string& name) const {

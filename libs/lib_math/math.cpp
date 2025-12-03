@@ -2,10 +2,11 @@
 
 #include <cmath>
 #include <stdexcept>
+#include <cstdint>
 #include "libs/lib_math/math.h"
 
 double Math::fmod(double numer, double denom) {
-    long long quotient = static_cast<long long>(numer / denom);
+    int64_t quotient = static_cast<int64_t>(numer / denom);
     return numer - (quotient * denom);
 }
 

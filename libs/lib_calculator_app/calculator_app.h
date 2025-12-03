@@ -25,7 +25,7 @@ class CalculatorApp {
 
     void run();
 
-private:
+ private:
     void print_menu();
     void print_info();
     void add_variable();
@@ -35,7 +35,6 @@ private:
     void calculate_expression();
     void wait_for_enter();
     void clear_screen();
-
 };
 
 #endif  // LIBS_LIB_CALCULATOR_APP_CALCULATOR_APP_H_
