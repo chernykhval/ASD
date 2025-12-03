@@ -225,7 +225,7 @@ bool Expression::is_valid_identifier(const std::string& name) {
     return true;
 }
 
-bool Expression::can_transition(LexemeType from, LexemeType to) {
+bool Expression::can_transition(LexemeType from, LexemeType to) const {
     return Transitions[static_cast<int>(from)][static_cast<int>(to)];
 }
 
@@ -247,7 +247,7 @@ int Expression::get_priority(const Lexeme& lexeme) const {
     return 0;
 }
 
-bool Expression::is_matching_pair(char open, char close) {
+bool Expression::is_matching_pair(char open, char close) const{
     return (open == '(' && close == ')') ||
            (open == '[' && close == ']') ||
            (open == '{' && close == '}') ||
@@ -375,56 +375,72 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
     Stack<Lexeme> stack(_infix.size());
 
     for (auto& lex : _infix) {
-        if (lex._type == LexemeType::Identifier) {
-            if (funcs.contains(lex._value)) {
-                lex._type = LexemeType::Function;
-            } else if (vars.contains(lex._value)) {
-                lex._type = LexemeType::Variable;
-            } else {
-                throw std::runtime_error(create_error_message(lex._pos,
-                    "Unknown identifier: '" + lex._value + "'"));
-            }
-        }
+        refine_lexeme(lex, prev, vars, funcs);
+        validate_grammar(lex, prev);
+        process_lexeme(lex, stack, result_postfix);
+        prev = lex._type;
+    }
 
-        if (lex._type == LexemeType::Operator) {
-            bool is_unary_context = (prev == LexemeType::Start ||
-                           prev == LexemeType::LeftBracket ||
-                           prev == LexemeType::Separator ||
-                           prev == LexemeType::BinaryOperator ||
-                           prev == LexemeType::UnaryOperator);
+    flush_stack(stack, result_postfix);
+    validate_end(prev);
+    _postfix = result_postfix;
+}
 
-            if (lex._value == "|") {
-                if (is_unary_context) {
-                    lex._type = LexemeType::LeftBracket;
-                } else {
-                    lex._type = LexemeType::RightBracket;
-                }
-            } else {
-                bool can_be_unary = lex._value == "-";
-
-                if (is_unary_context && can_be_unary) {
-                    lex._type = LexemeType::UnaryOperator;
-                } else {
-                    lex._type = LexemeType::BinaryOperator;
-                }
-            }
-        }
-
-        if (!can_transition(prev, lex._type)) {
+void Expression::refine_lexeme(Lexeme& lex, LexemeType prev,
+    const VarTable& vars, const FunctionTable& funcs) {
+    if (lex._type == LexemeType::Identifier) {
+        if (funcs.contains(lex._value)) {
+            lex._type = LexemeType::Function;
+        } else if (vars.contains(lex._value)) {
+            lex._type = LexemeType::Variable;
+        } else {
             throw std::runtime_error(create_error_message(lex._pos,
-                "Syntax Error: Unexpected lexeme '" + lex._value + "'"));
+                "Unknown identifier: '" + lex._value + "'"));
         }
+    } else if (lex._type == LexemeType::Operator) {
+        bool is_unary_context = (prev == LexemeType::Start ||
+                       prev == LexemeType::LeftBracket ||
+                       prev == LexemeType::Separator ||
+                       prev == LexemeType::BinaryOperator ||
+                       prev == LexemeType::UnaryOperator);
 
-        if (prev == LexemeType::Function &&
-            lex._type == LexemeType::LeftBracket) {
-            if (lex._value != "(") {
-                throw std::runtime_error(create_error_message(lex._pos,
-                    "Syntax Error: Functions must be"
-                    " called using '(', but found '" + lex._value + "'"));
+        if (lex._value == "|") {
+            if (is_unary_context) {
+                lex._type = LexemeType::LeftBracket;
+            } else {
+                lex._type = LexemeType::RightBracket;
+            }
+        } else {
+            bool can_be_unary = lex._value == "-";
+
+            if (is_unary_context && can_be_unary) {
+                lex._type = LexemeType::UnaryOperator;
+            } else {
+                lex._type = LexemeType::BinaryOperator;
             }
         }
+    }
+}
 
-        switch (lex._type) {
+void Expression::validate_grammar(Lexeme& lex, LexemeType prev) {
+    if (!can_transition(prev, lex._type)) {
+        throw std::runtime_error(create_error_message(lex._pos,
+            "Syntax Error: Unexpected lexeme '" + lex._value + "'"));
+    }
+
+    if (prev == LexemeType::Function &&
+        lex._type == LexemeType::LeftBracket) {
+        if (lex._value != "(") {
+            throw std::runtime_error(create_error_message(lex._pos,
+                "Syntax Error: Functions must be"
+                " called using '(', but found '" + lex._value + "'"));
+        }
+    }
+}
+
+void Expression::process_lexeme(const Lexeme& lex, Stack<Lexeme>& stack,
+    LinkedList<Lexeme>& result_postfix) const {
+    switch (lex._type) {
             case LexemeType::Number:
             case LexemeType::Variable:
                 result_postfix.push_back(lex);
@@ -436,94 +452,105 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
                 break;
 
             case LexemeType::Separator:
-                while (!stack.is_empty() &&
-                    stack.top()._type != LexemeType::LeftBracket) {
-                    result_postfix.push_back(stack.top());
-                    stack.pop();
-                }
-
-                if (stack.is_empty())
-                    throw std::runtime_error(create_error_message(lex._pos,
-                        "Separator outside of brackets: '" + lex._value + "'"));
+                process_separator(lex, stack, result_postfix);
                 break;
 
             case LexemeType::RightBracket:
-            {
-                while (!stack.is_empty() &&
-                    stack.top()._type != LexemeType::LeftBracket) {
-                    result_postfix.push_back(stack.top());
-                    stack.pop();
-                }
-
-                if (stack.is_empty())
-                    throw std::runtime_error(create_error_message(lex._pos,
-                        "Mismatched brackets: unexpected '"
-                        + lex._value + "'"));
-
-                char open_char = stack.top()._value[0];
-                char close_char = lex._value[0];
-
-                if (!is_matching_pair(open_char, close_char)) {
-                    throw std::runtime_error(create_error_message(lex._pos,
-                        "Mismatched brackets: expected matching for '" +
-                        std::string(1, open_char) + "', but found '" +
-                        std::string(1, close_char) + "'"));
-                }
-
-                stack.pop();
-
-                if (close_char == '|') {
-                    result_postfix.push_back(Lexeme(LexemeType::UnaryOperator,
-                        "abs", lex._pos));
-                }
-
-                if (!stack.is_empty() &&
-                    stack.top()._type == LexemeType::Function) {
-                    result_postfix.push_back(stack.top());
-                    stack.pop();
-                }
-            }
+                process_right_bracket(lex, stack, result_postfix);
                 break;
 
             case LexemeType::BinaryOperator:
             case LexemeType::UnaryOperator:
-            {
-                bool is_right_associative = (lex._value == "^" ||
-                    lex._type == LexemeType::UnaryOperator);
-
-                while (!stack.is_empty() &&
-                    stack.top()._type != LexemeType::LeftBracket) {
-                    int top_priority = get_priority(stack.top());
-                    int curr_priority = get_priority(lex);
-
-                    if (is_right_associative) {
-                        if (top_priority > curr_priority) {
-                            result_postfix.push_back(stack.top());
-                            stack.pop();
-                        } else {
-                            break;
-                        }
-                    } else {
-                        if (top_priority >= curr_priority) {
-                            result_postfix.push_back(stack.top());
-                            stack.pop();
-                        } else {
-                            break;
-                        }
-                    }
-                }
-
-                stack.push(lex);
-            }
+                process_operator(lex, stack, result_postfix);
                 break;
 
             default:
                 break;
         }
+}
 
-        prev = lex._type;
+void Expression::process_separator(const Lexeme& lex, Stack<Lexeme>& stack,
+    LinkedList<Lexeme>& result_postfix) const {
+    while (!stack.is_empty() &&
+                    stack.top()._type != LexemeType::LeftBracket) {
+        result_postfix.push_back(stack.top());
+        stack.pop();
+                    }
+
+    if (stack.is_empty())
+        throw std::runtime_error(create_error_message(lex._pos,
+            "Separator outside of brackets: '" + lex._value + "'"));
+}
+
+void Expression::process_right_bracket(const Lexeme& lex, Stack<Lexeme>& stack,
+    LinkedList<Lexeme>& result_postfix) const {
+    while (!stack.is_empty() && stack.top()._type != LexemeType::LeftBracket) {
+        result_postfix.push_back(stack.top());
+        stack.pop();
     }
 
+    if (stack.is_empty()) {
+        throw std::runtime_error(create_error_message(lex._pos,
+            "Mismatched brackets: unexpected '"
+            + lex._value + "'"));
+    }
+
+    char open_char = stack.top()._value[0];
+    char close_char = lex._value[0];
+
+    if (!is_matching_pair(open_char, close_char)) {
+        throw std::runtime_error(create_error_message(lex._pos,
+            "Mismatched brackets: expected matching for '" +
+            std::string(1, open_char) + "', but found '" +
+            std::string(1, close_char) + "'"));
+    }
+
+    stack.pop();
+
+    if (close_char == '|') {
+        result_postfix.push_back(
+            Lexeme(LexemeType::UnaryOperator, "abs", lex._pos));
+    }
+
+    if (!stack.is_empty() &&
+        stack.top()._type == LexemeType::Function) {
+        result_postfix.push_back(stack.top());
+        stack.pop();
+    }
+}
+
+void Expression::process_operator(const Lexeme& lex, Stack<Lexeme>& stack,
+    LinkedList<Lexeme>& result_postfix) const {
+    bool is_right_associative = (lex._value == "^" ||
+        lex._type == LexemeType::UnaryOperator);
+
+    while (!stack.is_empty() &&
+        stack.top()._type != LexemeType::LeftBracket) {
+        int top_priority = get_priority(stack.top());
+        int curr_priority = get_priority(lex);
+
+        if (is_right_associative) {
+            if (top_priority > curr_priority) {
+                result_postfix.push_back(stack.top());
+                stack.pop();
+            } else {
+                break;
+            }
+        } else {
+            if (top_priority >= curr_priority) {
+                result_postfix.push_back(stack.top());
+                stack.pop();
+            } else {
+                break;
+            }
+        }
+    }
+
+    stack.push(lex);
+}
+
+void Expression::flush_stack(Stack<Lexeme>& stack,
+    LinkedList<Lexeme>& result_postfix) const {
     while (!stack.is_empty()) {
         Lexeme top = stack.top();
 
@@ -531,16 +558,16 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
             top._type == LexemeType::Function) {
             throw std::runtime_error(create_error_message(top._pos,
                 "Mismatched brackets: missing ')'"));
-        }
+            }
 
         result_postfix.push_back(stack.top());
         stack.pop();
     }
+}
 
+void Expression::validate_end(LexemeType prev) const {
     if (!can_transition(prev, LexemeType::End)) {
         throw std::runtime_error(create_error_message(_expression.length(),
             "Unexpected end of expression"));
     }
-
-    _postfix = result_postfix;
 }

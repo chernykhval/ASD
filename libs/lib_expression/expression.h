@@ -8,6 +8,7 @@
 #include "libs/lib_linked_list/linked_list.h"
 #include "libs/lib_var_table/var_table.h"
 #include "libs/lib_function_table/function_table.h"
+#include "libs/lib_stack/stack.h"
 
 class Expression {
  private:
@@ -33,13 +34,28 @@ class Expression {
     static bool is_valid_identifier(const std::string& name);
 
  private:
-    bool can_transition(LexemeType from, LexemeType to);
+    bool can_transition(LexemeType from, LexemeType to) const;
     int get_priority(const Lexeme& lexeme) const;
-    bool is_matching_pair(char open, char close);
+    bool is_matching_pair(char open, char close) const;
     std::string create_error_message(size_t pos,
        const std::string& message) const;
     void tokenize();
     void parse(const VarTable& vars, const FunctionTable& funcs);
+
+    void refine_lexeme(Lexeme& lex, LexemeType prev,
+       const VarTable& vars, const FunctionTable& funcs );
+    void validate_grammar(Lexeme& lex, LexemeType prev);
+    void process_lexeme(const Lexeme& lex, Stack<Lexeme>& stack,
+       LinkedList<Lexeme>& result_postfix) const;
+    void process_separator(const Lexeme& lex, Stack<Lexeme>& stack,
+      LinkedList<Lexeme>& result_postfix) const;
+    void process_right_bracket(const Lexeme& lex, Stack<Lexeme>& stack,
+     LinkedList<Lexeme>& result_postfix) const;
+    void process_operator(const Lexeme& lex, Stack<Lexeme>& stack,
+     LinkedList<Lexeme>& result_postfix) const;
+    void flush_stack(Stack<Lexeme>& stack,
+       LinkedList<Lexeme>& result_postfix) const;
+    void validate_end(LexemeType prev) const;
 };
 
 #endif  // LIBS_LIB_EXPRESSION_EXPRESSION_H_
