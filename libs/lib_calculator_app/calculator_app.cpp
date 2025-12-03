@@ -65,7 +65,6 @@ void CalculatorApp::run() {
             }
         }
         catch (const std::exception& e) {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "\n[ERROR]: " << e.what() << "\n" << std::endl;
         }
 
@@ -98,13 +97,14 @@ void CalculatorApp::add_variable() {
     std::cout << "Enter value: ";
 
     if (std::cin >> value) {
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         _calculator.add_variable(name, value);
         std::cout << "Variable " << name << " = " << value << " added successfully." << std::endl;
     } else {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         throw std::runtime_error("Invalid number format for variable value");
     }
-
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 void CalculatorApp::remove_variable() {
@@ -154,6 +154,8 @@ void CalculatorApp::remove_expression() {
         _calculator.remove_expression(expr_num - 1);
         std::cout << "Expression number " << expr_num << " removed successfully." << std::endl;
     } else {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         throw std::runtime_error("Invalid number format");
     }
 }
@@ -164,6 +166,8 @@ void CalculatorApp::calculate_expression() {
     std::cout << _calculator.expressions_info() << "=== CALCULATING EXPRESSION ===\n" << "Enter expression num: ";
 
     if (!(std::cin >> expr_num)) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         throw std::runtime_error("Invalid input");
     }
 
