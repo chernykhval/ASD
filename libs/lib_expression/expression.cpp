@@ -460,19 +460,19 @@ void Expression::parse(const VarTable& vars, const FunctionTable& funcs) {
                         "Mismatched brackets: unexpected '"
                         + lex._value + "'"));
 
-                char open_сhar = stack.top()._value[0];
-                char close_сhar = lex._value[0];
+                char open_char = stack.top()._value[0];
+                char close_char = lex._value[0];
 
-                if (!is_matching_pair(open_сhar, close_сhar)) {
+                if (!is_matching_pair(open_char, close_char)) {
                     throw std::runtime_error(create_error_message(lex._pos,
                         "Mismatched brackets: expected matching for '" +
-                        std::string(1, open_сhar) + "', but found '" +
-                        std::string(1, close_сhar) + "'"));
+                        std::string(1, open_char) + "', but found '" +
+                        std::string(1, close_char) + "'"));
                 }
 
                 stack.pop();
 
-                if (close_сhar == '|') {
+                if (close_char == '|') {
                     result_postfix.push_back(Lexeme(LexemeType::UnaryOperator,
                         "abs", lex._pos));
                 }
