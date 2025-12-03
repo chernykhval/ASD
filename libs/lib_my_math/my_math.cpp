@@ -3,14 +3,14 @@
 #include <cmath>
 #include <stdexcept>
 #include <cstdint>
-#include "libs/lib_math/math.h"
+#include "libs/lib_my_math/my_math.h"
 
-double Math::fmod(double numer, double denom) {
+double MyMath::fmod(double numer, double denom) {
     int64_t quotient = static_cast<int64_t>(numer / denom);
     return numer - (quotient * denom);
 }
 
-double Math::normalize_angle(double x) {
+double MyMath::normalize_angle(double x) {
     x = fmod(x, TWO_PI);
 
     if (x > PI)
@@ -22,11 +22,11 @@ double Math::normalize_angle(double x) {
     return x;
 }
 
-double Math::abs(double x) {
+double MyMath::abs(double x) {
     return x < 0 ? -x : x;
 }
 
-double Math::sin(double x) {
+double MyMath::sin(double x) {
     x = normalize_angle(x);
 
     double term = x;
@@ -43,7 +43,7 @@ double Math::sin(double x) {
     return sum;
 }
 
-double Math::cos(double x) {
+double MyMath::cos(double x) {
     x = normalize_angle(x);
 
     double term = 1.0;
@@ -60,7 +60,7 @@ double Math::cos(double x) {
     return sum;
 }
 
-double Math::tg(double x) {
+double MyMath::tg(double x) {
     double cos_val = cos(x);
 
     if (abs(cos_val) < 1e-10) {
@@ -70,7 +70,7 @@ double Math::tg(double x) {
     return sin(x) / cos_val;
 }
 
-double Math::sqrt(double x) {
+double MyMath::sqrt(double x) {
     if (x < 0) {
         throw std::runtime_error("Square root of negative number");
     }
@@ -94,7 +94,7 @@ double Math::sqrt(double x) {
     return guess;
 }
 
-double Math::ln(double x) {
+double MyMath::ln(double x) {
     if (x <= 0) {
         throw std::runtime_error("Logarithm of non-positive number");
     }

@@ -4,17 +4,17 @@
 #include <string>
 #include <sstream>
 #include "libs/lib_calculator/calculator.h"
-#include "libs/lib_math/math.h"
+#include "libs/lib_my_math/my_math.h"
 
 Calculator::Calculator() {
     _vars.add("pi", 3.1415926535);
     _vars.add("e", 2.7182818284);
 
-    _functions.add("sin", Math::sin);
-    _functions.add("cos", Math::cos);
-    _functions.add("tg", Math::tg);
-    _functions.add("ln", Math::ln);
-    _functions.add("sqrt", Math::sqrt);
+    _functions.add("sin", MyMath::sin);
+    _functions.add("cos", MyMath::cos);
+    _functions.add("tg", MyMath::tg);
+    _functions.add("ln", MyMath::ln);
+    _functions.add("sqrt", MyMath::sqrt);
 }
 
 Calculator::Calculator(const VarTable& vars, const FunctionTable& functions) :
