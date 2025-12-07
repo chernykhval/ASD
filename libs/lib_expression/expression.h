@@ -43,7 +43,7 @@ class Expression {
     void parse(const VarTable& vars, const FunctionTable& funcs);
 
     void refine_lexeme(Lexeme& lex, LexemeType prev,
-       const VarTable& vars, const FunctionTable& funcs );
+       const VarTable& vars, const FunctionTable& funcs);
     void validate_grammar(Lexeme& lex, LexemeType prev);
     void process_lexeme(const Lexeme& lex, Stack<Lexeme>& stack,
        LinkedList<Lexeme>& result_postfix) const;

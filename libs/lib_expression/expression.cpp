@@ -247,7 +247,7 @@ int Expression::get_priority(const Lexeme& lexeme) const {
     return 0;
 }
 
-bool Expression::is_matching_pair(char open, char close) const{
+bool Expression::is_matching_pair(char open, char close) const {
     return (open == '(' && close == ')') ||
            (open == '[' && close == ']') ||
            (open == '{' && close == '}') ||
