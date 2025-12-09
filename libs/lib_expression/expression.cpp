@@ -43,18 +43,18 @@ double Expression::calculate(const VarTable& vars,
                 break;
 
             case LexemeType::Function:
-            {
-                if (stack.is_empty())
-                    throw std::runtime_error("Missing argument for function "
-                        + lex._value);
+                {
+                    if (stack.is_empty())
+                        throw std::runtime_error("Missing argument for function "
+                            + lex._value);
 
-                double arg = stack.top();
-                stack.pop();
-                double result = funcs.get(lex._value)(arg);
+                    double arg = stack.top();
+                    stack.pop();
+                    double result = funcs.get(lex._value)(arg);
 
-                stack.push(result);
-            }
-            break;
+                    stack.push(result);
+                }
+                break;
 
             case LexemeType::UnaryOperator:
                 {
