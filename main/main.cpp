@@ -404,7 +404,7 @@ int main() {
 
 int main() {
     generate(0, 9, 3, 3);
-
+    system("pause");
     return 0;
 }
 #endif  // LABYRINTH_TEST

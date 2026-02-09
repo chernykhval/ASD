@@ -143,17 +143,17 @@ void generate(int start_cell, int end_cell, int n, int m) {
         walls[void_cell_i][void_cell_j] = 0;
 
         if ((i % m) + 1 < m && is_wall(gen) < 50) {
-            // if (rooms.find(i) != rooms.find(i+1)) {
-            //     rooms.unite(i, i + 1);
-            //     walls[2 * (i / m) + 1][2 * (i % m) + 2] = 0;
-            // }
+            if (rooms.find(i) != rooms.find(i+1)) {
+                rooms.unite(i, i + 1);
+                walls[2 * (i / m) + 1][2 * (i % m) + 2] = 0;
+            }
         }
 
         if ((i / m) + 1 < n && is_wall(gen) < 50) {
-            // if (rooms.find(i) != rooms.find(i+m)) {
-            //     rooms.unite(i, i + m);
-            //     walls[2 * (i / m) + 2][2 * (i % m) + 1] = 0;
-            // }
+            if (rooms.find(i) != rooms.find(i + m)) {
+                rooms.unite(i, i + m);
+                walls[2 * (i / m) + 2][2 * (i % m) + 1] = 0;
+            }
         }
     }
 
@@ -175,10 +175,10 @@ void print_labyrinth(const Matrix<int>& walls) {
             }
 
             if (i % 2 == 0) {
-                std::cout << "-";
+                std::cout << "#";
             }
             else {
-                std::cout << "|";
+                std::cout << "#";
             }
         }
 
