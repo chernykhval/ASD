@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include "libs/lib_expression/expression.h"
+#include "libs/lib_my_math/my_math.h"
 #include "libs/lib_stack/stack.h"
 
 const bool Expression::Transitions[TypeCount][TypeCount] = {
@@ -68,7 +69,7 @@ double Expression::calculate(const VarTable& vars,
                     if (lex._value == "-") {
                         stack.push(-val);
                     } else if (lex._value == "abs") {
-                        stack.push(std::abs(val));
+                        stack.push(MyMath::abs(val));
                     } else {
                         stack.push(val);
                     }
