@@ -130,3 +130,7 @@ TEST(TestCalculateIslandsCount, ComplexShape) {
     };
     EXPECT_EQ(calculate_islands_count(matrix), 6);
 }
+
+TEST(TestPrintLabyrinth, print) {
+    generate(0, 9, 3, 3);
+}

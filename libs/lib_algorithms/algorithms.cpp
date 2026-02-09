@@ -89,3 +89,99 @@ int calculate_islands_count(const Matrix<int>& matrix) {
 
     return islands.count() - water_count;
 }
+
+// void generate(int start_cell, int end_cell, int n, int m) {
+//     std::random_device rd;
+//     std::mt19937 gen(rd());
+//     std::uniform_int_distribution<> is_wall(0, 1);
+//
+//     Matrix<int> vertical_walls(n + 1, m);
+//     Matrix<int> horizontal_walls(n, m + 1);
+//     DSU rooms(n * m);
+//
+//     for (int i = 0; i < n + 1; i++) {
+//         for (int j = 0; j < m; j++) {
+//             vertical_walls[i][j] = 1;
+//         }
+//     }
+//     for (int i = 0; i < n; i++) {
+//         for (int j = 0; j < m + 1; j++) {
+//             horizontal_walls[i][j] = 1;
+//         }
+//     }
+//
+//     for (int i = 0; i < n * m; i++) {
+//         if ((i % m) + 1 == m && is_wall(gen) == 0) {
+//             rooms.unite(i, i + 1);
+//             vertical_walls[i / m][(i % m) + 1] = 0;
+//         }
+//
+//         if ((i / m) + 1 == n && is_wall(gen) == 0) {
+//             rooms.unite(i, i + m);
+//             horizontal_walls[(i / m) + 1][i % m] = 0;
+//         }
+//     }
+// }
+
+void generate(int start_cell, int end_cell, int n, int m) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> is_wall(0, 99);
+
+    Matrix<int> walls(2 * n + 1, 2 * m + 1);
+    DSU rooms(n * m);
+
+    for (int i = 0; i < 2 * n + 1; i++) {
+        for (int j = 0; j < 2 * m + 1; j++) {
+            walls[i][j] = 1;
+        }
+    }
+
+    for (int i = 0; i < n * m; i++) {
+        int void_cell_i = 2 * (i / m) + 1;
+        int void_cell_j = 2 * (i % m) + 1;
+        walls[void_cell_i][void_cell_j] = 0;
+
+        if ((i % m) + 1 != m && is_wall(gen) < 50) {
+            // if (rooms.find(i) != rooms.find(i+1)) {
+            //     rooms.unite(i, i + 1);
+            //     walls[2 * (i / m) + 1][2 * (i % m) + 2] = 0;
+            // }
+        }
+
+        if ((i / m) + 1 != n && is_wall(gen) < 50) {
+            // if (rooms.find(i) != rooms.find(i+m)) {
+            //     rooms.unite(i, i + m);
+            //     walls[2 * (i / m) + 2][2 * (i % m) + 1] = 0;
+            // }
+        }
+    }
+
+    print_labyrinth(walls);
+    for (int i = 0; i < n * m; i++) {
+        std::cout << i << " parent(" << rooms.find(i) << ")" << std::endl;
+    }
+}
+
+void print_labyrinth(const Matrix<int>& walls) {
+    int rows = walls.rows();
+    int cols = walls.cols();
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (walls[i][j] != 1) {
+                std::cout << " ";
+                continue;
+            }
+
+            if (i % 2 == 0) {
+                std::cout << "-";
+            }
+            else {
+                std::cout << "|";
+            }
+        }
+
+        std::cout << std::endl;
+    }
+}
