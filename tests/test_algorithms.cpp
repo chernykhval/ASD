@@ -131,6 +131,12 @@ TEST(TestCalculateIslandsCount, ComplexShape) {
     EXPECT_EQ(calculate_islands_count(matrix), 6);
 }
 
-TEST(TestPrintLabyrinth, print) {
-    generate(0, 9, 3, 3);
+TEST(TestLabyrinthGenerate, start_and_end_exception) {
+    EXPECT_THROW(generate(-1, 8, 3, 3), std::invalid_argument);
+    EXPECT_THROW(generate(0, -1, 3, 3), std::invalid_argument);
+    EXPECT_THROW(generate(0, 15, 3, 3), std::invalid_argument);
+    EXPECT_THROW(generate(15, 0, 3, 3), std::invalid_argument);
+    EXPECT_THROW(generate(0, 0, 3, 3), std::invalid_argument);
+    EXPECT_THROW(generate(0, 4, 3, 3), std::invalid_argument);
+    EXPECT_THROW(generate(4, 0, 3, 3), std::invalid_argument);
 }

@@ -403,7 +403,7 @@ int main() {
 #include "libs/lib_algorithms/algorithms.h"
 
 int main() {
-    generate(0, 9, 3, 3);
+    generate(0, 9, 5, 5);
     system("pause");
     return 0;
 }

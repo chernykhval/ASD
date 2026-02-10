@@ -137,6 +137,30 @@ void generate(int start_cell, int end_cell, int n, int m) {
         }
     }
 
+    if (start_cell < 0 || end_cell < 0 ||
+        start_cell >= n * m || end_cell >= n * m) {
+        throw std::invalid_argument("Error: invalid start_cell or end_cell");
+    }
+    if (start_cell == end_cell) {
+        throw std::invalid_argument("Error: start_cell equal end_cell");
+    }
+
+    int start_cell_row = start_cell / m;
+    int start_cell_column = start_cell % m;
+
+    if (start_cell_row != 0 && start_cell_row != n - 1 &&
+       start_cell_column != 0 && start_cell_column != m - 1) {
+        throw std::invalid_argument("Error: start_cell not on the border");
+    }
+
+    int end_cell_row = end_cell / m;
+    int end_cell_column = end_cell % m;
+
+    if (end_cell_row != 0 && end_cell_row != n - 1 &&
+        end_cell_column != 0 && end_cell_column != m - 1) {
+        throw std::invalid_argument("Error: end_cell not on the border");
+    }
+
     for (int i = 0; i < n * m; i++) {
         int void_cell_i = 2 * (i / m) + 1;
         int void_cell_j = 2 * (i % m) + 1;
@@ -158,6 +182,9 @@ void generate(int start_cell, int end_cell, int n, int m) {
     }
 
     print_labyrinth(walls);
+    if (rooms.find(start_cell) != rooms.find(end_cell)) {
+        std::cout << "there is no entrance\n count of sets: " << rooms.count() << std::endl;
+    }
     for (int i = 0; i < n * m; i++) {
         std::cout << i << " parent(" << rooms.find(i) << ")" << std::endl;
     }
