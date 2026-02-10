@@ -131,12 +131,6 @@ void generate(int start_cell, int end_cell, int n, int m) {
     Matrix<int> walls(2 * n + 1, 2 * m + 1);
     DSU rooms(n * m);
 
-    for (int i = 0; i < 2 * n + 1; i++) {
-        for (int j = 0; j < 2 * m + 1; j++) {
-            walls[i][j] = 1;
-        }
-    }
-
     if (start_cell < 0 || end_cell < 0 ||
         start_cell >= n * m || end_cell >= n * m) {
         throw std::invalid_argument("Error: invalid start_cell or end_cell");
@@ -161,10 +155,25 @@ void generate(int start_cell, int end_cell, int n, int m) {
         throw std::invalid_argument("Error: end_cell not on the border");
     }
 
+    for (int i = 0; i < 2 * n + 1; i++) {
+        for (int j = 0; j < 2 * m + 1; j++) {
+            walls[i][j] = 1;
+        }
+    }
+
     for (int i = 0; i < n * m; i++) {
         int void_cell_i = 2 * (i / m) + 1;
         int void_cell_j = 2 * (i % m) + 1;
-        walls[void_cell_i][void_cell_j] = 0;
+
+        if (i == start_cell) {
+            walls[void_cell_i][void_cell_j] = 2;
+        }
+        else if (i == end_cell) {
+            walls[void_cell_i][void_cell_j] = 3;
+        }
+        else {
+            walls[void_cell_i][void_cell_j] = 0;
+        }
 
         if ((i % m) + 1 < m && is_wall(gen) < 50) {
             if (rooms.find(i) != rooms.find(i+1)) {
@@ -196,6 +205,16 @@ void print_labyrinth(const Matrix<int>& walls) {
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
+            if (walls[i][j] == 2) {
+                std::cout << "s";
+                continue;
+            }
+
+            if (walls[i][j] == 3) {
+                std::cout << "f";
+                continue;
+            }
+
             if (walls[i][j] != 1) {
                 std::cout << " ";
                 continue;
