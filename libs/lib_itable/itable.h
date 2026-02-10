@@ -7,7 +7,7 @@
 
 template <typename Key, typename Value>
 class ITable {
-public:
+ public:
     virtual ~ITable() = default;
     virtual void insert(const Key& key, const Value& value) = 0;
     virtual void erase(const Key& key) = 0;
