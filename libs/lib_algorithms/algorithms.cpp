@@ -183,21 +183,20 @@ void generate(int start_cell, int end_cell, int n, int m) {
             walls[void_cell_i][void_cell_j] = 0;
         }
 
-        if ((i % m) + 1 < m && is_wall(gen) < 50) {
+        if ((i % m) + 1 < m && is_wall(gen) < 0) {
             if (rooms.find(i) != rooms.find(i+1)) {
                 rooms.unite(i, i + 1);
                 walls[2 * (i / m) + 1][2 * (i % m) + 2] = 0;
             }
         }
 
-        if ((i / m) + 1 < n && is_wall(gen) < 50) {
+        if ((i / m) + 1 < n && is_wall(gen) < 0) {
             if (rooms.find(i) != rooms.find(i + m)) {
                 rooms.unite(i, i + m);
                 walls[2 * (i / m) + 2][2 * (i % m) + 1] = 0;
             }
         }
     }
-
 
     ITable<RoomConnection, WallSet>* walls_to_destroy = new UnorderedArrayTable<RoomConnection, WallSet>();
 
@@ -233,10 +232,11 @@ void generate(int start_cell, int end_cell, int n, int m) {
     else {
         std::cout << "there is entrance\n count of sets: " << rooms.count() << std::endl;
     }
-    for (int i = 0; i < n * m; i++) {
-        std::cout << i << " parent(" << rooms.find(i) << ")" << std::endl;
-    }
+    // for (int i = 0; i < n * m; i++) {
+    //     std::cout << i << " parent(" << rooms.find(i) << ")" << std::endl;
+    // }
     TVector<RoomConnection> keys = walls_to_destroy->get_keys();
+    shuffle(keys);
 
     for (auto key : keys) {
         WallSet* set = walls_to_destroy->find(key);
@@ -244,6 +244,11 @@ void generate(int start_cell, int end_cell, int n, int m) {
         Wall wall_to_destroy = set->get_wall(wall_index);
         int room1 = wall_to_destroy.first();
         int room2 = wall_to_destroy.second();
+
+        if (rooms.find(room1) == rooms.find(room2)) {
+            continue;
+        }
+
         rooms.unite(room1, room2);
         if (room2 == room1 + 1) {
             walls[2 * (room1 / m) + 1][2 * (room1 % m) + 2] = 0;
@@ -260,9 +265,9 @@ void generate(int start_cell, int end_cell, int n, int m) {
     else {
         std::cout << "there is entrance\n count of sets: " << rooms.count() << std::endl;
     }
-    for (int i = 0; i < n * m; i++) {
-        std::cout << i << " parent(" << rooms.find(i) << ")" << std::endl;
-    }
+    // for (int i = 0; i < n * m; i++) {
+    //     std::cout << i << " parent(" << rooms.find(i) << ")" << std::endl;
+    // }
 }
 
 void print_labyrinth(const Matrix<int>& walls) {
