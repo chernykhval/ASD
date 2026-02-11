@@ -705,7 +705,7 @@ typename TVector<T>::Iterator TVector<T>::erase(Iterator position) {
         reset_memory_for_delete();
     }
 
-    return position;
+    return position;  // TODO: fix to return valid iterator
 }
 
 template<typename T>
