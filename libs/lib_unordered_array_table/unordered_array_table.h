@@ -4,6 +4,7 @@
 #define LIBS_LIB_UNORDERED_ARRAY_TABLE_UNORDERED_ARRAY_TABLE_H_
 
 #include <sstream>
+#include <string>
 
 #include "libs/lib_itable/itable.h"
 #include "libs/lib_tvector/tvector.h"
