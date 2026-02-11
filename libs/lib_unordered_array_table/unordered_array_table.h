@@ -21,10 +21,13 @@ class UnorderedArrayTable : public ITable<Key, Value>{
     void insert(const Key& key, const Value& value) override;
     void erase(const Key& key) override;
     Value* find(const Key& key) override;
+    const Value* find(const Key& key) const override;
     bool is_empty() const override;
     void clear() override;
     size_t size() const override;
     std::string to_string() const override;
+    TVector<Key> get_keys() const override;
+    bool contains(const Key& key) const override;
 };
 
 template<typename Key, typename Value>
@@ -65,6 +68,17 @@ Value* UnorderedArrayTable<Key, Value>::find(const Key& key) {
 }
 
 template<typename Key, typename Value>
+const Value* UnorderedArrayTable<Key, Value>::find(const Key& key) const {
+    for (const auto& row : rows) {
+        if (row.first == key) {
+            return &row.second;
+        }
+    }
+
+    return nullptr;
+}
+
+template<typename Key, typename Value>
 bool UnorderedArrayTable<Key, Value>::is_empty() const {
     return rows.is_empty();
 }
@@ -91,5 +105,22 @@ std::string UnorderedArrayTable<Key, Value>::to_string() const {
 
     return ss.str();
 }
+
+template<typename Key, typename Value>
+TVector<Key> UnorderedArrayTable<Key, Value>::get_keys() const {
+    TVector<Key> keys;
+
+    for (const auto& row : rows) {
+        keys.push_back(row.first);
+    }
+
+    return keys;
+}
+
+template<typename Key, typename Value>
+bool UnorderedArrayTable<Key, Value>::contains(const Key& key) const {
+    return find(key) != nullptr;
+}
+
 
 #endif  // LIBS_LIB_UNORDERED_ARRAY_TABLE_UNORDERED_ARRAY_TABLE_H_

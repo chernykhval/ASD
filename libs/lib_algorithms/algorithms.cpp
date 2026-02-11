@@ -4,6 +4,14 @@
 #include "libs/lib_algorithms/algorithms.h"
 #include "libs/lib_matrix/matrix.h"
 #include "libs/lib_dsu/dsu.h"
+#include "libs/lib_unordered_array_table/unordered_array_table.h"
+
+size_t get_random_index(size_t n) noexcept {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> index(0, n-1);
+    return index(gen);
+}
 
 int find_local_minimum_gradient_descent(const Matrix<int>& matrix) {
     std::random_device rd;
@@ -190,9 +198,67 @@ void generate(int start_cell, int end_cell, int n, int m) {
         }
     }
 
+
+    ITable<RoomConnection, WallSet>* walls_to_destroy = new UnorderedArrayTable<RoomConnection, WallSet>();
+
+    for (int i = 0; i < n * m; i++) {
+        int right = i + 1;
+        int bottom = i + m;
+
+        if ((i % m) + 1 < m && rooms.find(i) != rooms.find(right)) {
+            RoomConnection connection(rooms.find(i), rooms.find(right));
+
+            if (walls_to_destroy->contains(connection) == false) {
+                walls_to_destroy->insert(connection, WallSet());
+            }
+
+            walls_to_destroy->find(connection)->add(i, right);
+        }
+
+        if ((i / m) + 1 < n && rooms.find(i) != rooms.find(bottom)) {
+            RoomConnection connection(rooms.find(i), rooms.find(bottom));
+
+            if (walls_to_destroy->contains(connection) == false) {
+                walls_to_destroy->insert(connection, WallSet());
+            }
+
+            walls_to_destroy->find(connection)->add(i, bottom);
+        }
+    }
+
     print_labyrinth(walls);
     if (rooms.find(start_cell) != rooms.find(end_cell)) {
         std::cout << "there is no entrance\n count of sets: " << rooms.count() << std::endl;
+    }
+    else {
+        std::cout << "there is entrance\n count of sets: " << rooms.count() << std::endl;
+    }
+    for (int i = 0; i < n * m; i++) {
+        std::cout << i << " parent(" << rooms.find(i) << ")" << std::endl;
+    }
+    TVector<RoomConnection> keys = walls_to_destroy->get_keys();
+
+    for (auto key : keys) {
+        WallSet* set = walls_to_destroy->find(key);
+        int wall_index = get_random_index(set->size());
+        Wall wall_to_destroy = set->get_wall(wall_index);
+        int room1 = wall_to_destroy.first();
+        int room2 = wall_to_destroy.second();
+        rooms.unite(room1, room2);
+        if (room2 == room1 + 1) {
+            walls[2 * (room1 / m) + 1][2 * (room1 % m) + 2] = 0;
+        }
+        else {
+            walls[2 * (room1 / m) + 2][2 * (room1 % m) + 1] = 0;
+        }
+    }
+
+    print_labyrinth(walls);
+    if (rooms.find(start_cell) != rooms.find(end_cell)) {
+        std::cout << "there is no entrance\n count of sets: " << rooms.count() << std::endl;
+    }
+    else {
+        std::cout << "there is entrance\n count of sets: " << rooms.count() << std::endl;
     }
     for (int i = 0; i < n * m; i++) {
         std::cout << i << " parent(" << rooms.find(i) << ")" << std::endl;

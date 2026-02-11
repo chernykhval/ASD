@@ -140,3 +140,7 @@ TEST(TestLabyrinthGenerate, start_and_end_exception) {
     EXPECT_THROW(generate(0, 4, 3, 3), std::invalid_argument);
     EXPECT_THROW(generate(4, 0, 3, 3), std::invalid_argument);
 }
+
+TEST(TestLabyrinthGenerate, generate) {
+    generate(0, 15, 4, 4);
+}
