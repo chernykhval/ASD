@@ -3,6 +3,8 @@
 #ifndef LIBS_LIB_UNORDERED_ARRAY_TABLE_UNORDERED_ARRAY_TABLE_H_
 #define LIBS_LIB_UNORDERED_ARRAY_TABLE_UNORDERED_ARRAY_TABLE_H_
 
+#include <sstream>
+
 #include "libs/lib_itable/itable.h"
 #include "libs/lib_tvector/tvector.h"
 
@@ -78,6 +80,15 @@ size_t UnorderedArrayTable<Key, Value>::size() const {
 
 template<typename Key, typename Value>
 std::string UnorderedArrayTable<Key, Value>::to_string() const {
-    return "table";
+    std::stringstream ss;
+
+    ss << "{key} : {value}\n";
+
+    for (const auto& row : rows) {
+        ss << "{" << row.first << "} : {" << row.second << "}\n";
+    }
+
+    return ss.str();
 }
+
 #endif  // LIBS_LIB_UNORDERED_ARRAY_TABLE_UNORDERED_ARRAY_TABLE_H_

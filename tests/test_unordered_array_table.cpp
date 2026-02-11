@@ -77,3 +77,18 @@ TEST(TestUnorderedArrayTable, multiple_elements_scenario) {
     EXPECT_EQ("one", *table.find(1));
     EXPECT_EQ("three", *table.find(3));
 }
+
+TEST(TestUnorderedArrayTable, to_string) {
+    UnorderedArrayTable<int, std::string> table;
+
+    table.insert(1, "one");
+    table.insert(2, "two");
+    table.insert(3, "three");
+
+    std::string text = "{key} : {value}\n"
+                       "{1} : {one}\n"
+                       "{2} : {two}\n"
+                       "{3} : {three}\n";
+
+    EXPECT_EQ(text, table.to_string());
+}
