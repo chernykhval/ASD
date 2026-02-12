@@ -4,6 +4,8 @@
 #define LIBS_LIB_ALGORITHMS_ALGORITHMS_H_
 
 #include "libs/lib_matrix/matrix.h"
+#include "libs/lib_dsu/dsu.h"
+#include "libs/lib_unordered_array_table/unordered_array_table.h"
 
 struct RoomConnection {
     int room1;
@@ -26,7 +28,8 @@ struct RoomConnection {
         return room1 == other.room1 && room2 == other.room2;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const RoomConnection& rc) {
+    friend std::ostream& operator<<(std::ostream& os
+        , const RoomConnection& rc) {
         os << "[" << rc.room1 << "<->" << rc.room2 << "]";
         return os;
     }
@@ -92,7 +95,14 @@ int find_local_minimum_gradient_descent(const Matrix<int>& matrix);
 
 int calculate_islands_count(const Matrix<int>& matrix);
 
-void generate(int start_cell, int end_cell, int n, int m);
+Matrix<int> generate(int start_cell, int end_cell, int rows, int cols);
 void print_labyrinth(const Matrix<int>& walls);
+void validate_input(int start_cell, int end_cell, int rows, int cols);
+Matrix<int> create_initial_matrix(int rows, int cols,
+    int start_cell, int end_cell);
+UnorderedArrayTable<RoomConnection, WallSet> collect_wall_candidates(int rows,
+    int cols, DSU& rooms);
+void build_labyrinth(Matrix<int>& walls, DSU& rooms,
+    UnorderedArrayTable<RoomConnection, WallSet>& table, int cols);
 
 #endif  // LIBS_LIB_ALGORITHMS_ALGORITHMS_H_

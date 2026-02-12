@@ -1,15 +1,17 @@
 // Copyright 2025 Chernykh Valentin
 
 #include <random>
+#include <iostream>
 #include "libs/lib_algorithms/algorithms.h"
 #include "libs/lib_matrix/matrix.h"
 #include "libs/lib_dsu/dsu.h"
 #include "libs/lib_unordered_array_table/unordered_array_table.h"
 
 size_t get_random_index(size_t n) noexcept {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> index(0, n-1);
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_int_distribution<size_t> index(0, n - 1);
+
     return index(gen);
 }
 
@@ -98,148 +100,99 @@ int calculate_islands_count(const Matrix<int>& matrix) {
     return islands.count() - water_count;
 }
 
-// void generate(int start_cell, int end_cell, int n, int m) {
-//     std::random_device rd;
-//     std::mt19937 gen(rd());
-//     std::uniform_int_distribution<> is_wall(0, 1);
-//
-//     Matrix<int> vertical_walls(n + 1, m);
-//     Matrix<int> horizontal_walls(n, m + 1);
-//     DSU rooms(n * m);
-//
-//     for (int i = 0; i < n + 1; i++) {
-//         for (int j = 0; j < m; j++) {
-//             vertical_walls[i][j] = 1;
-//         }
-//     }
-//     for (int i = 0; i < n; i++) {
-//         for (int j = 0; j < m + 1; j++) {
-//             horizontal_walls[i][j] = 1;
-//         }
-//     }
-//
-//     for (int i = 0; i < n * m; i++) {
-//         if ((i % m) + 1 == m && is_wall(gen) == 0) {
-//             rooms.unite(i, i + 1);
-//             vertical_walls[i / m][(i % m) + 1] = 0;
-//         }
-//
-//         if ((i / m) + 1 == n && is_wall(gen) == 0) {
-//             rooms.unite(i, i + m);
-//             horizontal_walls[(i / m) + 1][i % m] = 0;
-//         }
-//     }
-// }
-
-void generate(int start_cell, int end_cell, int n, int m) {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> is_wall(0, 99);
-
-    Matrix<int> walls(2 * n + 1, 2 * m + 1);
-    DSU rooms(n * m);
-
+void validate_input(int start_cell, int end_cell, int rows, int cols) {
     if (start_cell < 0 || end_cell < 0 ||
-        start_cell >= n * m || end_cell >= n * m) {
+        start_cell >= rows * cols || end_cell >= rows * cols) {
         throw std::invalid_argument("Error: invalid start_cell or end_cell");
-    }
+        }
     if (start_cell == end_cell) {
         throw std::invalid_argument("Error: start_cell equal end_cell");
     }
 
-    int start_cell_row = start_cell / m;
-    int start_cell_column = start_cell % m;
+    int start_cell_row = start_cell / cols;
+    int start_cell_column = start_cell % cols;
 
-    if (start_cell_row != 0 && start_cell_row != n - 1 &&
-       start_cell_column != 0 && start_cell_column != m - 1) {
+    if (start_cell_row != 0 && start_cell_row != rows - 1 &&
+       start_cell_column != 0 && start_cell_column != cols - 1) {
         throw std::invalid_argument("Error: start_cell not on the border");
     }
 
-    int end_cell_row = end_cell / m;
-    int end_cell_column = end_cell % m;
+    int end_cell_row = end_cell / cols;
+    int end_cell_column = end_cell % cols;
 
-    if (end_cell_row != 0 && end_cell_row != n - 1 &&
-        end_cell_column != 0 && end_cell_column != m - 1) {
+    if (end_cell_row != 0 && end_cell_row != rows - 1 &&
+        end_cell_column != 0 && end_cell_column != cols - 1) {
         throw std::invalid_argument("Error: end_cell not on the border");
     }
+}
 
-    for (int i = 0; i < 2 * n + 1; i++) {
-        for (int j = 0; j < 2 * m + 1; j++) {
-            walls[i][j] = 1;
-        }
-    }
+Matrix<int> create_initial_matrix(int rows, int cols,
+    int start_cell, int end_cell) {
 
-    for (int i = 0; i < n * m; i++) {
-        int void_cell_i = 2 * (i / m) + 1;
-        int void_cell_j = 2 * (i % m) + 1;
+    Matrix<int> walls(2 * rows + 1, 2 * cols + 1);
 
-        if (i == start_cell) {
-            walls[void_cell_i][void_cell_j] = 2;
-        }
-        else if (i == end_cell) {
-            walls[void_cell_i][void_cell_j] = 3;
-        }
-        else {
-            walls[void_cell_i][void_cell_j] = 0;
-        }
+    for (int i = 0; i < 2 * rows + 1; i++) {
+        for (int j = 0; j < 2 * cols + 1; j++) {
+            if (i % 2 != 0 && j % 2 != 0) {
+                int cell_row = (i - 1) / 2;
+                int cell_col = (j - 1) / 2;
+                int current_cell = cell_row  * cols + cell_col;
 
-        if ((i % m) + 1 < m && is_wall(gen) < 0) {
-            if (rooms.find(i) != rooms.find(i+1)) {
-                rooms.unite(i, i + 1);
-                walls[2 * (i / m) + 1][2 * (i % m) + 2] = 0;
-            }
-        }
-
-        if ((i / m) + 1 < n && is_wall(gen) < 0) {
-            if (rooms.find(i) != rooms.find(i + m)) {
-                rooms.unite(i, i + m);
-                walls[2 * (i / m) + 2][2 * (i % m) + 1] = 0;
+                if (current_cell == start_cell) {
+                    walls[i][j] = 2;
+                } else if (current_cell == end_cell) {
+                    walls[i][j] = 3;
+                } else {
+                    walls[i][j] = 0;
+                }
+            } else {
+                walls[i][j] = 1;
             }
         }
     }
 
-    ITable<RoomConnection, WallSet>* walls_to_destroy = new UnorderedArrayTable<RoomConnection, WallSet>();
+    return walls;
+}
 
-    for (int i = 0; i < n * m; i++) {
+UnorderedArrayTable<RoomConnection, WallSet> collect_wall_candidates(int rows,
+    int cols, DSU& rooms) {
+    UnorderedArrayTable<RoomConnection, WallSet> walls_to_destroy;
+
+    for (int i = 0; i < rows * cols; i++) {
         int right = i + 1;
-        int bottom = i + m;
+        int bottom = i + cols;
 
-        if ((i % m) + 1 < m && rooms.find(i) != rooms.find(right)) {
+        if ((i % cols) + 1 < cols && rooms.find(i) != rooms.find(right)) {
             RoomConnection connection(rooms.find(i), rooms.find(right));
 
-            if (walls_to_destroy->contains(connection) == false) {
-                walls_to_destroy->insert(connection, WallSet());
+            if (walls_to_destroy.contains(connection) == false) {
+                walls_to_destroy.insert(connection, WallSet());
             }
 
-            walls_to_destroy->find(connection)->add(i, right);
+            walls_to_destroy.find(connection)->add(i, right);
         }
 
-        if ((i / m) + 1 < n && rooms.find(i) != rooms.find(bottom)) {
+        if ((i / cols) + 1 < rows && rooms.find(i) != rooms.find(bottom)) {
             RoomConnection connection(rooms.find(i), rooms.find(bottom));
 
-            if (walls_to_destroy->contains(connection) == false) {
-                walls_to_destroy->insert(connection, WallSet());
+            if (walls_to_destroy.contains(connection) == false) {
+                walls_to_destroy.insert(connection, WallSet());
             }
 
-            walls_to_destroy->find(connection)->add(i, bottom);
+            walls_to_destroy.find(connection)->add(i, bottom);
         }
     }
 
-    print_labyrinth(walls);
-    if (rooms.find(start_cell) != rooms.find(end_cell)) {
-        std::cout << "there is no entrance\n count of sets: " << rooms.count() << std::endl;
-    }
-    else {
-        std::cout << "there is entrance\n count of sets: " << rooms.count() << std::endl;
-    }
-    // for (int i = 0; i < n * m; i++) {
-    //     std::cout << i << " parent(" << rooms.find(i) << ")" << std::endl;
-    // }
-    TVector<RoomConnection> keys = walls_to_destroy->get_keys();
+    return walls_to_destroy;
+}
+
+void build_labyrinth(Matrix<int>& walls, DSU& rooms,
+    UnorderedArrayTable<RoomConnection, WallSet>& table, int cols) {
+    TVector<RoomConnection> keys = table.get_keys();
     shuffle(keys);
 
     for (auto key : keys) {
-        WallSet* set = walls_to_destroy->find(key);
+        WallSet* set = table.find(key);
         int wall_index = get_random_index(set->size());
         Wall wall_to_destroy = set->get_wall(wall_index);
         int room1 = wall_to_destroy.first();
@@ -250,24 +203,26 @@ void generate(int start_cell, int end_cell, int n, int m) {
         }
 
         rooms.unite(room1, room2);
-        if (room2 == room1 + 1) {
-            walls[2 * (room1 / m) + 1][2 * (room1 % m) + 2] = 0;
-        }
-        else {
-            walls[2 * (room1 / m) + 2][2 * (room1 % m) + 1] = 0;
-        }
-    }
 
-    print_labyrinth(walls);
-    if (rooms.find(start_cell) != rooms.find(end_cell)) {
-        std::cout << "there is no entrance\n count of sets: " << rooms.count() << std::endl;
+        if (room2 == room1 + 1) {
+            walls[2 * (room1 / cols) + 1][2 * (room1 % cols) + 2] = 0;
+        } else {
+            walls[2 * (room1 / cols) + 2][2 * (room1 % cols) + 1] = 0;
+        }
     }
-    else {
-        std::cout << "there is entrance\n count of sets: " << rooms.count() << std::endl;
-    }
-    // for (int i = 0; i < n * m; i++) {
-    //     std::cout << i << " parent(" << rooms.find(i) << ")" << std::endl;
-    // }
+}
+
+Matrix<int> generate(int start_cell, int end_cell, int rows, int cols) {
+    validate_input(start_cell, end_cell, rows, cols);
+    Matrix<int> walls = create_initial_matrix(rows, cols, start_cell, end_cell);
+
+    DSU rooms(rows * cols);
+    UnorderedArrayTable<RoomConnection, WallSet> walls_to_destroy =
+        collect_wall_candidates(rows, cols, rooms);
+
+    build_labyrinth(walls, rooms, walls_to_destroy, cols);
+
+    return walls;
 }
 
 void print_labyrinth(const Matrix<int>& walls) {
@@ -293,8 +248,7 @@ void print_labyrinth(const Matrix<int>& walls) {
 
             if (i % 2 == 0) {
                 std::cout << "#";
-            }
-            else {
+            } else {
                 std::cout << "#";
             }
         }
