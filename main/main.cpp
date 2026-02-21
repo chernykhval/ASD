@@ -1,6 +1,6 @@
 // Copyright 2024 Marina Usova
 
-#define LIST_TEST
+#define SKIP_LIST_TEST
 
 #include "libs/lib_matrix/matrix.h"
 #include "libs/lib_triangle_matrix/triangle_matrix.h"
@@ -333,7 +333,7 @@ int main() {
 int main() {
     try {
         List<int> list;
-        std::cout << "Create emoty list. empty: " << list.is_empty()
+        std::cout << "Create empty list. empty: " << list.is_empty()
         << std::endl;
 
         list.push_back(1);
@@ -397,3 +397,34 @@ int main() {
 }
 
 #endif  // LIST_TEST
+
+#ifdef SKIP_LIST_TEST
+
+#include "libs/lib_list/list.h"
+#include "libs/lib_skip_list/skip_list.h"
+
+int main() {
+    SkipList<int, int> skip_list;
+
+    std::cout << "start insert" << std::endl;
+    std::cout << "stage: 1" << std::endl;
+    skip_list.insert(1, 10);
+    std::cout << "print list" << std::endl;
+    skip_list.print();
+    std::cout << "stage: 2" << std::endl;
+    skip_list.insert(2, 20);
+    std::cout << "print list" << std::endl;
+    skip_list.print();
+    std::cout << "stage: 3" << std::endl;
+    skip_list.insert(3, 30);
+    std::cout << "print list" << std::endl;
+    skip_list.print();
+    std::cout << "stage: 4" << std::endl;
+    skip_list.insert(4, 40);
+    std::cout << "print list" << std::endl;
+    skip_list.print();
+    system("pause");
+    return 0;
+}
+
+#endif  // SKIP_LIST_TEST

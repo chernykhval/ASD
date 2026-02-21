@@ -258,7 +258,7 @@ const noexcept {
 
 template<typename T>
 typename List<T>::ConstIterator& List<T>::ConstIterator::
-operator=(const ConstIterator &other) noexcept {
+operator=(const ConstIterator& other) noexcept {
     if (this != &other) {
         _current = other._current;
     }
