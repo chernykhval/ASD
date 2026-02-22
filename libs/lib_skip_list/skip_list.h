@@ -7,8 +7,10 @@
 #include <random>
 #include <cstdio>
 #include <iostream>
+#include <sstream>
 
 #include "libs/lib_list/list.h"
+#include "libs/lib_matrix/matrix.h"
 
 template<typename Key, typename Value>
 class SkipList {
@@ -92,7 +94,6 @@ void SkipList<Key, Value>::insert(const Key& key, const Value& value) {
 
     for (size_t i = 0; i < _level; ++i) {
         Node* current_node = *head;
-        Node* prev_node = nullptr;
         size_t current_index = _level - i - 1;
 
         if (current_node == nullptr) {
@@ -143,26 +144,39 @@ void SkipList<Key, Value>::insert(const Key& key, const Value& value) {
 
 template<typename Key, typename Value>
 void SkipList<Key, Value>::print() const noexcept {
-    int current_level = _level - 1;
+    TVector<Node*> nodes;
+    int index = 0;
 
     for (auto head : _heads) {
+        nodes.push_back(head);
+        ++index;
+    }
 
-        std::cout << "[h] ";
-        Node* node = head;
+    for (int i = 0; i < _level; ++i) {
+        size_t current_index = _level - i - 1;
+        std::stringstream ss;
+        std::stringstream buffer;
+        ss << "[head_" << current_index + 1 << "]";
+        Node* last_row_element = nodes[_level - 1];
+        Node* current_row_element = nodes[i];
 
-        for (int i = 0; i < _size; ++i) {
-            if (node == nullptr) {
-                std::cout << "[n] ";
+        for (int j = 0; j < _size; ++j) {
+            if (last_row_element == current_row_element) {
+                ss << "->[" << current_row_element->get_value() << "]";
+                current_row_element = current_row_element->_next[current_index];
             }
             else {
-                std::cout << "[" << node->_pair.second << "] ";
-                node = node->_next[current_level];
+                buffer << last_row_element->get_value();
+                ss << std::string(buffer.str().length() + 4, '-');
+                buffer.str("");
+                buffer.clear();
             }
+
+            last_row_element = last_row_element->_next[0];
         }
 
-        current_level--;
-
-        std::cout << '\n';
+        ss << "->[null]" << std::endl;
+        std::cout << ss.str();
     }
 }
 
