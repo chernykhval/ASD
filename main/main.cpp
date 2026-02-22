@@ -400,7 +400,6 @@ int main() {
 
 #ifdef SKIP_LIST_TEST
 
-#include "libs/lib_list/list.h"
 #include "libs/lib_skip_list/skip_list.h"
 
 int main() {

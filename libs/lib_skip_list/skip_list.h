@@ -1,13 +1,14 @@
 // Copyright 2026 Chernykh Valentin
 
-#ifndef LIBS_LIB_SKIP_LIST_SKIP_LIST_H
-#define LIBS_LIB_SKIP_LIST_SKIP_LIST_H
+#ifndef LIBS_LIB_SKIP_LIST_SKIP_LIST_H_
+#define LIBS_LIB_SKIP_LIST_SKIP_LIST_H_
 
 #include <utility>
 #include <random>
 #include <cstdio>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 #include "libs/lib_list/list.h"
 #include "libs/lib_matrix/matrix.h"
@@ -20,12 +21,13 @@ class SkipList {
         Node** _next;
         size_t _size;
 
-        explicit Node(const Key&, const Value&,
+        Node(const Key&, const Value&,
             Node** next = nullptr, size_t size = 0) noexcept;
+        Node(const Key&, const Value&, size_t size = 0) noexcept;
         ~Node() noexcept;
 
         Value& get_value() noexcept;
-        Key& get_key() const noexcept;
+        const Key& get_key() const noexcept;
     };
 
     List<Node*> _heads;
@@ -39,15 +41,25 @@ class SkipList {
     void insert(const Key&, const Value&);
     void print() const noexcept;
 
-private:
+ private:
     bool flip_coin() const noexcept;
     size_t calculate_level() const noexcept;
 };
 
 template<typename Key, typename Value>
 SkipList<Key, Value>::Node::Node(const Key& key, const Value& value,
-            Node** next, size_t size)noexcept : _pair(key, value),
+            Node** next, size_t size) noexcept : _pair(key, value),
             _next(next), _size(size) {
+}
+
+template<typename Key, typename Value>
+SkipList<Key, Value>::Node::Node(const Key& key, const Value& value,
+size_t size) noexcept : _pair(key, value), _size(size) {
+    if (size == 0) {
+        _next = nullptr;
+    } else {
+        _next = new Node*[size];
+    }
 }
 
 template<typename Key, typename Value>
@@ -61,12 +73,13 @@ Value& SkipList<Key, Value>::Node::get_value() noexcept {
 }
 
 template<typename Key, typename Value>
-Key& SkipList<Key, Value>::Node::get_key() const noexcept {
+const Key& SkipList<Key, Value>::Node::get_key() const noexcept {
     return _pair.first;
 }
 
 template<typename Key, typename Value>
-SkipList<Key, Value>::SkipList() : _heads(), _level(0), _max_level(5), _size(0) {
+SkipList<Key, Value>::SkipList() : _heads(), _level(0),
+_max_level(5), _size(0) {
 }
 
 template<typename Key, typename Value>
@@ -87,15 +100,15 @@ void SkipList<Key, Value>::insert(const Key& key, const Value& value) {
         }
     }
 
-    Node** next_nodes = new Node*[level];
-    Node* new_node = new Node(key, value, next_nodes, level);
+    Node* new_node = new Node(key, value, level);
 
     auto head_it = _heads.begin();
     Node* current_node = nullptr;
 
-    for (int current_index = _level - 1; current_index >= 0; --current_index, ++head_it) {
+    for (int current_index = _level - 1; current_index >= 0;
+        --current_index, ++head_it) {
         if (current_node == nullptr) {
-            if (*head_it == nullptr || (*head_it)->get_value() > value) {
+            if (*head_it == nullptr || (*head_it)->get_key() > key) {
                 if (current_index < level) {
                     new_node->_next[current_index] = *head_it;
                     *head_it = new_node;
@@ -108,7 +121,7 @@ void SkipList<Key, Value>::insert(const Key& key, const Value& value) {
         }
 
         while (current_node->_next[current_index] != nullptr &&
-            current_node->_next[current_index]->get_value() <= value) {
+            current_node->_next[current_index]->get_key() <= key) {
             current_node = current_node->_next[current_index];
         }
 
@@ -141,12 +154,13 @@ void SkipList<Key, Value>::print() const noexcept {
 
         for (int j = 0; j < _size; ++j) {
             if (last_row_element == current_row_element) {
-                ss << "->[" << current_row_element->get_value() << "]";
+                ss << "->[" << current_row_element->get_key() << ":"
+                << current_row_element->get_value() << "]";
                 current_row_element = current_row_element->_next[current_index];
-            }
-            else {
-                buffer << last_row_element->get_value();
-                ss << std::string(buffer.str().length() + 4, '-');
+            } else {
+                buffer << "->[" << last_row_element->get_key() << ":"
+                << last_row_element->get_value() << "]";
+                ss << std::string(buffer.str().length(), '-');
                 buffer.str("");
                 buffer.clear();
             }
@@ -179,4 +193,4 @@ size_t SkipList<Key, Value>::calculate_level() const noexcept {
     return level;
 }
 
-#endif  // LIBS_LIB_SKIP_LIST_SKIP_LIST_H
+#endif  // LIBS_LIB_SKIP_LIST_SKIP_LIST_H_
