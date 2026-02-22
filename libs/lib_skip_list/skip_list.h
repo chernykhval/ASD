@@ -21,9 +21,13 @@ class SkipList {
         explicit Node(const Key&, const Value&,
             Node** next = nullptr, size_t size = 0) noexcept;
         ~Node() noexcept;
+
+        Value& get_value() noexcept;
+        Key& get_key() const noexcept;
     };
 
     List<Node*> _heads;
+    size_t _level;
     size_t _size;
     size_t _max_level;
 
@@ -50,24 +54,34 @@ SkipList<Key, Value>::Node::~Node() noexcept {
 }
 
 template<typename Key, typename Value>
-SkipList<Key, Value>::SkipList() : _heads(), _size(0), _max_level(5) {
+Value& SkipList<Key, Value>::Node::get_value() noexcept {
+    return _pair.second;
+}
+
+template<typename Key, typename Value>
+Key& SkipList<Key, Value>::Node::get_key() const noexcept {
+    return _pair.first;
+}
+
+template<typename Key, typename Value>
+SkipList<Key, Value>::SkipList() : _heads(), _level(0), _max_level(5), _size(0) {
 }
 
 template<typename Key, typename Value>
 SkipList<Key, Value>::SkipList(size_t max_level) :
-_heads(), _size(0), _max_level(max_level) {
+_heads(), _level(0), _max_level(max_level), _size(0) {
 }
 
 template<typename Key, typename Value>
 void SkipList<Key, Value>::insert(const Key& key, const Value& value) {
     size_t level = calculate_level();
 
-    if (level > _size) {
-        size_t offset = level - _size;
+    if (level > _level) {
+        size_t offset = level - _level;
 
         for (int i = 0; i < offset; ++i) {
             _heads.push_front(nullptr);
-            ++_size;
+            ++_level;
         }
     }
 
@@ -76,14 +90,13 @@ void SkipList<Key, Value>::insert(const Key& key, const Value& value) {
 
     auto head = _heads.begin();
 
-    for (size_t i = 0; i < _size; ++i) {
+    for (size_t i = 0; i < _level; ++i) {
         Node* current_node = *head;
         Node* prev_node = nullptr;
-        size_t current_index = _size - i - 1;
+        size_t current_index = _level - i - 1;
 
         if (current_node == nullptr) {
             if (current_index < level) {
-                //next_nodes[current_index] = current_node->_next[current_index];
                 new_node->_next[current_index] = nullptr;
                 *head = new_node;
             }
@@ -91,68 +104,53 @@ void SkipList<Key, Value>::insert(const Key& key, const Value& value) {
             ++head;
             continue;
         }
-        if (current_node->_pair.second > value) {
-            if (current_index < level) {
-                //next_nodes[current_index] = current_node->_next[current_index];
-                new_node->_next[current_index] = current_node->_next[current_index];
-                current_node->_next[current_index] = new_node;
-            }
 
-            ++head;
-            continue;
-        }
-        if (current_node->_next[current_index] == nullptr) {
+        if (current_node->get_value() > value) {
             if (current_index < level) {
-                //next_nodes[current_index] = current_node->_next[current_index];
-                new_node->_next[current_index] = current_node->_next[current_index];
-                current_node->_next[current_index] = new_node;
+                new_node->_next[current_index] = *head;
+                *head = new_node;
             }
 
             ++head;
             continue;
         }
 
-        while (true) {
-            if (current_node->_next[current_index]->_pair.second <= value) {
-                prev_node = current_node;
-                current_node = current_node->_next[current_index];
-                continue;
-            }
+       while (true) {
+           if (current_node->_next[current_index] != nullptr &&
+               current_node->_next[current_index]->get_value() <= value) {
+               current_node = current_node->_next[current_index];
+               continue;
+           }
 
-            if (current_index > 0) {
-                if (current_index < level) {
-                    //next_nodes[current_index] = current_node->_next[current_index];
-                    new_node->_next[current_index] = current_node->_next[current_index];
-                    current_node->_next[current_index] = new_node;
-                }
+           if (current_index < level) {
+               new_node->_next[current_index] = current_node->_next[current_index];
+               current_node->_next[current_index] = new_node;
+           }
 
-                --current_index;
-                continue;
-            }
+           if (current_index > 0) {
+               --current_index;
+               continue;
+           }
 
-            break; // current_node - звено после которого нужно вставить
-        }
+           break;
+       }
 
-        if (current_index < level) {
-            //next_nodes[current_index] = current_node->_next[current_index];
-            new_node->_next[current_index] = current_node->_next[current_index];
-            current_node->_next[current_index] = new_node;
-        }
-
-        ++head;
+        break;
     }
+
+    ++_size;
 }
 
 template<typename Key, typename Value>
 void SkipList<Key, Value>::print() const noexcept {
-    int current_level = _size - 1;
+    int current_level = _level - 1;
 
     for (auto head : _heads) {
 
         std::cout << "[h] ";
         Node* node = head;
 
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < _size; ++i) {
             if (node == nullptr) {
                 std::cout << "[n] ";
             }

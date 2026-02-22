@@ -404,25 +404,50 @@ int main() {
 #include "libs/lib_skip_list/skip_list.h"
 
 int main() {
-    SkipList<int, int> skip_list;
+    SkipList<int, int> skip_list(0);
 
     std::cout << "start insert" << std::endl;
+
     std::cout << "stage: 1" << std::endl;
     skip_list.insert(1, 10);
     std::cout << "print list" << std::endl;
     skip_list.print();
+
     std::cout << "stage: 2" << std::endl;
     skip_list.insert(2, 20);
     std::cout << "print list" << std::endl;
     skip_list.print();
+
     std::cout << "stage: 3" << std::endl;
     skip_list.insert(3, 30);
     std::cout << "print list" << std::endl;
     skip_list.print();
+
     std::cout << "stage: 4" << std::endl;
     skip_list.insert(4, 40);
     std::cout << "print list" << std::endl;
     skip_list.print();
+
+    std::cout << "stage: 5" << std::endl;
+    skip_list.insert(5, 35);
+    std::cout << "print list" << std::endl;
+    skip_list.print();
+
+    std::cout << "stage: 6" << std::endl;
+    skip_list.insert(6, 25);
+    std::cout << "print list" << std::endl;
+    skip_list.print();
+
+    std::cout << "stage: 7" << std::endl;
+    skip_list.insert(7, 15);
+    std::cout << "print list" << std::endl;
+    skip_list.print();
+
+    std::cout << "stage: 8" << std::endl;
+    skip_list.insert(8, 5);
+    std::cout << "print list" << std::endl;
+    skip_list.print();
+
     system("pause");
     return 0;
 }
