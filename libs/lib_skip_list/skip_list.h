@@ -90,53 +90,32 @@ void SkipList<Key, Value>::insert(const Key& key, const Value& value) {
     Node** next_nodes = new Node*[level];
     Node* new_node = new Node(key, value, next_nodes, level);
 
-    auto head = _heads.begin();
+    auto head_it = _heads.begin();
+    Node* current_node = nullptr;
 
-    for (size_t i = 0; i < _level; ++i) {
-        Node* current_node = *head;
-        size_t current_index = _level - i - 1;
-
+    for (int current_index = _level - 1; current_index >= 0; --current_index, ++head_it) {
         if (current_node == nullptr) {
-            if (current_index < level) {
-                new_node->_next[current_index] = nullptr;
-                *head = new_node;
+            if (*head_it == nullptr || (*head_it)->get_value() > value) {
+                if (current_index < level) {
+                    new_node->_next[current_index] = *head_it;
+                    *head_it = new_node;
+                }
+
+                continue;
             }
 
-            ++head;
-            continue;
+            current_node = *head_it;
         }
 
-        if (current_node->get_value() > value) {
-            if (current_index < level) {
-                new_node->_next[current_index] = *head;
-                *head = new_node;
-            }
-
-            ++head;
-            continue;
+        while (current_node->_next[current_index] != nullptr &&
+            current_node->_next[current_index]->get_value() <= value) {
+            current_node = current_node->_next[current_index];
         }
 
-       while (true) {
-           if (current_node->_next[current_index] != nullptr &&
-               current_node->_next[current_index]->get_value() <= value) {
-               current_node = current_node->_next[current_index];
-               continue;
-           }
-
-           if (current_index < level) {
-               new_node->_next[current_index] = current_node->_next[current_index];
-               current_node->_next[current_index] = new_node;
-           }
-
-           if (current_index > 0) {
-               --current_index;
-               continue;
-           }
-
-           break;
-       }
-
-        break;
+        if (current_index < level) {
+            new_node->_next[current_index] = current_node->_next[current_index];
+            current_node->_next[current_index] = new_node;
+        }
     }
 
     ++_size;
