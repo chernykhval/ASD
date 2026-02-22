@@ -36,9 +36,10 @@ class SkipList {
     size_t _max_level;
 
  public:
-    explicit  SkipList();
-    explicit  SkipList(size_t max_level);
+    SkipList();
+    explicit SkipList(size_t max_level);
     void insert(const Key&, const Value&);
+    bool contains(const Key& key) const;
     void print() const noexcept;
 
  private:
@@ -89,6 +90,10 @@ _heads(), _level(0), _max_level(max_level), _size(0) {
 
 template<typename Key, typename Value>
 void SkipList<Key, Value>::insert(const Key& key, const Value& value) {
+    if (contains(key)) {
+        throw std::invalid_argument("Key already exists");
+    }
+
     size_t level = calculate_level();
 
     if (level > _level) {
@@ -132,6 +137,38 @@ void SkipList<Key, Value>::insert(const Key& key, const Value& value) {
     }
 
     ++_size;
+}
+
+template<typename Key, typename Value>
+bool SkipList<Key, Value>::contains(const Key& key) const {
+    auto head_it = _heads.begin();
+    Node* current_node = nullptr;
+
+    for (int current_index = _level - 1; current_index >= 0;
+        --current_index, ++head_it) {
+        if (current_node == nullptr) {
+            if (*head_it == nullptr || (*head_it)->get_key() > key) {
+                continue;
+            }
+
+            if ((*head_it)->get_key() == key) {
+                return true;
+            }
+
+            current_node = *head_it;
+        }
+
+        while (current_node->_next[current_index] != nullptr &&
+            current_node->_next[current_index]->get_key() <= key) {
+            current_node = current_node->_next[current_index];
+
+            if (current_node->get_key() == key) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 template<typename Key, typename Value>
