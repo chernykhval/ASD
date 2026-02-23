@@ -19,7 +19,7 @@ class UnorderedArrayTable : public ITable<Key, Value>{
     ~UnorderedArrayTable() override = default;
 
     void insert(const Key& key, const Value& value) override;
-    void erase(const Key& key) override;
+    bool erase(const Key& key) override;
     Value* find(const Key& key) override;
     const Value* find(const Key& key) const override;
     bool is_empty() const override;
@@ -33,27 +33,24 @@ class UnorderedArrayTable : public ITable<Key, Value>{
 template<typename Key, typename Value>
 void UnorderedArrayTable<Key, Value>::
 insert(const Key& key, const Value& value) {
-    for (auto& row : rows) {
-        if (row.first == key) {
-            // row.second = value;
-            // return;
-            throw std::invalid_argument("Key already exists");
-        }
-    }
+   if (contains(key)) {
+       throw std::invalid_argument("Key already exists");
+   }
 
-    rows.push_back(std::pair<Key, Value>(key, value));
+    rows.push_back({key, value});
 }
 
 template<typename Key, typename Value>
-void UnorderedArrayTable<Key, Value>::erase(const Key& key) {
+bool UnorderedArrayTable<Key, Value>::erase(const Key& key) {
     for (auto it = rows.begin(); it != rows.end(); ++it) {
         if (it->first == key) {
             rows.erase(it);
-            return;
+            return true
+            ;
         }
     }
 
-    throw std::invalid_argument("Key not found");
+    return false;
 }
 
 template<typename Key, typename Value>
