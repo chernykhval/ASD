@@ -1,6 +1,6 @@
 // Copyright 2024 Marina Usova
 
-#define LIST_TEST
+#define LABYRINTH_TEST
 
 #include "libs/lib_matrix/matrix.h"
 #include "libs/lib_triangle_matrix/triangle_matrix.h"
@@ -397,3 +397,14 @@ int main() {
 }
 
 #endif  // LIST_TEST
+
+#ifdef LABYRINTH_TEST
+
+#include "libs/lib_algorithms/algorithms.h"
+
+int main() {
+    print_labyrinth(generate(0, 3474, 25, 139));
+    system("pause");
+    return 0;
+}
+#endif  // LABYRINTH_TEST
