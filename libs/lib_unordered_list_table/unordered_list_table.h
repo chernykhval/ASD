@@ -80,6 +80,7 @@ bool UnorderedListTable<Key, Value>::is_empty() const {
 
 template<typename Key, typename Value>
 void UnorderedListTable<Key, Value>::clear() {
+    _rows.clear();
 }
 
 template<typename Key, typename Value>

@@ -2,28 +2,28 @@
 
 #include <gtest/gtest.h>
 #include <string>
-#include "libs/lib_unordered_array_table/unordered_array_table.h"
+#include "libs/lib_unordered_list_table/unordered_list_table.h"
 
 #define EPSILON 0.000001
 
-TEST(TestUnorderedArrayTable, insert) {
-    UnorderedArrayTable<int, std::string> table;
+TEST(TestUnorderedListTable, insert) {
+    UnorderedListTable<int, std::string> table;
 
     table.insert(1, "hello");
 
     EXPECT_EQ(1, table.size());
 }
 
-TEST(TestUnorderedArrayTable, insert_exception) {
-    UnorderedArrayTable<int, std::string> table;
+TEST(TestUnorderedListTable, insert_exception) {
+    UnorderedListTable<int, std::string> table;
 
     table.insert(1, "hello");
 
     EXPECT_THROW(table.insert(1, "hello"), std::invalid_argument);
 }
 
-TEST(TestUnorderedArrayTable, erase_true) {
-    UnorderedArrayTable<int, std::string> table;
+TEST(TestUnorderedListTable, erase_true) {
+    UnorderedListTable<int, std::string> table;
 
     table.insert(1, "hello");
 
@@ -32,24 +32,24 @@ TEST(TestUnorderedArrayTable, erase_true) {
     EXPECT_EQ(0, table.size());
 }
 
-TEST(TestUnorderedArrayTable, erase_false) {
-    UnorderedArrayTable<int, std::string> table;
+TEST(TestUnorderedListTable, erase_false) {
+    UnorderedListTable<int, std::string> table;
 
     table.insert(1, "hello");
 
     EXPECT_FALSE(table.erase(2));
 }
 
-TEST(TestUnorderedArrayTable, find) {
-    UnorderedArrayTable<int, std::string> table;
+TEST(TestUnorderedListTable, find) {
+    UnorderedListTable<int, std::string> table;
 
     EXPECT_EQ(nullptr, table.find(1));
     table.insert(1, "hello");
     EXPECT_EQ("hello", *table.find(1));
 }
 
-TEST(TestUnorderedArrayTable, is_empty_and_clear) {
-    UnorderedArrayTable<int, std::string> table;
+TEST(TestUnorderedListTable, is_empty_and_clear) {
+    UnorderedListTable<int, std::string> table;
 
     EXPECT_EQ(true, table.is_empty());
     table.insert(1, "hello");
@@ -58,8 +58,8 @@ TEST(TestUnorderedArrayTable, is_empty_and_clear) {
     EXPECT_EQ(true, table.is_empty());
 }
 
-TEST(TestUnorderedArrayTable, multiple_elements_scenario) {
-    UnorderedArrayTable<int, std::string> table;
+TEST(TestUnorderedListTable, multiple_elements_scenario) {
+    UnorderedListTable<int, std::string> table;
 
     table.insert(1, "one");
     table.insert(2, "two");
@@ -79,8 +79,8 @@ TEST(TestUnorderedArrayTable, multiple_elements_scenario) {
     EXPECT_EQ("three", *table.find(3));
 }
 
-TEST(TestUnorderedArrayTable, to_string) {
-    UnorderedArrayTable<int, std::string> table;
+TEST(TestUnorderedListTable, to_string) {
+    UnorderedListTable<int, std::string> table;
 
     table.insert(1, "one");
     table.insert(2, "two");
