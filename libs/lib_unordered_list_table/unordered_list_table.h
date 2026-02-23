@@ -1,22 +1,22 @@
 // Copyright 2026 Chernykh Valentin
 
-#ifndef LIBS_LIB_UNORDERED_ARRAY_TABLE_UNORDERED_ARRAY_TABLE_H_
-#define LIBS_LIB_UNORDERED_ARRAY_TABLE_UNORDERED_ARRAY_TABLE_H_
+#ifndef LIBS_LIB_UNORDERED_LIST_TABLE_UNORDERED_LIST_TABLE_H_
+#define LIBS_LIB_UNORDERED_LIST_TABLE_UNORDERED_LIST_TABLE_H_
 
-#include <sstream>
 #include <string>
+#include <sstream>
 
+#include "libs/lib_list/list.h"
 #include "libs/lib_itable/itable.h"
-#include "libs/lib_tvector/tvector.h"
 
 template <typename Key, typename Value>
-class UnorderedArrayTable : public ITable<Key, Value> {
+class UnorderedListTable : public ITable<Key, Value> {
  private:
-    TVector<std::pair<Key, Value>> _rows;
+    List<std::pair<Key, Value>> _rows;
 
  public:
-    UnorderedArrayTable() = default;
-    ~UnorderedArrayTable() override = default;
+    UnorderedListTable() = default;
+    ~UnorderedListTable() override = default;
 
     void insert(const Key& key, const Value& value) override;
     bool erase(const Key& key) override;
@@ -31,8 +31,7 @@ class UnorderedArrayTable : public ITable<Key, Value> {
 };
 
 template<typename Key, typename Value>
-void UnorderedArrayTable<Key, Value>::
-insert(const Key& key, const Value& value) {
+void UnorderedListTable<Key, Value>::insert(const Key& key, const Value& value) {
     if (contains(key)) {
         throw std::invalid_argument("Key already exists");
     }
@@ -41,7 +40,7 @@ insert(const Key& key, const Value& value) {
 }
 
 template<typename Key, typename Value>
-bool UnorderedArrayTable<Key, Value>::erase(const Key& key) {
+bool UnorderedListTable<Key, Value>::erase(const Key& key) {
     for (auto it = _rows.begin(); it != _rows.end(); ++it) {
         if (it->first == key) {
             _rows.erase(it);
@@ -53,7 +52,7 @@ bool UnorderedArrayTable<Key, Value>::erase(const Key& key) {
 }
 
 template<typename Key, typename Value>
-Value* UnorderedArrayTable<Key, Value>::find(const Key& key) {
+Value* UnorderedListTable<Key, Value>::find(const Key& key) {
     for (auto& row : _rows) {
         if (row.first == key) {
             return &row.second;
@@ -64,7 +63,7 @@ Value* UnorderedArrayTable<Key, Value>::find(const Key& key) {
 }
 
 template<typename Key, typename Value>
-const Value* UnorderedArrayTable<Key, Value>::find(const Key& key) const {
+const Value* UnorderedListTable<Key, Value>::find(const Key& key) const {
     for (const auto& row : _rows) {
         if (row.first == key) {
             return &row.second;
@@ -75,22 +74,21 @@ const Value* UnorderedArrayTable<Key, Value>::find(const Key& key) const {
 }
 
 template<typename Key, typename Value>
-bool UnorderedArrayTable<Key, Value>::is_empty() const {
+bool UnorderedListTable<Key, Value>::is_empty() const {
     return _rows.is_empty();
 }
 
 template<typename Key, typename Value>
-void UnorderedArrayTable<Key, Value>::clear() {
-    _rows.clear();
+void UnorderedListTable<Key, Value>::clear() {
 }
 
 template<typename Key, typename Value>
-size_t UnorderedArrayTable<Key, Value>::size() const {
+size_t UnorderedListTable<Key, Value>::size() const {
     return _rows.size();
 }
 
 template<typename Key, typename Value>
-std::string UnorderedArrayTable<Key, Value>::to_string() const {
+std::string UnorderedListTable<Key, Value>::to_string() const {
     std::stringstream ss;
 
     ss << "{key} : {value}\n";
@@ -103,7 +101,7 @@ std::string UnorderedArrayTable<Key, Value>::to_string() const {
 }
 
 template<typename Key, typename Value>
-TVector<Key> UnorderedArrayTable<Key, Value>::get_keys() const {
+TVector<Key> UnorderedListTable<Key, Value>::get_keys() const {
     TVector<Key> keys;
 
     for (const auto& row : _rows) {
@@ -114,9 +112,8 @@ TVector<Key> UnorderedArrayTable<Key, Value>::get_keys() const {
 }
 
 template<typename Key, typename Value>
-bool UnorderedArrayTable<Key, Value>::contains(const Key& key) const {
+bool UnorderedListTable<Key, Value>::contains(const Key& key) const {
     return find(key) != nullptr;
 }
 
-
-#endif  // LIBS_LIB_UNORDERED_ARRAY_TABLE_UNORDERED_ARRAY_TABLE_H_
+#endif  // LIBS_LIB_UNORDERED_LIST_TABLE_UNORDERED_LIST_TABLE_H_
