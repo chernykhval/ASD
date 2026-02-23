@@ -31,7 +31,8 @@ class UnorderedListTable : public ITable<Key, Value> {
 };
 
 template<typename Key, typename Value>
-void UnorderedListTable<Key, Value>::insert(const Key& key, const Value& value) {
+void UnorderedListTable<Key, Value>::insert(const Key& key,
+    const Value& value) {
     if (contains(key)) {
         throw std::invalid_argument("Key already exists");
     }
