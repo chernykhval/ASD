@@ -5,6 +5,7 @@
 
 #include <cstddef>
 #include <iosfwd>
+#include <string>
 
 #include "libs/lib_list/list.h"
 
@@ -13,6 +14,7 @@ class Monom {
     static constexpr size_t VAR_COUNT = 3;
     double _coeff;
     int _powers[VAR_COUNT];
+
  public:
     explicit Monom(double coeff = 0.0, const int* powers = nullptr);
     Monom(const Monom& monom);
@@ -52,7 +54,7 @@ class Polynom {
     List<Monom> _monomes;
     std::string _name;
 
-public:
+ public:
     explicit Polynom(const std::string& name = "");
     Polynom(const Polynom& polynom);
 

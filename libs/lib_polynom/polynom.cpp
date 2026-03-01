@@ -12,6 +12,10 @@ Monom::Monom(double coeff, const int* powers) : _coeff(coeff) {
         }
     } else {
         for (size_t i = 0; i < VAR_COUNT; ++i) {
+            if (powers[i] < 0) {
+                throw std::out_of_range("Error: powers cannot be negative");
+            }
+
             _powers[i] = powers[i];
         }
     }
@@ -122,6 +126,12 @@ Monom& Monom::operator/=(const Monom& monom) {
         throw std::invalid_argument("Error: division by zero monom");
     }
 
+    for (size_t i = 0; i < VAR_COUNT; ++i) {
+        if (this->_powers[i] < monom._powers[i]) {
+            throw std::out_of_range("Error: resulting power would be negative");
+        }
+    }
+
     _coeff /= monom._coeff;
 
     for (size_t i = 0; i < VAR_COUNT; ++i) {
@@ -181,7 +191,10 @@ std::ostream& operator<<(std::ostream& os, const Monom& monom) {
 }
 
 std::istream& operator>>(std::istream& is, Monom& monom) {
-    is >> monom._coeff >> monom._powers[0] >> monom._powers[1] >> monom._powers[2];
+    is >> monom._coeff
+    >> monom._powers[0]
+    >> monom._powers[1]
+    >> monom._powers[2];
 
     return is;
 }
