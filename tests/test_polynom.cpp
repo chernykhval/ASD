@@ -424,4 +424,5 @@ TEST(TestMonom, InputFormatIsCorrect) {
     EXPECT_DOUBLE_EQ(m.calculate(1, 1, 1), 5.5);
 }
 
-// TODO(chernykh): Add unary minus test and exception test to output operator
+// TODO(chernykh): Add unary minus test and exception test
+//  to input/output operator for Monom class
