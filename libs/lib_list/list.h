@@ -99,6 +99,7 @@ class List {
     void erase(const Iterator&);
 
     void clear() noexcept;
+    size_t size() const noexcept;
 
     List& operator=(const List<T>&);
 
@@ -490,6 +491,11 @@ void List<T>::clear() noexcept {
     }
 
     _tail = nullptr;
+}
+
+template<typename T>
+size_t List<T>::size() const noexcept {
+    return _size;
 }
 
 template<typename T>

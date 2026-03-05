@@ -180,6 +180,50 @@ Monom& Monom::operator=(const Monom& monom) {
     return *this;
 }
 
+Polynom::Polynom(const std::string& name) : _name(name), _size(0), _monomes() {
+}
+
+Polynom::Polynom(const Polynom& polynom) : _name(polynom._name),
+_size(polynom._size), _monomes(polynom._monomes) {
+}
+
+Polynom& Polynom::operator+=(const Monom& monom) {
+    if (_monomes.is_empty()) {
+        _monomes.push_back(monom);
+
+        return *this;
+    }
+
+    for (auto it = _monomes.begin(); it != _monomes.end(); ++it) {
+        if (*it == monom) {
+            *it += monom;
+            return *this;
+        }
+    }
+
+    _monomes.push_back(monom);
+
+    return *this;
+}
+
+double Polynom::calculate(double x, double y, double z) const {
+    double result = 0.0;
+
+    for (auto& monom : _monomes) {
+        result += monom.calculate(x, y, z);
+    }
+
+    return  result;
+}
+
+size_t Polynom::size() const {
+    return _monomes.size();
+}
+
+std::string Polynom::name() const {
+    return _name;
+}
+
 std::ostream& operator<<(std::ostream& os, const Monom& monom) {
     os << "(" << monom._coeff
     << " * x^" << monom._powers[0]

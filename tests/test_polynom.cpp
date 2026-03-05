@@ -426,3 +426,56 @@ TEST(TestMonom, InputFormatIsCorrect) {
 
 // TODO(chernykh): Add unary minus test and exception test
 //  to input/output operator for Monom class
+
+TEST(TestPolynom, DefaultConstructorCreatesEmptyPolynom) {
+    Polynom p;
+
+    EXPECT_EQ(p.size(), 0);
+    EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 0.0);
+    EXPECT_EQ(p.name(), "");
+}
+
+TEST(TestPolynom, CopyConstructorCreatesExactCopy) {
+    Polynom p1;
+    Polynom p2(p1);
+
+    EXPECT_EQ(p2.size(), 0);
+    EXPECT_DOUBLE_EQ(p2.calculate(1, 1, 1), 0.0);
+    EXPECT_EQ(p2.name(), "");
+}
+
+TEST(TestPolynom, AddFirstMonom) {
+    Polynom p;
+    int powers[3] = {1, 2, 3};
+    Monom m(3.0, powers);
+
+    p += m;
+    EXPECT_EQ(p.size(), 1);
+    EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 3.0);
+}
+
+TEST(TestPolynom, test_1) {
+    Polynom p;
+    int pow[3] = {1, 2, 3};
+    Monom m1(3.0, pow);
+    Monom m2(4.0, pow);
+
+    p += m1;
+    p += m2;
+    EXPECT_EQ(p.size(), 1);
+    EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 7.0);
+}
+
+TEST(TestPolynom, test_2) {
+    Polynom p;
+    int pow1[3] = {1, 2, 3};
+    int pow2[3] = {2, 2, 3};
+    Monom m1(3.0, pow1);
+    Monom m2(4.0, pow2);
+
+    p += m1;
+    p += m2;
+    EXPECT_EQ(p.size(), 2);
+    EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 7.0);
+}
+

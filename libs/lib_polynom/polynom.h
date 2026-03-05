@@ -53,6 +53,7 @@ class Polynom {
  private:
     List<Monom> _monomes;
     std::string _name;
+    size_t _size;
 
  public:
     explicit Polynom(const std::string& name = "");
@@ -64,6 +65,13 @@ class Polynom {
     Polynom& operator+=(const Polynom& polynom);
     Polynom& operator-=(const Polynom& polynom);
     Polynom& operator*=(const Polynom& polynom);
+
+    Polynom operator+(const Monom& monom) const;
+    Polynom operator-(const Monom& monom) const;
+    Polynom operator*(const Monom& monom) const;
+    Polynom& operator+=(const Monom& monom);
+    Polynom& operator-=(const Monom& monom);
+    Polynom& operator*=(const Monom& monom);
 
     Polynom operator*(double value) const;
     Polynom operator/(double value) const;
@@ -79,6 +87,11 @@ class Polynom {
 
     friend std::ostream& operator<<(std::ostream& os, const Polynom& p);
     friend std::istream& operator>>(std::istream& is, Polynom& p);
+
+   Polynom& operator=(const Polynom& polynom);
+
+   size_t size() const;
+   std::string name() const;
 
  private:
     void add_monom(const Monom& m);
