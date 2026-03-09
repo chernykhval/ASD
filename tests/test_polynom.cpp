@@ -781,4 +781,101 @@ TEST(TestPolynom, MultiplyAssignByScalarAllMonoms) {
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
 
+TEST(TestPolynom, DivideAssignByScalar) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    Monom m5(6.0, pow5);
+    Monom m3(9.0, pow3);
+    Monom m1(3.0, pow1);
+
+    p += m5; p += m3; p += m1;
+    p /= 3.0;
+
+    Monom m5_expected(2.0, pow5);
+    Monom m3_expected(3.0, pow3);
+    Monom m1_expected(1.0, pow1);
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5_expected << " + " << m3_expected << " + " << m1_expected;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+}
+
+TEST(TestPolynom, DivideByScalar) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(4.0, pow5);
+    Monom m3(8.0, pow3);
+
+    p += m5; p += m3;
+
+    Polynom result = p / 2.0;
+
+    Monom m5_expected(2.0, pow5);
+    Monom m3_expected(4.0, pow3);
+
+    std::ostringstream oss_polynom;
+    oss_polynom << result;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5_expected << " + " << m3_expected;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+}
+
+TEST(TestPolynom, DivideByScalarDoesNotModifyOriginal) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    Monom m5(4.0, pow5);
+
+    p += m5;
+    Polynom result = p / 2.0;
+
+    std::ostringstream oss_original;
+    oss_original << p;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5;
+
+    EXPECT_EQ(oss_original.str(), oss_monom.str());
+}
+
+TEST(TestPolynom, DivideAssignByZeroThrows) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    Monom m5(2.0, pow5);
+
+    p += m5;
+
+    EXPECT_THROW(p /= 0.0, std::invalid_argument);
+}
+
+TEST(TestPolynom, DivideByZeroThrows) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    Monom m5(2.0, pow5);
+
+    p += m5;
+
+    EXPECT_THROW(p / 0.0, std::invalid_argument);
+}
+
+TEST(TestPolynom, DivideByScalarCalculate) {
+    Polynom p;
+    int pow1[3] = {1, 0, 0};
+    Monom m(6.0, pow1);
+
+    p += m;
+    Polynom result = p / 3.0;
+
+    EXPECT_DOUBLE_EQ(result.calculate(2, 0, 0), 4.0);
+    EXPECT_DOUBLE_EQ(result.calculate(3, 0, 0), 6.0);
+}
+
 

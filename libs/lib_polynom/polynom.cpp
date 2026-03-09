@@ -235,6 +235,13 @@ Polynom Polynom::operator*(double value) const {
     return result;
 }
 
+Polynom Polynom::operator/(double value) const {
+    Polynom result(*this);
+
+    result /= value;
+    return result;
+}
+
 Polynom Polynom::operator-() const {
     Polynom result(*this);
 
@@ -249,6 +256,18 @@ Polynom& Polynom::operator*=(double value) {
 
     for (auto& monom : _monomes) {
         monom *= value;
+    }
+
+    return *this;
+}
+
+Polynom& Polynom::operator/=(double value) {
+    if (value == 0.0) {
+        throw std::invalid_argument("Polynom: division by zero");
+    }
+
+    for (auto& monom : _monomes) {
+        monom /= value;
     }
 
     return *this;
