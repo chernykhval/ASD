@@ -184,14 +184,18 @@ Monom& Monom::operator=(const Monom& monom) {
     return *this;
 }
 
-Polynom::Polynom(const std::string& name) : _name(name), _size(0), _monomes() {
+Polynom::Polynom(const std::string& name) : _name(name), _monomes() {
 }
 
 Polynom::Polynom(const Polynom& polynom) : _name(polynom._name),
-_size(polynom._size), _monomes(polynom._monomes) {
+_monomes(polynom._monomes) {
 }
 
 Polynom& Polynom::operator+=(const Monom& monom) {
+    if (monom.is_zero()){
+        return *this;
+    }
+
     if(_monomes.is_empty() || monom > *(_monomes.begin())){
         _monomes.push_front(monom);
 
@@ -220,6 +224,32 @@ Polynom& Polynom::operator+=(const Monom& monom) {
     }
 
     _monomes.push_back(monom);
+
+    return *this;
+}
+
+Polynom Polynom::operator*(double value) const {
+    Polynom result(*this);
+
+    result *= value;
+    return result;
+}
+
+Polynom Polynom::operator-() const {
+    Polynom result(*this);
+
+    return result * (-1.0);
+}
+
+Polynom& Polynom::operator*=(double value) {
+    if (value == 0.0) {
+        _monomes.clear();
+        return *this;
+    }
+
+    for (auto& monom : _monomes) {
+        monom *= value;
+    }
 
     return *this;
 }

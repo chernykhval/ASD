@@ -54,7 +54,6 @@ class Polynom {
  private:
     List<Monom> _monomes;
     std::string _name;
-    size_t _size;
 
  public:
     explicit Polynom(const std::string& name = "");
