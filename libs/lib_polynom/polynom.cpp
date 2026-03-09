@@ -170,6 +170,10 @@ bool Monom::is_zero() const {
     return _coeff == 0;
 }
 
+bool Monom::equal(const Monom& other) const {
+    return *this == other && _coeff == other._coeff;
+}
+
 Monom& Monom::operator=(const Monom& monom) {
     if (this == &monom) {
         return *this;
@@ -240,6 +244,30 @@ Polynom Polynom::operator/(double value) const {
 
     result /= value;
     return result;
+}
+
+bool Polynom::operator==(const Polynom& other) const {
+    if (_monomes.size() != other._monomes.size()) {
+        return false;
+    }
+
+    auto it1 = _monomes.begin();
+    auto it2 = other._monomes.begin();
+
+    while (it1 != _monomes.end()) {
+        if (!it1->equal(*it2)) {
+            return false;
+        }
+
+        ++it1;
+        ++it2;
+    }
+
+    return true;
+}
+
+bool Polynom::operator!=(const Polynom& other) const {
+    return !(*this == other);
 }
 
 Polynom Polynom::operator-() const {

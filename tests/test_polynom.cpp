@@ -878,4 +878,75 @@ TEST(TestPolynom, DivideByScalarCalculate) {
     EXPECT_DOUBLE_EQ(result.calculate(3, 0, 0), 6.0);
 }
 
+TEST(TestPolynom, EqualPolynoms) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
 
+    p1 += m5; p1 += m3;
+    p2 += m5; p2 += m3;
+
+    EXPECT_TRUE(p1 == p2);
+}
+
+TEST(TestPolynom, NotEqualByCoeff) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    Monom m5_2(2.0, pow5);
+    Monom m5_3(3.0, pow5);
+
+    p1 += m5_2;
+    p2 += m5_3;
+
+    EXPECT_TRUE(p1 != p2);
+}
+
+TEST(TestPolynom, NotEqualByDegree) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(2.0, pow3);
+
+    p1 += m5;
+    p2 += m3;
+
+    EXPECT_TRUE(p1 != p2);
+}
+
+TEST(TestPolynom, NotEqualBySize) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p1 += m5; p1 += m3;
+    p2 += m5;
+
+    EXPECT_TRUE(p1 != p2);
+}
+
+TEST(TestPolynom, EqualEmptyPolynoms) {
+    Polynom p1, p2;
+
+    EXPECT_TRUE(p1 == p2);
+}
+
+TEST(TestPolynom, EqualAfterOperations) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(6.0, pow5);
+    Monom m3(3.0, pow3);
+    Monom m5_base(2.0, pow5);
+    Monom m3_base(1.0, pow3);
+
+    p1 += m5; p1 += m3;
+    p2 += m5_base; p2 += m3_base;
+    p2 *= 3.0;
+
+    EXPECT_TRUE(p1 == p2);
+}
