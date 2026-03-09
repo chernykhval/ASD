@@ -232,6 +232,15 @@ Polynom& Polynom::operator+=(const Monom& monom) {
     return *this;
 }
 
+Polynom& Polynom::operator-=(const Monom& monom) {
+    *this += (-monom);
+    return *this;
+}
+
+Polynom& Polynom::operator*=(const Monom& monom) {
+    return *this;
+}
+
 Polynom Polynom::operator*(double value) const {
     Polynom result(*this);
 

@@ -1018,3 +1018,142 @@ TEST(TestPolynom, AssignEmptyPolynom) {
     EXPECT_EQ(p1.size(), 0);
     EXPECT_TRUE(p1 == p2);
 }
+
+TEST(TestPolynom, SubtractFromMiddle) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    Monom m5(1.0, pow5);
+    Monom m3(1.0, pow3);
+    Monom m1(1.0, pow1);
+
+    p += m5; p += m3; p += m1;
+    EXPECT_EQ(p.size(), 3);
+    p -= m3;
+    EXPECT_EQ(p.size(), 2);
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5 << " + " << m1;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+}
+
+TEST(TestPolynom, SubtractFromFront) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    Monom m5(1.0, pow5);
+    Monom m3(1.0, pow3);
+    Monom m1(1.0, pow1);
+
+    p += m5; p += m3; p += m1;
+    EXPECT_EQ(p.size(), 3);
+    p -= m5;
+    EXPECT_EQ(p.size(), 2);
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p;
+
+    std::ostringstream oss_monom;
+    oss_monom << m3 << " + " << m1;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+}
+
+TEST(TestPolynom, SubtractFromBack) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    Monom m5(1.0, pow5);
+    Monom m3(1.0, pow3);
+    Monom m1(1.0, pow1);
+
+    p += m5; p += m3; p += m1;
+    EXPECT_EQ(p.size(), 3);
+    p -= m1;
+    EXPECT_EQ(p.size(), 2);
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5 << " + " << m3;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+}
+
+TEST(TestPolynom, SubtractReducesCoeff) {
+    Polynom p;
+    int pow1[3] = {2, 2, 3};
+    Monom m1(5.0, pow1);
+    Monom m2(3.0, pow1);
+    Monom expected(2.0, pow1);
+
+    p += m1;
+    EXPECT_EQ(p.size(), 1);
+    p -= m2;
+    EXPECT_EQ(p.size(), 1);
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p;
+
+    std::ostringstream oss_monom;
+    oss_monom << expected;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+}
+
+TEST(TestPolynom, SubtractToZeroRemoves) {
+    Polynom p;
+    int pow1[3] = {2, 2, 3};
+    Monom m1(3.0, pow1);
+
+    p += m1;
+    EXPECT_EQ(p.size(), 1);
+    p -= m1;
+
+    EXPECT_EQ(p.size(), 0);
+    EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 0.0);
+}
+
+TEST(TestPolynom, SubtractNonExistentAddsNegative) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(1.0, pow5);
+    Monom m3(1.0, pow3);
+    Monom m3_neg(-1.0, pow3);
+
+    p += m5;
+    EXPECT_EQ(p.size(), 1);
+    p -= m3;
+    EXPECT_EQ(p.size(), 2);
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5 << " + " << m3_neg;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+}
+
+TEST(TestPolynom, SubtractZeroMonomDoesNothing) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m_zero(0.0, pow5);
+
+    p += m5;
+    EXPECT_EQ(p.size(), 1);
+    p -= m_zero;
+    EXPECT_EQ(p.size(), 1);
+
+    EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 2.0);
+}
