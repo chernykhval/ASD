@@ -1290,3 +1290,169 @@ TEST(TestPolynom, MultiplyMonomReturnsCorrectResult) {
     expected += m6_expected;
     EXPECT_TRUE(result == expected);
 }
+
+TEST(TestPolynom, AddPolynomMergeEqualMonoms) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    Monom m5_2(2.0, pow5);
+    Monom m5_3(3.0, pow5);
+    Monom m5_5(5.0, pow5);
+
+    p1 += m5_2;
+    p2 += m5_3;
+    p1 += p2;
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p1;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5_5;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+    EXPECT_EQ(p1.size(), 1);
+}
+
+TEST(TestPolynom, AddPolynomMergeToZeroRemoves) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    Monom m5_pos(3.0, pow5);
+    Monom m5_neg(-3.0, pow5);
+
+    p1 += m5_pos;
+    p2 += m5_neg;
+    p1 += p2;
+
+    EXPECT_EQ(p1.size(), 0);
+    EXPECT_DOUBLE_EQ(p1.calculate(1, 1, 1), 0.0);
+}
+
+TEST(TestPolynom, AddPolynomOtherTailLonger) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+    Monom m1(4.0, pow1);
+
+    p1 += m5; p1 += m3;
+    p2 += m1;
+    p1 += p2;
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p1;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5 << " + " << m3 << " + " << m1;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+}
+
+TEST(TestPolynom, AddPolynomOtherHeadLarger) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+    Monom m1(4.0, pow1);
+
+    p1 += m3; p1 += m1;
+    p2 += m5;
+    p1 += p2;
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p1;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5 << " + " << m3 << " + " << m1;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+}
+
+TEST(TestPolynom, AddEmptyPolynom) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    Monom m5(2.0, pow5);
+
+    p1 += m5;
+    p1 += p2;
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p1;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+    EXPECT_EQ(p1.size(), 1);
+}
+
+TEST(TestPolynom, AddPolynomDoesNotModifyOther) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p1 += m5;
+    p2 += m3;
+    p1 += p2;
+
+    std::ostringstream oss_other;
+    oss_other << p2;
+
+    std::ostringstream oss_monom;
+    oss_monom << m3;
+
+    EXPECT_EQ(oss_other.str(), oss_monom.str());
+    EXPECT_EQ(p2.size(), 1);
+}
+
+TEST(TestPolynom, AddPolynomSelfAssign) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p += m5; p += m3;
+    p += p;
+
+    Monom m5_expected(4.0, pow5);
+    Monom m3_expected(6.0, pow3);
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5_expected << " + " << m3_expected;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+}
+
+TEST(TestPolynom, AddPolynomInterleaved) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow4[3] = {4, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    int pow2[3] = {2, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    Monom m5(1.0, pow5);
+    Monom m4(1.0, pow4);
+    Monom m3(1.0, pow3);
+    Monom m2(1.0, pow2);
+    Monom m1(1.0, pow1);
+
+    p1 += m5; p1 += m3; p1 += m1;
+    p2 += m4; p2 += m2;
+    p1 += p2;
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p1;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5 << " + " << m4 << " + " << m3 << " + " << m2 << " + " << m1;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+}

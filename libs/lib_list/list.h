@@ -96,7 +96,7 @@ class List {
     void pop_back();
     void pop_front();
     void erase(size_t);
-    void erase(const Iterator&);
+    Iterator erase(const Iterator&);
 
     void clear() noexcept;
     size_t size() const noexcept;
@@ -457,14 +457,16 @@ void List<T>::erase(size_t pos) {
 }
 
 template<typename T>
-void List<T>::erase(const Iterator& iterator) {
+typename List<T>::Iterator List<T>::erase(const Iterator& iterator) {
     if (iterator._current == nullptr || is_empty()) {
         throw std::runtime_error("List::erase - null iterator or empty list");
     }
 
+    Node* next = iterator._current->_next;
+
     if (iterator._current == _head) {
         pop_front();
-        return;
+        return Iterator(next);
     }
 
     Node* current = _head;
@@ -480,6 +482,8 @@ void List<T>::erase(const Iterator& iterator) {
     current->_next = iterator._current->_next;
     delete iterator._current;
     --_size;
+
+    return Iterator(next);
 }
 
 template<typename T>

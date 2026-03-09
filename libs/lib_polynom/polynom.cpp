@@ -195,6 +195,51 @@ Polynom::Polynom(const Polynom& polynom) : _name(polynom._name),
 _monomes(polynom._monomes) {
 }
 
+Polynom& Polynom::operator+=(const Polynom& polynom) {
+    auto it1 = _monomes.begin();
+    auto it2 = polynom._monomes.begin();
+    auto prev = it1;
+
+    while (it1 != _monomes.end() && it2 != polynom._monomes.end()) {
+        if (*it1 > *it2) {
+            prev = it1;
+            ++it1;
+        } else if (*it2 > *it1) {
+            if (it1 == _monomes.begin()) {
+                _monomes.push_front(*it2);
+            } else {
+                _monomes.insert(prev, *it2);
+            }
+
+            ++it2;
+        } else {
+            *it1 += *it2;
+
+            if (it1->is_zero()) {
+                it1 = _monomes.erase(it1);
+            } else {
+                prev = it1;
+                ++it1;
+            }
+
+            ++it2;
+        }
+    }
+
+    while (it2 != polynom._monomes.end()) {
+        _monomes.push_back(*it2);
+        ++it2;
+    }
+
+    return *this;
+}
+
+// Polynom & Polynom::operator-=(const Polynom& polynom) {
+// }
+//
+// Polynom & Polynom::operator*=(const Polynom &polynom) {
+// }
+
 Polynom Polynom::operator+(const Monom& monom) const {
     Polynom result(*this);
 
@@ -235,7 +280,7 @@ Polynom& Polynom::operator+=(const Monom& monom) {
             *it += monom;
 
             if (it->is_zero()){
-                _monomes.erase(it);
+                it = _monomes.erase(it);
             }
 
             return *this;
