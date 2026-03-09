@@ -1656,3 +1656,114 @@ TEST(TestPolynom, MultiplyPolynomCalculate) {
     EXPECT_DOUBLE_EQ(p1.calculate(2, 1, 1), 21.0);
     EXPECT_EQ(p1.size(), 3);
 }
+
+TEST(TestPolynom, AddPolynomDoesNotModifyOriginal) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p1 += m5;
+    p2 += m3;
+    Polynom result = p1 + p2;
+
+    EXPECT_EQ(p1.size(), 1);
+    EXPECT_EQ(p2.size(), 1);
+    EXPECT_EQ(result.size(), 2);
+}
+
+TEST(TestPolynom, SubtractPolynomDoesNotModifyOriginal) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p1 += m5; p1 += m3;
+    p2 += m3;
+    Polynom result = p1 - p2;
+
+    EXPECT_EQ(p1.size(), 2);
+    EXPECT_EQ(p2.size(), 1);
+    EXPECT_EQ(result.size(), 1);
+}
+
+TEST(TestPolynom, MultiplyPolynomDoesNotModifyOriginal) {
+    Polynom p1, p2;
+    int pow2[3] = {2, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    Monom m2(2.0, pow2);
+    Monom m1(3.0, pow1);
+
+    p1 += m2;
+    p2 += m1;
+    Polynom result = p1 * p2;
+
+    EXPECT_EQ(p1.size(), 1);
+    EXPECT_EQ(p2.size(), 1);
+    EXPECT_EQ(result.size(), 1);
+}
+
+TEST(TestPolynom, AddPolynomReturnsCorrectResult) {
+    Polynom p1, p2, expected;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p1 += m5;
+    p2 += m3;
+    Polynom result = p1 + p2;
+
+    expected += m5; expected += m3;
+
+    std::ostringstream oss_result, oss_expected;
+    oss_result << result;
+    oss_expected << expected;
+
+    EXPECT_EQ(oss_result.str(), oss_expected.str());
+}
+
+TEST(TestPolynom, SubtractPolynomReturnsCorrectResult) {
+    Polynom p1, p2, expected;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p1 += m5; p1 += m3;
+    p2 += m3;
+    Polynom result = p1 - p2;
+
+    expected += m5;
+
+    std::ostringstream oss_result, oss_expected;
+    oss_result << result;
+    oss_expected << expected;
+
+    EXPECT_EQ(oss_result.str(), oss_expected.str());
+}
+
+TEST(TestPolynom, MultiplyPolynomReturnsCorrectResult) {
+    // (2x^2)(3x) = 6x^3
+    Polynom p1, p2, expected;
+    int pow2[3] = {2, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m2(2.0, pow2);
+    Monom m1(3.0, pow1);
+    Monom m3_expected(6.0, pow3);
+
+    p1 += m2;
+    p2 += m1;
+    Polynom result = p1 * p2;
+
+    expected += m3_expected;
+
+    std::ostringstream oss_result, oss_expected;
+    oss_result << result;
+    oss_expected << expected;
+
+    EXPECT_EQ(oss_result.str(), oss_expected.str());
+}

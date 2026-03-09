@@ -195,6 +195,24 @@ Polynom::Polynom(const Polynom& polynom) : _name(polynom._name),
 _monomes(polynom._monomes) {
 }
 
+Polynom Polynom::operator+(const Polynom& polynom) const {
+    Polynom result(*this);
+    result += polynom;
+    return result;
+}
+
+Polynom Polynom::operator-(const Polynom& polynom) const {
+    Polynom result(*this);
+    result -= polynom;
+    return result;
+}
+
+Polynom Polynom::operator*(const Polynom& polynom) const {
+    Polynom result(*this);
+    result *= polynom;
+    return result;
+}
+
 Polynom& Polynom::operator+=(const Polynom& polynom) {
     auto it1 = _monomes.begin();
     auto it2 = polynom._monomes.begin();
