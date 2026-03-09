@@ -238,6 +238,15 @@ Polynom& Polynom::operator-=(const Monom& monom) {
 }
 
 Polynom& Polynom::operator*=(const Monom& monom) {
+    if (monom.is_zero()) {
+        _monomes.clear();
+        return *this;
+    }
+
+    for (auto& m : _monomes) {
+        m *= monom;
+    }
+
     return *this;
 }
 

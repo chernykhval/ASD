@@ -1157,3 +1157,50 @@ TEST(TestPolynom, SubtractZeroMonomDoesNothing) {
 
     EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 2.0);
 }
+
+TEST(TestPolynom, MultiplyByMonomBasic) {
+    Polynom p, expected;
+    int pow2[3] = {2, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m2(2.0, pow2);
+    Monom m1(3.0, pow1);
+    Monom mult(1.0, pow1);
+
+    p += m2; p += m1;
+    p *= mult;
+
+    Monom e1(2.0, pow3);
+    Monom e2(3.0, pow2);
+    expected += e1; expected += e2;
+
+    EXPECT_TRUE(p == expected);
+}
+
+TEST(TestPolynom, MultiplyByZeroMonom) {
+    Polynom p;
+    int pow2[3] = {2, 0, 0};
+    int pow0[3] = {0, 0, 0};
+    Monom m(2.0, pow2);
+    Monom zero(0.0, pow0);
+
+    p += m;
+    p *= zero;
+
+    EXPECT_EQ(p.size(), 0);
+    EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 0.0);
+}
+
+TEST(TestPolynom, MultiplyByMonomCalculate) {
+    Polynom p;
+    int pow2[3] = {2, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    Monom m(2.0, pow2);
+    Monom mult(3.0, pow1);
+
+    p += m;
+    p *= mult;
+
+    EXPECT_DOUBLE_EQ(p.calculate(2, 1, 1), 48.0);
+    EXPECT_EQ(p.size(), 1);
+}
