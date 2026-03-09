@@ -950,3 +950,71 @@ TEST(TestPolynom, EqualAfterOperations) {
 
     EXPECT_TRUE(p1 == p2);
 }
+
+TEST(TestPolynom, AssignCopiesMonoms) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p1 += m5; p1 += m3;
+    p2 = p1;
+
+    EXPECT_TRUE(p1 == p2);
+}
+
+TEST(TestPolynom, AssignCopiesName) {
+    Polynom p1("myPoly"), p2;
+
+    p2 = p1;
+
+    EXPECT_EQ(p1.name(), p2.name());
+}
+
+TEST(TestPolynom, AssignDoesNotModifyOriginal) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p1 += m5; p1 += m3;
+    p2 = p1;
+
+    int pow1[3] = {1, 0, 0};
+    Monom m1(4.0, pow1);
+    p2 += m1;
+
+    EXPECT_FALSE(p1 == p2);
+    EXPECT_EQ(p1.size(), 2);
+}
+
+TEST(TestPolynom, AssignToSelf) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    Monom m5(2.0, pow5);
+
+    p += m5;
+    p = p;
+
+    std::ostringstream oss;
+    oss << p;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5;
+
+    EXPECT_EQ(oss.str(), oss_monom.str());
+}
+
+TEST(TestPolynom, AssignEmptyPolynom) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    Monom m5(2.0, pow5);
+
+    p1 += m5;
+    p1 = p2;
+
+    EXPECT_EQ(p1.size(), 0);
+    EXPECT_TRUE(p1 == p2);
+}

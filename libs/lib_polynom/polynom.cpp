@@ -311,6 +311,17 @@ double Polynom::calculate(double x, double y, double z) const {
     return  result;
 }
 
+Polynom& Polynom::operator=(const Polynom& polynom) {
+    if (this == &polynom) {
+        return *this;
+    }
+
+    _name = polynom._name;
+    _monomes = polynom._monomes;
+
+    return *this;
+}
+
 size_t Polynom::size() const {
     return _monomes.size();
 }
