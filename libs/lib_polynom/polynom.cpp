@@ -234,11 +234,22 @@ Polynom& Polynom::operator+=(const Polynom& polynom) {
     return *this;
 }
 
-// Polynom & Polynom::operator-=(const Polynom& polynom) {
-// }
-//
-// Polynom & Polynom::operator*=(const Polynom &polynom) {
-// }
+Polynom& Polynom::operator-=(const Polynom& polynom) {
+    return (*this) += (-polynom);
+}
+
+Polynom& Polynom::operator*=(const Polynom& polynom) {
+    Polynom result;
+
+    for (const auto& m1 : _monomes) {
+        for (const auto& m2 : polynom._monomes) {
+            result += m1 * m2;
+        }
+    }
+
+    *this = result;
+    return *this;
+}
 
 Polynom Polynom::operator+(const Monom& monom) const {
     Polynom result(*this);

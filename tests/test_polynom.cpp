@@ -1456,3 +1456,203 @@ TEST(TestPolynom, AddPolynomInterleaved) {
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
+
+TEST(TestPolynom, SubtractPolynomBasic) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+    Monom m1(4.0, pow1);
+
+    p1 += m5; p1 += m3; p1 += m1;
+    p2 += m3;
+    p1 -= p2;
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p1;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5 << " + " << m1;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+    EXPECT_EQ(p1.size(), 2);
+}
+
+TEST(TestPolynom, SubtractPolynomToZero) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p1 += m5; p1 += m3;
+    p2 += m5; p2 += m3;
+    p1 -= p2;
+
+    EXPECT_EQ(p1.size(), 0);
+    EXPECT_DOUBLE_EQ(p1.calculate(1, 1, 1), 0.0);
+}
+
+TEST(TestPolynom, SubtractPolynomDoesNotModifyOther) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p1 += m5; p1 += m3;
+    p2 += m3;
+    p1 -= p2;
+
+    std::ostringstream oss_other;
+    oss_other << p2;
+
+    std::ostringstream oss_monom;
+    oss_monom << m3;
+
+    EXPECT_EQ(oss_other.str(), oss_monom.str());
+    EXPECT_EQ(p2.size(), 1);
+}
+
+TEST(TestPolynom, SubtractEmptyPolynom) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    Monom m5(2.0, pow5);
+
+    p1 += m5;
+    p1 -= p2;
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p1;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+    EXPECT_EQ(p1.size(), 1);
+}
+
+TEST(TestPolynom, SubtractPolynomNonExistentAddsNegative) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+    Monom m3_neg(-3.0, pow3);
+
+    p1 += m5;
+    p2 += m3;
+    p1 -= p2;
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p1;
+
+    std::ostringstream oss_monom;
+    oss_monom << m5 << " + " << m3_neg;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+    EXPECT_EQ(p1.size(), 2);
+}
+
+TEST(TestPolynom, MultiplyPolynomBasic) {
+    Polynom p1, p2;
+    int pow2[3] = {2, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m2(2.0, pow2);
+    Monom m1(3.0, pow1);
+    Monom mult(1.0, pow1);
+
+    p1 += m2; p1 += m1;
+    p2 += mult;
+
+    p1 *= p2;
+
+    Monom m3_expected(2.0, pow3);
+    Monom m2_expected(3.0, pow2);
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p1;
+
+    std::ostringstream oss_monom;
+    oss_monom << m3_expected << " + " << m2_expected;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+    EXPECT_EQ(p1.size(), 2);
+}
+
+TEST(TestPolynom, MultiplyPolynomMergesEqualMonoms) {
+    Polynom p1, p2;
+    int pow1[3] = {1, 0, 0};
+    int pow0[3] = {0, 0, 0};
+    int pow2[3] = {2, 0, 0};
+    Monom mx(1.0, pow1);
+    Monom m1(1.0, pow0);
+    Monom m1_neg(-1.0, pow0);
+    Monom mx2(1.0, pow2);
+
+    p1 += mx; p1 += m1;
+    p2 += mx; p2 += m1_neg;
+    p1 *= p2;
+
+    std::ostringstream oss_polynom;
+    oss_polynom << p1;
+
+    std::ostringstream oss_monom;
+    oss_monom << mx2 << " + " << m1_neg;
+
+    EXPECT_EQ(oss_polynom.str(), oss_monom.str());
+    EXPECT_EQ(p1.size(), 2);
+}
+
+TEST(TestPolynom, MultiplyPolynomByZeroPolynom) {
+    Polynom p1, p2;
+    int pow5[3] = {5, 0, 0};
+    Monom m5(2.0, pow5);
+
+    p1 += m5;
+    p1 *= p2;
+
+    EXPECT_EQ(p1.size(), 0);
+    EXPECT_DOUBLE_EQ(p1.calculate(1, 1, 1), 0.0);
+}
+
+TEST(TestPolynom, MultiplyPolynomDoesNotModifyOther) {
+    Polynom p1, p2;
+    int pow2[3] = {2, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    Monom m2(2.0, pow2);
+    Monom m1(3.0, pow1);
+
+    p1 += m2;
+    p2 += m1;
+    p1 *= p2;
+
+    std::ostringstream oss_other;
+    oss_other << p2;
+
+    std::ostringstream oss_monom;
+    oss_monom << m1;
+
+    EXPECT_EQ(oss_other.str(), oss_monom.str());
+    EXPECT_EQ(p2.size(), 1);
+}
+
+TEST(TestPolynom, MultiplyPolynomCalculate) {
+    Polynom p1, p2;
+    int pow1[3] = {1, 0, 0};
+    int pow0[3] = {0, 0, 0};
+    Monom m2x(2.0, pow1);
+    Monom m3(3.0, pow0);
+    Monom mx(1.0, pow1);
+    Monom m1(1.0, pow0);
+
+    p1 += m2x; p1 += m3;
+    p2 += mx;  p2 += m1;
+    p1 *= p2;
+
+    EXPECT_DOUBLE_EQ(p1.calculate(2, 1, 1), 21.0);
+    EXPECT_EQ(p1.size(), 3);
+}
