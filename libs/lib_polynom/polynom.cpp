@@ -166,6 +166,10 @@ double Monom::calculate(double x, double y, double z) const {
     return result;
 }
 
+bool Monom::is_zero() const {
+    return _coeff == 0;
+}
+
 Monom& Monom::operator=(const Monom& monom) {
     if (this == &monom) {
         return *this;
@@ -188,8 +192,8 @@ _size(polynom._size), _monomes(polynom._monomes) {
 }
 
 Polynom& Polynom::operator+=(const Monom& monom) {
-    if (_monomes.is_empty()) {
-        _monomes.push_back(monom);
+    if(_monomes.is_empty() || monom > *(_monomes.begin())){
+        _monomes.push_front(monom);
 
         return *this;
     }
@@ -197,6 +201,20 @@ Polynom& Polynom::operator+=(const Monom& monom) {
     for (auto it = _monomes.begin(); it != _monomes.end(); ++it) {
         if (*it == monom) {
             *it += monom;
+
+            if (it->is_zero()){
+                _monomes.erase(it);
+            }
+
+            return *this;
+        }
+
+        auto next = it;
+        ++next;
+
+        if (next == _monomes.end() || monom > *next){
+            _monomes.insert(it, monom);
+
             return *this;
         }
     }
@@ -224,6 +242,10 @@ std::string Polynom::name() const {
     return _name;
 }
 
+void Polynom::add_monom(const Monom& monom) {
+
+}
+
 std::ostream& operator<<(std::ostream& os, const Monom& monom) {
     os << "(" << monom._coeff
     << " * x^" << monom._powers[0]
@@ -241,4 +263,14 @@ std::istream& operator>>(std::istream& is, Monom& monom) {
     >> monom._powers[2];
 
     return is;
+}
+
+std::ostream& operator<<(std::ostream& os, const Polynom& p) {
+    for (auto it = p._monomes.begin(); it != p._monomes.end(); ++it) {
+        if (it != p._monomes.begin())
+            os << " + ";
+        os << *it;
+    }
+
+    return os;
 }

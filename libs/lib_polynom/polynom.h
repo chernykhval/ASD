@@ -42,6 +42,7 @@ class Monom {
     Monom& operator/=(double value);
 
     double calculate(double x, double y, double z) const;
+    bool is_zero() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Monom& monom);
     friend std::istream& operator>>(std::istream& is, Monom& monom);
