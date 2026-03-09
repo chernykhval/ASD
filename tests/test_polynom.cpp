@@ -1204,3 +1204,89 @@ TEST(TestPolynom, MultiplyByMonomCalculate) {
     EXPECT_DOUBLE_EQ(p.calculate(2, 1, 1), 48.0);
     EXPECT_EQ(p.size(), 1);
 }
+
+TEST(TestPolynom, AddMonomDoesNotModifyOriginal) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p += m5;
+    Polynom result = p + m3;
+
+    EXPECT_EQ(p.size(), 1);
+    EXPECT_EQ(result.size(), 2);
+}
+
+TEST(TestPolynom, SubtractMonomDoesNotModifyOriginal) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p += m5; p += m3;
+    Polynom result = p - m3;
+
+    EXPECT_EQ(p.size(), 2);
+    EXPECT_EQ(result.size(), 1);
+}
+
+TEST(TestPolynom, MultiplyMonomDoesNotModifyOriginal) {
+    Polynom p;
+    int pow5[3] = {5, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m1(3.0, pow1);
+
+    p += m5;
+    Polynom result = p * m1;
+
+    EXPECT_EQ(p.size(), 1);
+    EXPECT_DOUBLE_EQ(p.calculate(2, 1, 1), 64.0);
+}
+
+TEST(TestPolynom, AddMonomReturnsCorrectResult) {
+    Polynom p, expected;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p += m5;
+    Polynom result = p + m3;
+
+    expected += m5; expected += m3;
+    EXPECT_TRUE(result == expected);
+}
+
+TEST(TestPolynom, SubtractMonomReturnsCorrectResult) {
+    Polynom p, expected;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p += m5; p += m3;
+    Polynom result = p - m3;
+
+    expected += m5;
+    EXPECT_TRUE(result == expected);
+}
+
+TEST(TestPolynom, MultiplyMonomReturnsCorrectResult) {
+    Polynom p, expected;
+    int pow5[3] = {5, 0, 0};
+    int pow1[3] = {1, 0, 0};
+    int pow6[3] = {6, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m1(3.0, pow1);
+    Monom m6_expected(6.0, pow6);
+
+    p += m5;
+    Polynom result = p * m1;
+
+    expected += m6_expected;
+    EXPECT_TRUE(result == expected);
+}
