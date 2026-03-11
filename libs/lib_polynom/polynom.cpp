@@ -1,9 +1,8 @@
 // Copyright 2026 Chernykh Valentin
 
 #include <cmath>
-#include <iostream>
 #include <sstream>
-#include <cmath>
+#include <string>
 
 #include "libs/lib_polynom/polynom.h"
 
@@ -337,11 +336,11 @@ Polynom Polynom::operator*(const Monom& monom) const {
 }
 
 Polynom& Polynom::operator+=(const Monom& monom) {
-    if (monom.is_zero()){
+    if (monom.is_zero()) {
         return *this;
     }
 
-    if(_monomes.is_empty() || monom > *(_monomes.begin())){
+    if (_monomes.is_empty() || monom > *(_monomes.begin())) {
         _monomes.push_front(monom);
 
         return *this;
@@ -351,7 +350,7 @@ Polynom& Polynom::operator+=(const Monom& monom) {
         if (*it == monom) {
             *it += monom;
 
-            if (it->is_zero()){
+            if (it->is_zero()) {
                 it = _monomes.erase(it);
             }
 
@@ -361,7 +360,7 @@ Polynom& Polynom::operator+=(const Monom& monom) {
         auto next = it;
         ++next;
 
-        if (next == _monomes.end() || monom > *next){
+        if (next == _monomes.end() || monom > *next) {
             _monomes.insert(it, monom);
 
             return *this;
@@ -535,7 +534,9 @@ double Polynom::read_coeff(const std::string& polynom, size_t& pos) {
         (polynom[pos] != '.' &&
          !(polynom[pos] >= '0' && polynom[pos] <= '9') &&
          polynom[pos] != 'x' && polynom[pos] != 'y' && polynom[pos] != 'z')) {
-        throw std::invalid_argument("Polynom::parse - invalid symbol after sign: " + std::string(1, polynom[pos]));
+        throw std::invalid_argument(
+            "Polynom::parse - invalid symbol after sign: "
+            + std::string(1, polynom[pos]));
     }
 
     while (polynom[pos] >= '0' && polynom[pos] <= '9') {
@@ -563,7 +564,8 @@ double Polynom::read_coeff(const std::string& polynom, size_t& pos) {
     return std::stod(oss.str());
 }
 
-void Polynom::read_powers(const std::string& polynom, size_t& pos, int powers[VAR_COUNT]) {
+void Polynom::read_powers(const std::string& polynom,
+    size_t& pos, int powers[VAR_COUNT]) {
     char vars[VAR_COUNT] = {'x', 'y', 'z'};
 
     for (int i = 0; i < VAR_COUNT; i++) {
@@ -593,7 +595,9 @@ void Polynom::read_powers(const std::string& polynom, size_t& pos, int powers[VA
     skip_spaces(polynom, pos);
 
     if (pos < polynom.size() && polynom[pos] != '+' && polynom[pos] != '-') {
-        throw std::invalid_argument("Polynom::parse - invalid symbol: " + std::string(1, polynom[pos]));
+        throw std::invalid_argument(
+            "Polynom::parse - invalid symbol: "
+            + std::string(1, polynom[pos]));
     }
 }
 
@@ -605,7 +609,6 @@ std::ostream& operator<<(std::ostream& os, const Monom& monom) {
     os << monom.abs_string();
 
     return os;
-
 }
 
 std::istream& operator>>(std::istream& is, Monom& monom) {

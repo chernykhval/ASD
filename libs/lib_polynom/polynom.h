@@ -93,17 +93,18 @@ class Polynom {
     friend std::ostream& operator<<(std::ostream& os, const Polynom& p);
     friend std::istream& operator>>(std::istream& is, Polynom& p);
 
-   Polynom& operator=(const Polynom& polynom);
+    Polynom& operator=(const Polynom& polynom);
 
-   size_t size() const;
-   std::string name() const;
+    size_t size() const;
+    std::string name() const;
 
  private:
     void parse_polynom(const std::string& polynom);
     void parse_monom(const std::string& polynom, size_t& pos);
     void skip_spaces(const std::string& polynom, size_t& pos);
     double read_coeff(const std::string& polynom, size_t& pos);
-    void read_powers(const std::string& polynom, size_t& pos, int powers[VAR_COUNT]);
+    void read_powers(const std::string& polynom,
+       size_t& pos, int powers[VAR_COUNT]);
 };
 
 #endif  // LIBS_LIB_POLYNOM_POLYNOM_H_

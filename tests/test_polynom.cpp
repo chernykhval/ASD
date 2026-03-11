@@ -1830,7 +1830,7 @@ TEST(TestPolynom, MultiplyPolynomReturnsCorrectResult) {
     EXPECT_EQ(oss_result.str(), oss_expected.str());
 }
 
-TEST(TestPolynom, ConstructFromStringParsesCorrectly){
+TEST(TestPolynom, ConstructFromStringParsesCorrectly) {
     Polynom p("test", "-x^3y^19 - 11.5z^7 + 5.0y^28 + x^25y - 25.5");
 
     std::ostringstream oss;
@@ -1841,8 +1841,9 @@ TEST(TestPolynom, ConstructFromStringParsesCorrectly){
     EXPECT_EQ(oss.str(), "x^25y - x^3y^19 + 5y^28 - 11.5z^7 - 25.5");
 }
 
-TEST(TestPolynom, ConstructFromStringThrowsOnInvalidFormat){
-    EXPECT_THROW(Polynom p("test", "- - 11.5z^7 + 5.0y^28 + x^25y - 25.5"), std::invalid_argument);
+TEST(TestPolynom, ConstructFromStringThrowsOnInvalidFormat) {
+    EXPECT_THROW(Polynom p("test", "- - 11.5z^7 + 5.0y^28 + x^25y - 25.5"),
+        std::invalid_argument);
 }
 
 TEST(TestPolynom, ParseEmptyString) {
