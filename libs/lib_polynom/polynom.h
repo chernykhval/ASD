@@ -99,7 +99,6 @@ class Polynom {
    std::string name() const;
 
  private:
-    void add_monom(const Monom& m);
     void parse_polynom(const std::string& polynom);
     void parse_monom(const std::string& polynom, size_t& pos);
     void skip_spaces(const std::string& polynom, size_t& pos);

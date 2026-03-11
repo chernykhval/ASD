@@ -11,7 +11,7 @@ TEST(TestMonom, default_init) {
 
     std::ostringstream oss;
     oss << monom;
-    EXPECT_EQ(oss.str(), "(0 * x^0 * y^0 * z^0)");
+    EXPECT_EQ(oss.str(), "0");
 
     EXPECT_DOUBLE_EQ(monom.calculate(1.0, 1.0, 1.0), 0.0);
     EXPECT_DOUBLE_EQ(monom.calculate(5.5, -2.1, 3.14), 0.0);
@@ -410,7 +410,7 @@ TEST(TestMonom, OutputFormatIsCorrect) {
     std::ostringstream oss;
     oss << m;
 
-    EXPECT_EQ(oss.str(), "(5.5 * x^2 * y^1 * z^0)");
+    EXPECT_EQ(oss.str(), "5.5x^2y");
 }
 
 TEST(TestMonom, InputFormatIsCorrect) {
@@ -424,8 +424,59 @@ TEST(TestMonom, InputFormatIsCorrect) {
     EXPECT_DOUBLE_EQ(m.calculate(1, 1, 1), 5.5);
 }
 
-// TODO(chernykh): Add unary minus test and exception test
-//  to input/output operator for Monom class
+TEST(TestMonom, UnaryMinus) {
+    int pow[3] = {2, 3, 1};
+    Monom m(3.0, pow);
+    Monom neg_m = -m;
+
+    EXPECT_DOUBLE_EQ(neg_m.calculate(1, 1, 1), -3.0);
+    EXPECT_TRUE(neg_m.is_negative());
+}
+
+TEST(TestMonom, UnaryMinusDoesNotModifyOriginal) {
+    int pow[3] = {2, 3, 1};
+    Monom m(3.0, pow);
+    Monom neg_m = -m;
+
+    EXPECT_DOUBLE_EQ(m.calculate(1, 1, 1), 3.0);
+    EXPECT_FALSE(m.is_negative());
+}
+
+TEST(TestMonom, UnaryMinusOfNegative) {
+    int pow[3] = {2, 3, 1};
+    Monom m(-3.0, pow);
+    Monom neg_m = -m;
+
+    EXPECT_DOUBLE_EQ(neg_m.calculate(1, 1, 1), 3.0);
+    EXPECT_FALSE(neg_m.is_negative());
+}
+
+TEST(TestMonom, InputOperatorNegativeCoeff) {
+    Monom m;
+    std::istringstream iss("-3.0 2 1 0");
+    iss >> m;
+
+    EXPECT_DOUBLE_EQ(m.calculate(1, 1, 1), -3.0);
+    EXPECT_TRUE(m.is_negative());
+}
+
+TEST(TestMonom, InputOperatorInvalidCoeff) {
+    Monom m;
+    std::istringstream iss("abc 2 1 0");
+    EXPECT_THROW(iss >> m, std::invalid_argument);
+}
+
+TEST(TestMonom, InputOperatorMissingPowers) {
+    Monom m;
+    std::istringstream iss("3.0 2");
+    EXPECT_THROW(iss >> m, std::invalid_argument);
+}
+
+TEST(TestMonom, InputOperatorInvalidPower) {
+    Monom m;
+    std::istringstream iss("3.0 2 abc 0");
+    EXPECT_THROW(iss >> m, std::invalid_argument);
+}
 
 TEST(TestPolynom, DefaultConstructorCreatesEmptyPolynom) {
     Polynom p;
@@ -1779,7 +1830,7 @@ TEST(TestPolynom, MultiplyPolynomReturnsCorrectResult) {
     EXPECT_EQ(oss_result.str(), oss_expected.str());
 }
 
-TEST(TestPolynom, parse_constructor){
+TEST(TestPolynom, ConstructFromStringParsesCorrectly){
     Polynom p("test", "-x^3y^19 - 11.5z^7 + 5.0y^28 + x^25y - 25.5");
 
     std::ostringstream oss;
@@ -1790,7 +1841,7 @@ TEST(TestPolynom, parse_constructor){
     EXPECT_EQ(oss.str(), "x^25y - x^3y^19 + 5y^28 - 11.5z^7 - 25.5");
 }
 
-TEST(TestPolynom, parse_constructor_throw){
+TEST(TestPolynom, ConstructFromStringThrowsOnInvalidFormat){
     EXPECT_THROW(Polynom p("test", "- - 11.5z^7 + 5.0y^28 + x^25y - 25.5"), std::invalid_argument);
 }
 
@@ -1825,4 +1876,94 @@ TEST(TestPolynom, ParseInvalidCoeff) {
 
 TEST(TestPolynom, ParseNegativeDegree) {
     EXPECT_THROW(Polynom p("test", "3x^-2y^1z^0"), std::invalid_argument);
+}
+
+TEST(TestPolynom, InputOperatorBasic) {
+    Polynom p;
+    std::istringstream iss("-x^3y^19 - 11.5z^7 + 5.0y^28 + x^25y - 25.5");
+    iss >> p;
+
+    std::ostringstream oss;
+    oss << p;
+
+    EXPECT_EQ(p.size(), 5);
+    EXPECT_EQ(p.calculate(1, 1, 1), -32.0);
+    EXPECT_EQ(oss.str(), "x^25y - x^3y^19 + 5y^28 - 11.5z^7 - 25.5");
+}
+
+TEST(TestPolynom, InputOperatorThrow) {
+    Polynom p;
+    std::istringstream iss("- - 11.5z^7 + 5.0y^28 + x^25y - 25.5");
+    EXPECT_THROW(iss >> p, std::invalid_argument);
+}
+
+TEST(TestPolynom, InputOperatorEmptyString) {
+    Polynom p;
+    std::istringstream iss("");
+    iss >> p;
+    EXPECT_EQ(p.size(), 0);
+    EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 0.0);
+}
+
+TEST(TestPolynom, InputOperatorOnlySpaces) {
+    Polynom p;
+    std::istringstream iss("   ");
+    iss >> p;
+    EXPECT_EQ(p.size(), 0);
+    EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 0.0);
+}
+
+TEST(TestPolynom, InputOperatorInvalidSymbols) {
+    Polynom p;
+    std::istringstream iss("3x^2 + @y^1");
+    EXPECT_THROW(iss >> p, std::invalid_argument);
+}
+
+TEST(TestPolynom, InputOperatorInvalidFormat) {
+    Polynom p;
+    std::istringstream iss("3x^2 + + 4y^1");
+    EXPECT_THROW(iss >> p, std::invalid_argument);
+}
+
+TEST(TestPolynom, InputOperatorMissingDegree) {
+    Polynom p;
+    std::istringstream iss("3x^ + 4y^1");
+    EXPECT_THROW(iss >> p, std::invalid_argument);
+}
+
+TEST(TestPolynom, InputOperatorInvalidCoeff) {
+    Polynom p;
+    std::istringstream iss("3.2.1x^2");
+    EXPECT_THROW(iss >> p, std::invalid_argument);
+}
+
+TEST(TestPolynom, InputOperatorNegativeDegree) {
+    Polynom p;
+    std::istringstream iss("3x^-2y^1z^0");
+    EXPECT_THROW(iss >> p, std::invalid_argument);
+}
+
+TEST(TestPolynom, CopyConstructorCopiesMonoms) {
+    Polynom p1;
+    int pow5[3] = {5, 0, 0};
+    Monom m5(2.0, pow5);
+    p1 += m5;
+
+    Polynom p2(p1);
+    EXPECT_TRUE(p1 == p2);
+}
+
+TEST(TestPolynom, CopyConstructorIsDeepCopy) {
+    Polynom p1;
+    int pow5[3] = {5, 0, 0};
+    int pow3[3] = {3, 0, 0};
+    Monom m5(2.0, pow5);
+    Monom m3(3.0, pow3);
+
+    p1 += m5;
+    Polynom p2(p1);
+    p2 += m3;
+
+    EXPECT_EQ(p1.size(), 1);
+    EXPECT_EQ(p2.size(), 2);
 }

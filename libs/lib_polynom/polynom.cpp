@@ -489,10 +489,6 @@ std::string Polynom::name() const {
     return _name;
 }
 
-void Polynom::add_monom(const Monom& monom) {
-
-}
-
 void Polynom::parse_polynom(const std::string& polynom) {
     size_t pos = 0;
 
@@ -602,13 +598,14 @@ void Polynom::read_powers(const std::string& polynom, size_t& pos, int powers[VA
 }
 
 std::ostream& operator<<(std::ostream& os, const Monom& monom) {
-    os << "(" << monom._coeff
-    << " * x^" << monom._powers[0]
-    << " * y^" << monom._powers[1]
-    << " * z^" << monom._powers[2]
-    << ")";
+    if (monom.is_negative()) {
+        os << '-';
+    }
+
+    os << monom.abs_string();
 
     return os;
+
 }
 
 std::istream& operator>>(std::istream& is, Monom& monom) {
@@ -616,6 +613,10 @@ std::istream& operator>>(std::istream& is, Monom& monom) {
     >> monom._powers[0]
     >> monom._powers[1]
     >> monom._powers[2];
+
+    if (is.fail()) {
+        throw std::invalid_argument("Monom::operator>> - invalid input");
+    }
 
     return is;
 }
@@ -646,4 +647,12 @@ std::ostream& operator<<(std::ostream& os, const Polynom& p) {
     }
 
     return os;
+}
+
+std::istream& operator>>(std::istream& is, Polynom& p) {
+    std::string input;
+    std::getline(is, input);
+    p.parse_polynom(input);
+
+    return is;
 }
