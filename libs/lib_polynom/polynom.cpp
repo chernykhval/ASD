@@ -2,6 +2,8 @@
 
 #include <cmath>
 #include <iostream>
+#include <sstream>
+#include <cmath>
 
 #include "libs/lib_polynom/polynom.h"
 
@@ -170,6 +172,42 @@ bool Monom::is_zero() const {
     return _coeff == 0;
 }
 
+bool Monom::is_negative() const {
+    return _coeff < 0.0;
+}
+
+std::string Monom::abs_string() const {
+    std::ostringstream oss;
+    char vars[VAR_COUNT] = {'x', 'y', 'z'};
+
+    for (int i = 0; i < VAR_COUNT; i++) {
+        if (i == VAR_COUNT - 1 && _powers[i] == 0) {
+            oss << std::abs(_coeff);;
+            return oss.str();
+        }
+
+        if (_powers[i] != 0) {
+            break;
+        }
+    }
+
+    if (std::abs(_coeff) != 1) {
+        oss << std::abs(_coeff);
+    }
+
+    for (int i = 0; i < VAR_COUNT; i++) {
+        if (_powers[i] > 0) {
+            oss << vars[i];
+        }
+
+        if (_powers[i] > 1) {
+            oss << "^" << _powers[i];
+        }
+    }
+
+    return oss.str();
+}
+
 bool Monom::equal(const Monom& other) const {
     return *this == other && _coeff == other._coeff;
 }
@@ -193,6 +231,11 @@ Polynom::Polynom(const std::string& name) : _name(name), _monomes() {
 
 Polynom::Polynom(const Polynom& polynom) : _name(polynom._name),
 _monomes(polynom._monomes) {
+}
+
+Polynom::Polynom(const std::string& name, const std::string& polynom) {
+    _name = name;
+    parse_polynom(polynom);
 }
 
 Polynom Polynom::operator+(const Polynom& polynom) const {
@@ -450,6 +493,114 @@ void Polynom::add_monom(const Monom& monom) {
 
 }
 
+void Polynom::parse_polynom(const std::string& polynom) {
+    size_t pos = 0;
+
+    while (pos < polynom.size()) {
+        parse_monom(polynom, pos);
+    }
+}
+
+void Polynom::parse_monom(const std::string& polynom, size_t& pos) {
+    skip_spaces(polynom, pos);
+    if (pos >= polynom.size()) {
+        return;
+    }
+
+    double coeff = read_coeff(polynom, pos);
+    int powers[VAR_COUNT];
+    read_powers(polynom, pos, powers);
+
+    Monom m(coeff, powers);
+
+    *this += m;
+}
+
+void Polynom::skip_spaces(const std::string& polynom, size_t& pos) {
+    while (pos < polynom.size() && polynom[pos] == ' ') {
+        pos++;
+    }
+}
+
+double Polynom::read_coeff(const std::string& polynom, size_t& pos) {
+    std::ostringstream oss;
+    bool has_dot = false;
+
+    if (polynom[pos] == '-') {
+        oss << '-';
+        pos++;
+    } else if (polynom[pos] == '+') {
+        pos++;
+    }
+
+    skip_spaces(polynom, pos);
+
+    if (pos >= polynom.size() ||
+        (polynom[pos] != '.' &&
+         !(polynom[pos] >= '0' && polynom[pos] <= '9') &&
+         polynom[pos] != 'x' && polynom[pos] != 'y' && polynom[pos] != 'z')) {
+        throw std::invalid_argument("Polynom::parse - invalid symbol after sign: " + std::string(1, polynom[pos]));
+    }
+
+    while (polynom[pos] >= '0' && polynom[pos] <= '9') {
+        oss << polynom[pos];
+        pos++;
+    }
+
+    if (polynom[pos] == '.') {
+        has_dot = true;
+        oss << '.';
+        pos++;
+    }
+
+    if (has_dot) {
+        while (polynom[pos] >= '0' && polynom[pos] <= '9') {
+            oss << polynom[pos];
+            pos++;
+        }
+    }
+
+    if (oss.str() == "-" || oss.str() == "") {
+        oss << 1;
+    }
+
+    return std::stod(oss.str());
+}
+
+void Polynom::read_powers(const std::string& polynom, size_t& pos, int powers[VAR_COUNT]) {
+    char vars[VAR_COUNT] = {'x', 'y', 'z'};
+
+    for (int i = 0; i < VAR_COUNT; i++) {
+        if (polynom[pos] != vars[i]) {
+            powers[i] = 0;
+            continue;
+        }
+
+        pos++;
+
+        if (polynom[pos] != '^') {
+            powers[i] = 1;
+            continue;
+        }
+
+        pos++;
+        std::ostringstream oss;
+
+        while (polynom[pos] >= '0' && polynom[pos] <= '9') {
+            oss << polynom[pos];
+            pos++;
+        }
+
+        powers[i] = std::stoi(oss.str());
+    }
+
+    skip_spaces(polynom, pos);
+
+    if (pos < polynom.size() && polynom[pos] != '+' && polynom[pos] != '-') {
+        throw std::invalid_argument("Polynom::parse - invalid symbol: " + std::string(1, polynom[pos]));
+    }
+}
+
 std::ostream& operator<<(std::ostream& os, const Monom& monom) {
     os << "(" << monom._coeff
     << " * x^" << monom._powers[0]
@@ -470,10 +621,28 @@ std::istream& operator>>(std::istream& is, Monom& monom) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Polynom& p) {
-    for (auto it = p._monomes.begin(); it != p._monomes.end(); ++it) {
-        if (it != p._monomes.begin())
+    if (p.size() == 0) {
+        os << "0";
+
+        return os;
+    }
+
+    auto first = p._monomes.begin();
+    if (first->is_negative()) {
+        os << '-';
+    }
+
+    os << first -> abs_string();
+
+
+    for (auto it = ++p._monomes.begin(); it != p._monomes.end(); ++it) {
+        if (it->is_negative()) {
+            os << " - ";
+        } else {
             os << " + ";
-        os << *it;
+        }
+
+        os << it->abs_string();
     }
 
     return os;

@@ -454,7 +454,7 @@ TEST(TestPolynom, AddFirstMonom) {
     EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 3.0);
 }
 
-TEST(TestPolynom, test_1) {
+TEST(TestPolynom, AddEqualDegreeMonomsMergesCoefficients) {
     Polynom p;
     int pow[3] = {1, 2, 3};
     Monom m1(3.0, pow);
@@ -466,7 +466,7 @@ TEST(TestPolynom, test_1) {
     EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 7.0);
 }
 
-TEST(TestPolynom, test_2) {
+TEST(TestPolynom, AddDifferentDegreeMonomsKeepsBoth) {
     Polynom p;
     int pow1[3] = {1, 2, 3};
     int pow2[3] = {2, 2, 3};
@@ -479,7 +479,7 @@ TEST(TestPolynom, test_2) {
     EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 7.0);
 }
 
-TEST(TestPolynom, test_3) {
+TEST(TestPolynom, AddMonomsOutputsInDescendingOrder) {
     Polynom p;
     int pow1[3] = {1, 2, 3};
     int pow2[3] = {2, 2, 3};
@@ -493,7 +493,7 @@ TEST(TestPolynom, test_3) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m2 << " + " << m1;
+    oss_monom << m2.abs_string() << " + " << m1.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -515,7 +515,8 @@ TEST(TestPolynom, InsertInMiddle) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m5 << " + " << m3 << " + " << m2 << " + " << m1;
+    oss_monom << m5.abs_string() << " + " << m3.abs_string()
+    << " + " << m2.abs_string() << " + " << m1.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -537,7 +538,8 @@ TEST(TestPolynom, InsertAtFront) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m6 << " + " << m5 << " + " << m3 << " + " << m1;
+    oss_monom << m6.abs_string() << " + " << m5.abs_string()
+    << " + " << m3.abs_string() << " + " << m1.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -559,7 +561,8 @@ TEST(TestPolynom, InsertAtBack) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m5 << " + " << m3 << " + " << m1 << " + " << m0;
+    oss_monom << m5.abs_string() << " + " << m3.abs_string()
+    << " + " << m1.abs_string() << " + " << m0.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -579,7 +582,8 @@ TEST(TestPolynom, SortByY) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m2 << " + " << m3 << " + " << m1;
+    oss_monom << m2.abs_string() << " + " << m3.abs_string()
+    << " + " << m1.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -599,7 +603,8 @@ TEST(TestPolynom, SortByZ) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m2 << " + " << m3 << " + " << m1;
+    oss_monom << m2.abs_string() << " + " << m3.abs_string()
+    << " + " << m1.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -617,7 +622,7 @@ TEST(TestPolynom, MergeEqualMonomials) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << expected;
+    oss_monom << expected.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -633,7 +638,7 @@ TEST(TestPolynom, MergeToZeroRemoves) {
     std::ostringstream oss_polynom;
     oss_polynom << p;
 
-    EXPECT_EQ(oss_polynom.str(), "");
+    EXPECT_EQ(oss_polynom.str(), "0");
 }
 
 TEST(TestPolynom, AddZeroMonomDoesNothing) {
@@ -668,7 +673,8 @@ TEST(TestPolynom, UnaryMinus) {
     oss_polynom << neg_p;
 
     std::ostringstream oss_monom;
-    oss_monom << m5_neg << " + " << m3_neg << " + " << m1_neg;
+    oss_monom << "-" << m5_neg.abs_string() << " - " << m3_neg.abs_string()
+    << " - " << m1_neg.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -685,7 +691,7 @@ TEST(TestPolynom, UnaryMinusDoesNotModifyOriginal) {
     oss_original << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m5;
+    oss_monom << m5.abs_string();
 
     EXPECT_EQ(oss_original.str(), oss_monom.str());
 }
@@ -708,7 +714,7 @@ TEST(TestPolynom, MultiplyByScalar) {
     oss_polynom << result;
 
     std::ostringstream oss_monom;
-    oss_monom << m5_expected << " + " << m3_expected;
+    oss_monom << m5_expected.abs_string() << " + " << m3_expected.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -725,7 +731,7 @@ TEST(TestPolynom, MultiplyByScalarDoesNotModifyOriginal) {
     oss_original << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m5;
+    oss_monom << m5.abs_string();
 
     EXPECT_EQ(oss_original.str(), oss_monom.str());
 }
@@ -776,7 +782,8 @@ TEST(TestPolynom, MultiplyAssignByScalarAllMonoms) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m5_expected << " + " << m3_expected << " + " << m1_expected;
+    oss_monom << m5_expected.abs_string() << " + " << m3_expected.abs_string()
+     << " + " << m1_expected.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -801,7 +808,8 @@ TEST(TestPolynom, DivideAssignByScalar) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m5_expected << " + " << m3_expected << " + " << m1_expected;
+    oss_monom << m5_expected.abs_string() << " + " << m3_expected.abs_string()
+    << " + " << m1_expected.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -824,7 +832,7 @@ TEST(TestPolynom, DivideByScalar) {
     oss_polynom << result;
 
     std::ostringstream oss_monom;
-    oss_monom << m5_expected << " + " << m3_expected;
+    oss_monom << m5_expected.abs_string() << " + " << m3_expected.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -841,7 +849,7 @@ TEST(TestPolynom, DivideByScalarDoesNotModifyOriginal) {
     oss_original << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m5;
+    oss_monom << m5.abs_string();
 
     EXPECT_EQ(oss_original.str(), oss_monom.str());
 }
@@ -1002,7 +1010,7 @@ TEST(TestPolynom, AssignToSelf) {
     oss << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m5;
+    oss_monom << m5.abs_string();
 
     EXPECT_EQ(oss.str(), oss_monom.str());
 }
@@ -1037,7 +1045,7 @@ TEST(TestPolynom, SubtractFromMiddle) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m5 << " + " << m1;
+    oss_monom << m5.abs_string() << " + " << m1.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -1060,7 +1068,7 @@ TEST(TestPolynom, SubtractFromFront) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m3 << " + " << m1;
+    oss_monom << m3.abs_string() << " + " << m1.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -1083,7 +1091,7 @@ TEST(TestPolynom, SubtractFromBack) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m5 << " + " << m3;
+    oss_monom << m5.abs_string() << " + " << m3.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -1104,7 +1112,7 @@ TEST(TestPolynom, SubtractReducesCoeff) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << expected;
+    oss_monom << expected.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -1139,7 +1147,7 @@ TEST(TestPolynom, SubtractNonExistentAddsNegative) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m5 << " + " << m3_neg;
+    oss_monom << m5.abs_string() << " - " << m3_neg.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -1306,7 +1314,7 @@ TEST(TestPolynom, AddPolynomMergeEqualMonoms) {
     oss_polynom << p1;
 
     std::ostringstream oss_monom;
-    oss_monom << m5_5;
+    oss_monom << m5_5.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
     EXPECT_EQ(p1.size(), 1);
@@ -1343,7 +1351,8 @@ TEST(TestPolynom, AddPolynomOtherTailLonger) {
     oss_polynom << p1;
 
     std::ostringstream oss_monom;
-    oss_monom << m5 << " + " << m3 << " + " << m1;
+    oss_monom << m5.abs_string() << " + " << m3.abs_string()
+    << " + " << m1.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -1365,7 +1374,8 @@ TEST(TestPolynom, AddPolynomOtherHeadLarger) {
     oss_polynom << p1;
 
     std::ostringstream oss_monom;
-    oss_monom << m5 << " + " << m3 << " + " << m1;
+    oss_monom << m5.abs_string() << " + " << m3.abs_string()
+    << " + " << m1.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -1382,7 +1392,7 @@ TEST(TestPolynom, AddEmptyPolynom) {
     oss_polynom << p1;
 
     std::ostringstream oss_monom;
-    oss_monom << m5;
+    oss_monom << m5.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
     EXPECT_EQ(p1.size(), 1);
@@ -1403,7 +1413,7 @@ TEST(TestPolynom, AddPolynomDoesNotModifyOther) {
     oss_other << p2;
 
     std::ostringstream oss_monom;
-    oss_monom << m3;
+    oss_monom << m3.abs_string();
 
     EXPECT_EQ(oss_other.str(), oss_monom.str());
     EXPECT_EQ(p2.size(), 1);
@@ -1426,7 +1436,7 @@ TEST(TestPolynom, AddPolynomSelfAssign) {
     oss_polynom << p;
 
     std::ostringstream oss_monom;
-    oss_monom << m5_expected << " + " << m3_expected;
+    oss_monom << m5_expected.abs_string() << " + " << m3_expected.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -1452,7 +1462,9 @@ TEST(TestPolynom, AddPolynomInterleaved) {
     oss_polynom << p1;
 
     std::ostringstream oss_monom;
-    oss_monom << m5 << " + " << m4 << " + " << m3 << " + " << m2 << " + " << m1;
+    oss_monom << m5.abs_string() << " + " << m4.abs_string()
+    << " + " << m3.abs_string() << " + " << m2.abs_string()
+    << " + " << m1.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
 }
@@ -1474,7 +1486,7 @@ TEST(TestPolynom, SubtractPolynomBasic) {
     oss_polynom << p1;
 
     std::ostringstream oss_monom;
-    oss_monom << m5 << " + " << m1;
+    oss_monom << m5.abs_string() << " + " << m1.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
     EXPECT_EQ(p1.size(), 2);
@@ -1510,7 +1522,7 @@ TEST(TestPolynom, SubtractPolynomDoesNotModifyOther) {
     oss_other << p2;
 
     std::ostringstream oss_monom;
-    oss_monom << m3;
+    oss_monom << m3.abs_string();
 
     EXPECT_EQ(oss_other.str(), oss_monom.str());
     EXPECT_EQ(p2.size(), 1);
@@ -1528,7 +1540,7 @@ TEST(TestPolynom, SubtractEmptyPolynom) {
     oss_polynom << p1;
 
     std::ostringstream oss_monom;
-    oss_monom << m5;
+    oss_monom << m5.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
     EXPECT_EQ(p1.size(), 1);
@@ -1550,7 +1562,7 @@ TEST(TestPolynom, SubtractPolynomNonExistentAddsNegative) {
     oss_polynom << p1;
 
     std::ostringstream oss_monom;
-    oss_monom << m5 << " + " << m3_neg;
+    oss_monom << m5.abs_string() << " - " << m3_neg.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
     EXPECT_EQ(p1.size(), 2);
@@ -1577,7 +1589,7 @@ TEST(TestPolynom, MultiplyPolynomBasic) {
     oss_polynom << p1;
 
     std::ostringstream oss_monom;
-    oss_monom << m3_expected << " + " << m2_expected;
+    oss_monom << m3_expected.abs_string() << " + " << m2_expected.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
     EXPECT_EQ(p1.size(), 2);
@@ -1601,7 +1613,7 @@ TEST(TestPolynom, MultiplyPolynomMergesEqualMonoms) {
     oss_polynom << p1;
 
     std::ostringstream oss_monom;
-    oss_monom << mx2 << " + " << m1_neg;
+    oss_monom << mx2.abs_string() << " - " << m1_neg.abs_string();
 
     EXPECT_EQ(oss_polynom.str(), oss_monom.str());
     EXPECT_EQ(p1.size(), 2);
@@ -1634,7 +1646,7 @@ TEST(TestPolynom, MultiplyPolynomDoesNotModifyOther) {
     oss_other << p2;
 
     std::ostringstream oss_monom;
-    oss_monom << m1;
+    oss_monom << m1.abs_string();
 
     EXPECT_EQ(oss_other.str(), oss_monom.str());
     EXPECT_EQ(p2.size(), 1);
@@ -1746,7 +1758,6 @@ TEST(TestPolynom, SubtractPolynomReturnsCorrectResult) {
 }
 
 TEST(TestPolynom, MultiplyPolynomReturnsCorrectResult) {
-    // (2x^2)(3x) = 6x^3
     Polynom p1, p2, expected;
     int pow2[3] = {2, 0, 0};
     int pow1[3] = {1, 0, 0};
@@ -1766,4 +1777,52 @@ TEST(TestPolynom, MultiplyPolynomReturnsCorrectResult) {
     oss_expected << expected;
 
     EXPECT_EQ(oss_result.str(), oss_expected.str());
+}
+
+TEST(TestPolynom, parse_constructor){
+    Polynom p("test", "-x^3y^19 - 11.5z^7 + 5.0y^28 + x^25y - 25.5");
+
+    std::ostringstream oss;
+    oss << p;
+
+    EXPECT_EQ(p.size(), 5);
+    EXPECT_EQ(p.calculate(1, 1, 1), -32.0);
+    EXPECT_EQ(oss.str(), "x^25y - x^3y^19 + 5y^28 - 11.5z^7 - 25.5");
+}
+
+TEST(TestPolynom, parse_constructor_throw){
+    EXPECT_THROW(Polynom p("test", "- - 11.5z^7 + 5.0y^28 + x^25y - 25.5"), std::invalid_argument);
+}
+
+TEST(TestPolynom, ParseEmptyString) {
+    Polynom p("test", "");
+    EXPECT_EQ(p.size(), 0);
+    EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 0.0);
+}
+
+TEST(TestPolynom, ParseOnlySpaces) {
+    Polynom p("test", "   ");
+    EXPECT_EQ(p.size(), 0);
+    EXPECT_DOUBLE_EQ(p.calculate(1, 1, 1), 0.0);
+}
+
+
+TEST(TestPolynom, ParseInvalidSymbols) {
+    EXPECT_THROW(Polynom p("test", "3x^2 + @y^1"), std::invalid_argument);
+}
+
+TEST(TestPolynom, ParseInvalidFormat) {
+    EXPECT_THROW(Polynom p("test", "3x^2 + + 4y^1"), std::invalid_argument);
+}
+
+TEST(TestPolynom, ParseMissingDegree) {
+    EXPECT_THROW(Polynom p("test", "3x^ + 4y^1"), std::invalid_argument);
+}
+
+TEST(TestPolynom, ParseInvalidCoeff) {
+    EXPECT_THROW(Polynom p("test", "3.2.1x^2"), std::invalid_argument);
+}
+
+TEST(TestPolynom, ParseNegativeDegree) {
+    EXPECT_THROW(Polynom p("test", "3x^-2y^1z^0"), std::invalid_argument);
 }
