@@ -42,6 +42,7 @@ class BTree {
     void print_dlcr_rec(Node* node, bool& first) const;
     void print_dlrc_rec(Node* node, bool& first) const;
     void print_dclr_rec(Node* node, bool& first) const;
+    void print_tree_rec(Node* node, int deep) const;
     void clear_rec(Node* node);
 };
 
@@ -141,20 +142,20 @@ void BTree<Key, Value>::erase(const Key& key) {
         throw std::logic_error("BTree::erase: tree is empty");
     }
 
-    if (_root->key == key && _size == 1) {
+    if (_size == 1 && _root->key == key) {
+
         delete _root;
         _root = nullptr;
         _size--;
         return;
     }
 
-    Node *current = nullptr, *prev_node = nullptr;
+    Node *current = nullptr;
     Node *to_erase = nullptr, *last_node = nullptr, *last_node_parent = nullptr;
     Queue<Node*> queue((_size + 1) / 2);
     queue.enqueue(_root);
 
     while (!queue.is_empty()) {
-        prev_node = current;
         current = queue.front();
         queue.dequeue();
 
@@ -162,21 +163,15 @@ void BTree<Key, Value>::erase(const Key& key) {
             to_erase = current;
         }
 
-        if (!current->left && last_node == nullptr) {
-            last_node_parent = prev_node;
-            last_node = prev_node->right;
-        }
-
-        if (!current->right && last_node == nullptr) {
+        if (current->left) {
             last_node_parent = current;
             last_node = current->left;
-        }
-
-        if (current->left) {
             queue.enqueue(current->left);
         }
 
         if (current->right) {
+            last_node_parent = current;
+            last_node = current->right;
             queue.enqueue(current->right);
         }
     }
@@ -238,6 +233,8 @@ void BTree<Key, Value>::print_w() const {
             queue.enqueue(current->right);
         }
     }
+
+    std::cout << std::endl;
 }
 
 template<typename Key, typename Value>
@@ -259,6 +256,11 @@ void BTree<Key, Value>::print_dclr() const {
     bool first = true;
     print_dclr_rec(_root, first);
     std::cout << std::endl;
+}
+
+template<typename Key, typename Value>
+void BTree<Key, Value>::print_tree() const {
+    print_tree_rec(_root, 1);
 }
 
 template<typename Key, typename Value>
@@ -309,6 +311,17 @@ void BTree<Key, Value>::print_dclr_rec(Node* node, bool& first) const {
     first = false;
     print_dclr_rec(node->left, first);
     print_dclr_rec(node->right, first);
+}
+
+template<typename Key, typename Value>
+void BTree<Key, Value>::print_tree_rec(Node* node, int deep) const {
+    if (node == nullptr) {
+        return;
+    }
+
+    print_tree_rec(node->right, deep + 1);
+    std::cout << std::string(deep, ' ') << node->key << ":" << node->value << std::endl;
+    print_tree_rec(node->left, deep + 1);
 }
 
 template<typename Key, typename Value>
