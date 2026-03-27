@@ -17,7 +17,7 @@ protected:
     }
 };
 
-TEST_F(BTreeTest, BTreePrintW) {
+TEST_F(BTreeTest, PrintW) {
     std::stringstream ss;
     std::streambuf* old = std::cout.rdbuf(ss.rdbuf());
     tree.print_w();
@@ -26,7 +26,7 @@ TEST_F(BTreeTest, BTreePrintW) {
     EXPECT_EQ(ss.str(), "0:1, 1:2, 2:3, 3:4, 4:5\n");
 }
 
-TEST_F(BTreeTest, BTreePrintDLCR) {
+TEST_F(BTreeTest, PrintDLCR) {
     std::stringstream ss;
     std::streambuf* old = std::cout.rdbuf(ss.rdbuf());
     tree.print_dlcr();
@@ -35,7 +35,7 @@ TEST_F(BTreeTest, BTreePrintDLCR) {
     EXPECT_EQ(ss.str(), "3:4, 1:2, 4:5, 0:1, 2:3\n");
 }
 
-TEST_F(BTreeTest, BTreePrintDLRC) {
+TEST_F(BTreeTest, PrintDLRC) {
     std::stringstream ss;
     std::streambuf* old = std::cout.rdbuf(ss.rdbuf());
     tree.print_dlrc();
@@ -44,7 +44,7 @@ TEST_F(BTreeTest, BTreePrintDLRC) {
     EXPECT_EQ(ss.str(), "3:4, 4:5, 1:2, 2:3, 0:1\n");
 }
 
-TEST_F(BTreeTest, BTreePrintDCLR) {
+TEST_F(BTreeTest, PrintDCLR) {
     std::stringstream ss;
     std::streambuf* old = std::cout.rdbuf(ss.rdbuf());
     tree.print_dclr();
@@ -53,7 +53,7 @@ TEST_F(BTreeTest, BTreePrintDCLR) {
     EXPECT_EQ(ss.str(), "0:1, 1:2, 3:4, 4:5, 2:3\n");
 }
 
-TEST_F(BTreeTest, BTreePrintTree) {
+TEST_F(BTreeTest, PrintTree) {
     std::stringstream ss;
     std::streambuf* old = std::cout.rdbuf(ss.rdbuf());
     tree.print_tree();

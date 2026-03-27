@@ -4,7 +4,6 @@
 #define LIBS_LIB_BSTREE_BSTREE_H_
 
 #include <stdexcept>
-#include <sstream>
 #include <string>
 #include <iostream>
 #include "libs/lib_queue/queue.h"
@@ -42,8 +41,7 @@ class BSTree {
     void print_tree() const;
 
  private:
-    Node* find_parent(const Key& key);
-    Node* find_node(const Key& key);
+    Node* find_parent(const Key& key) const;
     void left_swap_and_erase(Node* node);
     void right_swap_and_erase(Node* node);
     void print_dlcr_rec(Node* node, bool& first) const;
@@ -73,16 +71,19 @@ void BSTree<Key, Value>::insert(const Key &key, const Value &value) {
 
     if (!parent) {
         _root = new Node(key, value);
+        _size++;
         return;
     }
 
     if (parent->key < key && !parent->right) {
         parent->right = new Node(key, value);
+        _size++;
         return;
     }
 
     if (parent->key > key && !parent->left) {
         parent->left = new Node(key, value);
+        _size++;
         return;
     }
 
@@ -106,7 +107,7 @@ Value* BSTree<Key, Value>::find(const Key& key) const {
     }
 
     if (parent == _root) {
-        return _root->value;
+        return &_root->value;
     }
 
     return nullptr;
@@ -331,7 +332,7 @@ void BSTree<Key, Value>::clear_rec(Node *node) {
 }
 
 template<typename Key, typename Value>
-typename BSTree<Key, Value>::Node *BSTree<Key, Value>::find_parent(const Key& key) {
+typename BSTree<Key, Value>::Node *BSTree<Key, Value>::find_parent(const Key& key) const {
     if (_root == nullptr) {
         return nullptr;
     }
@@ -358,25 +359,6 @@ typename BSTree<Key, Value>::Node *BSTree<Key, Value>::find_parent(const Key& ke
 
             current = current->right;
         }
-    }
-
-    return nullptr;
-}
-
-template<typename Key, typename Value>
-typename BSTree<Key, Value>::Node* BSTree<Key, Value>::find_node(const Key& key) {
-    Node* parent = find_parent(key);
-
-    if (parent->left && parent->left->key == key) {
-        return parent->left;
-    }
-
-    if (parent->right && parent->right->key == key) {
-        return parent->right;
-    }
-
-    if (parent->key == key) {
-        return parent;
     }
 
     return nullptr;
