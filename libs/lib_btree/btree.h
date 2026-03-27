@@ -325,7 +325,7 @@ void BTree<Key, Value>::print_tree_rec(Node* node, int deep) const {
 }
 
 template<typename Key, typename Value>
-void BTree<Key, Value>::clear_rec(Node *node) {
+void BTree<Key, Value>::clear_rec(Node* node) {
     if (node == nullptr) {
         return;
     }
