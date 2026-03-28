@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "libs/lib_queue/queue.h"
+#include "libs/lib_tvector/tvector.h"
 
 template<typename Key, typename Value>
 class BTree {
@@ -31,6 +32,8 @@ class BTree {
     void erase(const Key& key);
     void clear();
     bool is_empty() const;
+    size_t size() const;
+    TVector<Key> get_keys() const;
 
     void print_w() const;
     void print_dlcr() const;
@@ -201,6 +204,40 @@ void BTree<Key, Value>::clear() {
 template<typename Key, typename Value>
 bool BTree<Key, Value>::is_empty() const {
     return _root == nullptr;
+}
+
+template<typename Key, typename Value>
+size_t BTree<Key, Value>::size() const {
+    return _size;
+}
+
+template<typename Key, typename Value>
+TVector<Key> BTree<Key, Value>::get_keys() const {
+    TVector<Key> result;
+
+    if (is_empty()) {
+        return result;
+    }
+
+    Node* current = nullptr;
+    Queue<Node*> queue((_size + 1) / 2);
+    queue.enqueue(_root);
+
+    while (!queue.is_empty()) {
+        current = queue.front();
+        result.push_back(current->key);
+        queue.dequeue();
+
+        if (current->left) {
+            queue.enqueue(current->left);
+        }
+
+        if (current->right) {
+            queue.enqueue(current->right);
+        }
+    }
+
+    return result;
 }
 
 template<typename Key, typename Value>
