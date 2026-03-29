@@ -4,6 +4,7 @@
 #define LIBS_LIB_AVLTREE_AVLTREE_H_
 
 #include <cstdlib>
+#include <stdexcept>
 
 template<typename Key, typename Value>
 class AVLTree {
@@ -13,6 +14,10 @@ class AVLTree {
         Key key;
         Value value;
         size_t height;
+
+        Node(const Key& a_key, const Value& a_value,
+            const size_t& a_height = 0, Node* a_left = nullptr,
+            Node* a_right = nullptr, Node* a_parent = nullptr);
     };
 
     Node* _root;
@@ -52,6 +57,70 @@ class AVLTree {
     void recalculate_height(Node* node);
     int calculate_balance(Node* node);
 };
+
+template<typename Key, typename Value>
+void AVLTree<Key, Value>::left_rotate(Node* node) {
+    if (!node) {
+        throw std::invalid_argument("AVLTree::left_rotate: node is nullptr");
+    }
+
+    Node* grand = node;
+    Node* great = grand->parent;;
+    Node* dad = grand->right;
+    Node* left_child = dad->left;
+
+    dad->parent = grand->parent;
+    grand->right = left_child;
+
+    if (left_child) {
+        left_child->parent = grand;
+    }
+
+    dad->left = grand;
+    grand->parent = dad;
+
+    if (great && great->right == node) {
+        great->right = dad;
+    } else if (great && great->left == node) {
+        great->left = dad;
+    }
+
+    if (!great) {
+        _root = dad;
+    }
+}
+
+template<typename Key, typename Value>
+void AVLTree<Key, Value>::right_rotate(Node* node) {
+    if (!node) {
+        throw std::invalid_argument("AVLTree::left_rotate: node is nullptr");
+    }
+
+    Node* grand = node;
+    Node* great = grand->parent;;
+    Node* dad = grand->left;
+    Node* right_child = dad->right;
+
+    dad->parent = grand->parent;
+    grand->left = right_child;
+
+    if (right_child) {
+        right_child->parent = grand;
+    }
+
+    dad->right = grand;
+    grand->parent = dad;
+
+    if (great && great->right == node) {
+        great->right = dad;
+    } else if (great && great->left == node) {
+        great->left = dad;
+    }
+
+    if (!great) {
+        _root = dad;
+    }
+}
 
 template<typename Key, typename Value>
 void AVLTree<Key, Value>::recalculate_height(Node* node) {
