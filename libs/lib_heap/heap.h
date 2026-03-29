@@ -10,19 +10,19 @@
 
 template <typename T>
 class Heap {
-private:
+ private:
     TVector<T> vec;
 
-public:
+ public:
     Heap();
     void insert(const T&);
     T pop();
-    bool is_empty();
+    bool is_empty() const;
     void clear();
     const T& top() const;
-    std::string to_string_as_array();
+    size_t size() const;
 
-private:
+ private:
     void surface(size_t index);
     void dive();
 };
@@ -53,7 +53,7 @@ T Heap<T>::pop() {
 }
 
 template<typename T>
-bool Heap<T>::is_empty() {
+bool Heap<T>::is_empty() const {
     return vec.is_empty();
 }
 
@@ -72,20 +72,8 @@ const T& Heap<T>::top() const {
 }
 
 template<typename T>
-std::string Heap<T>::to_string_as_array() {
-    std::stringstream ss;
-    bool first = true;
-
-    for (int i = 0; i < vec.size(); i++) {
-        if (!first) {
-            ss << ", ";
-        }
-
-        ss << vec[i];
-        first = false;
-    }
-
-    return ss.str();
+size_t Heap<T>::size() const {
+    return vec.size();
 }
 
 template<typename T>
