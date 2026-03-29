@@ -15,9 +15,9 @@ class AVLTree {
         Value value;
         size_t height;
 
-        Node(const Key& a_key, const Value& a_value,
+        Node(const Key& a_key, const Value& a_value, Node* a_parent = nullptr,
             const size_t& a_height = 0, Node* a_left = nullptr,
-            Node* a_right = nullptr, Node* a_parent = nullptr);
+            Node* a_right = nullptr);
     };
 
     Node* _root;
@@ -49,14 +49,74 @@ class AVLTree {
 
     void left_rotate(Node* node);
     void right_rotate(Node* node);
-    void case_rr(Node* node);
-    void case_ll(Node* node);
-    void case_lr(Node* node);
-    void case_rl(Node* node);
+    // void case_rr(Node* node);
+    // void case_ll(Node* node);
+    // void case_lr(Node* node);
+    // void case_rl(Node* node);
     void rebalance(Node* node);
     void recalculate_height(Node* node);
     int calculate_balance(Node* node);
 };
+
+template<typename Key, typename Value>
+AVLTree<Key, Value>::Node::Node(const Key& a_key, const Value& a_value, Node* a_parent, const size_t& a_height,
+    Node* a_left, Node* a_right) : key(a_key), value(a_value), parent(a_parent),
+height(a_height), left(a_left), right(a_right){
+}
+
+template<typename Key, typename Value>
+void AVLTree<Key, Value>::insert(const Key& key, const Value& value) {
+    Node* parent = find_parent(key);
+    Node* new_node = new Node(key, value, parent);
+
+    if (!parent) {
+        _root = new_node;
+        _size++;
+    } else if (parent->key < key && !parent->right) {
+        parent->right = new_node;
+        _size++;
+    } else if (parent->key > key && !parent->left) {
+        parent->left = new_node;
+        _size++;
+    } else {
+        delete new_node;
+        throw std::invalid_argument("AVLTree::insert: Key already exists");
+    }
+
+    if (new_node == _root)  {
+        return;
+    }
+
+    Node* dad = new_node->parent;
+    Node* grand = dad->parent;
+    int grand_balance;
+
+    recalculate_height(dad);
+
+    if (!grand) {
+        return;
+    }
+
+    grand_balance = calculate_balance(grand);
+
+    if (grand_balance < -1 || grand_balance > 1) {
+        rebalance(grand);
+    }
+
+    Node* current = grand;
+    int prev_height;
+
+    while (current) {
+        prev_height = current->height;
+        recalculate_height(current);
+
+        if (prev_height == current->height) {
+            break;
+        }
+
+        current = current->parent;
+    }
+}
 
 template<typename Key, typename Value>
 void AVLTree<Key, Value>::left_rotate(Node* node) {
@@ -119,6 +179,39 @@ void AVLTree<Key, Value>::right_rotate(Node* node) {
 
     if (!great) {
         _root = dad;
+    }
+}
+
+template<typename Key, typename Value>
+void AVLTree<Key, Value>::rebalance(Node* node) {
+    Node* grand = node;
+    Node* dad = nullptr;
+
+    int grand_balance = calculate_balance(grand);
+    int dad_balance = 0;
+
+    if (grand_balance >= 2) {
+        dad = node->right;
+        dad_balance = calculate_balance(dad);
+
+        if (dad_balance >= 0) {
+            left_rotate(grand);
+        } else {
+            right_rotate(dad);
+            recalculate_height(dad);
+            left_rotate(grand);
+        }
+    } else if (grand_balance <= -2) {
+        dad = node->left;
+        dad_balance = calculate_balance(dad);
+
+        if (dad_balance <= 0) {
+            right_rotate(grand);
+        } else {
+            left_rotate(dad);
+            recalculate_height(dad);
+            right_rotate(grand);
+        }
     }
 }
 
