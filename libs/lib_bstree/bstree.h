@@ -119,71 +119,44 @@ void BSTree<Key, Value>::erase(const Key& key) {
         throw std::logic_error("BSTree::erase: tree is empty");
     }
 
+    Node** slot;
     Node* to_erase_parent = find_parent(key);
     Node* to_erase = nullptr;
-    bool is_right = false;
-    bool is_left = false;
 
     if (to_erase_parent->left && to_erase_parent->left->key == key) {
         to_erase = to_erase_parent->left;
-        is_left = true;
+        slot = &to_erase_parent->left;
     } else if (to_erase_parent->right && to_erase_parent->right->key == key) {
         to_erase = to_erase_parent->right;
-        is_right = true;
+        slot = &to_erase_parent->right;
     } else if (to_erase_parent == _root) {
         to_erase = _root;
+        slot = &_root;
     } else {
         throw std::invalid_argument("BSTree::erase: this key does not exist");
     }
 
-    if (to_erase->left) {
-        Node* left = to_erase->left;
-        Node* left_parent = to_erase;
+    if (to_erase->left && to_erase->right) {
+        Node* leaf = to_erase->left;
+        Node* leaf_parent = to_erase;
 
-        while (left->right) {
-            left_parent = left;
-            left = left->right;
+        while (leaf->right) {
+            leaf_parent = leaf;
+            leaf = leaf->right;
         }
 
-        to_erase->key = left->key;
-        to_erase->value = left->value;
-        delete left;
-        if (left_parent != to_erase) {
-            left_parent->right = nullptr;
+        if (leaf_parent != to_erase) {
+            leaf_parent->right = leaf->left;
         } else {
-            to_erase->left = nullptr;
-        }
-        return;
-    } else if (to_erase->right) {
-        Node* right = to_erase->right;
-        Node* right_parent = to_erase;
-
-        while (right->left) {
-            right_parent = right;
-            right = right->left;;
+            to_erase->left = leaf->left;
         }
 
-        to_erase->key = right->key;
-        to_erase->value = right->value;
-        delete right;
-        if (right_parent != to_erase) {
-            right_parent->left = nullptr;
-        } else {
-            to_erase->right = nullptr;
-        }
-        return;
+        to_erase->key = leaf->key;
+        to_erase->value = leaf->value;
+        delete leaf;
     } else {
-        if (to_erase == _root) {
-            _root = nullptr;
-        }
+        *slot = to_erase->left ? to_erase->left : to_erase->right;
         delete to_erase;
-        if (is_right) {
-            to_erase_parent->right = nullptr;
-        }
-        if (is_left) {
-            to_erase_parent->left = nullptr;
-        }
-        return;
     }
 }
 

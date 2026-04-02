@@ -236,9 +236,9 @@ TEST(TestBSTree, EraseNodeWithOneLeftChild) {
     tree.print_tree();
     std::cout.rdbuf(old);
 
-    EXPECT_EQ(ss.str(), "   10:10\n"
-                        "    9:7\n"
-                        "     8:9\n"
+    EXPECT_EQ(ss.str(), "    10:10\n"
+                        "   9:7\n"
+                        "    8:9\n"
                         "  7:2\n"
                         " 6:0\n"
                         "   5:4\n"
@@ -281,10 +281,10 @@ TEST(TestBSTree, EraseNodeWithOneRightChild) {
     tree.print_tree();
     std::cout.rdbuf(old);
 
-    EXPECT_EQ(ss.str(), "   11:5\n"
-                        "     10:10\n"
-                        "    9:7\n"
-                        "  8:9\n"
+    EXPECT_EQ(ss.str(), "  11:5\n"
+                        "    10:10\n"
+                        "   9:7\n"
+                        "    8:9\n"
                         " 6:0\n"
                         "   5:4\n"
                         "  4:1\n"
@@ -336,6 +336,115 @@ TEST(TestBSTree, EraseRootNode) {
                         "     3:8\n"
                         "    2:6\n"
                         "   1:3\n");
+}
+
+TEST(TestBSTree, EraseRootWithOneChild) {
+    BSTree<int, int> tree;
+
+    int array[6] = {6, 4, 1, 5, 2, 3,};
+
+    for (int i = 0; i < 6; i++) {
+        tree.insert(array[i], i);
+    }
+
+    std::stringstream ss;
+    std::streambuf* old = std::cout.rdbuf(ss.rdbuf());
+    tree.print_tree();
+    std::cout.rdbuf(old);
+
+    EXPECT_EQ(ss.str(), " 6:0\n"
+                        "   5:3\n"
+                        "  4:1\n"
+                        "     3:5\n"
+                        "    2:4\n"
+                        "   1:2\n");
+
+    tree.erase(6);
+
+    ss.str("");
+    old = std::cout.rdbuf(ss.rdbuf());
+    tree.print_tree();
+    std::cout.rdbuf(old);
+
+    EXPECT_EQ(ss.str(), "  5:3\n"
+                        " 4:1\n"
+                        "    3:5\n"
+                        "   2:4\n"
+                        "  1:2\n");
+}
+
+TEST(TestBSTree, EraseRootWithTwoChildsButReplaceLeafhasLeftChildCase1) {
+    BSTree<int, int> tree;
+
+    int array[7] = {6, 7, 5, 4, 3, 2, 1};
+
+    for (int i = 0; i < 7; i++) {
+        tree.insert(array[i], i);
+    }
+
+    std::stringstream ss;
+    std::streambuf* old = std::cout.rdbuf(ss.rdbuf());
+    tree.print_tree();
+    std::cout.rdbuf(old);
+
+    EXPECT_EQ(ss.str(), "  7:1\n"
+                        " 6:0\n"
+                        "  5:2\n"
+                        "   4:3\n"
+                        "    3:4\n"
+                        "     2:5\n"
+                        "      1:6\n");
+
+    tree.erase(6);
+
+    ss.str("");
+    old = std::cout.rdbuf(ss.rdbuf());
+    tree.print_tree();
+    std::cout.rdbuf(old);
+
+    EXPECT_EQ(ss.str(), "  7:1\n"
+                        " 5:2\n"
+                        "  4:3\n"
+                        "   3:4\n"
+                        "    2:5\n"
+                        "     1:6\n");
+}
+
+TEST(TestBSTree, EraseRootWithTwoChildsButReplaceLeafhasLeftChildCase2) {
+    BSTree<int, int> tree;
+
+    int array[7] = {6, 7, 1, 5, 4, 3, 2};
+
+    for (int i = 0; i < 7; i++) {
+        tree.insert(array[i], i);
+    }
+
+    std::stringstream ss;
+    std::streambuf* old = std::cout.rdbuf(ss.rdbuf());
+    tree.print_tree();
+    std::cout.rdbuf(old);
+
+    EXPECT_EQ(ss.str(), "  7:1\n"
+                        " 6:0\n"
+                        "   5:3\n"
+                        "    4:4\n"
+                        "     3:5\n"
+                        "      2:6\n"
+                        "  1:2\n");
+
+    tree.erase(6);
+
+    ss.str("");
+    old = std::cout.rdbuf(ss.rdbuf());
+    tree.print_tree();
+    std::cout.rdbuf(old);
+
+    EXPECT_EQ(ss.str(), "  7:1\n"
+                        " 5:3\n"
+                        "   4:4\n"
+                        "    3:5\n"
+                        "     2:6\n"
+                        "  1:2\n");
 }
 
 TEST(TestBSTree, EraseNodeWithTwoChields) {
