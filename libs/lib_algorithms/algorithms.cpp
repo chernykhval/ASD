@@ -154,32 +154,22 @@ Matrix<Cell> create_initial_matrix(int rows, int cols,
     return walls;
 }
 
-OrderedArrayTable<RoomConnection, WallSet> collect_wall_candidates(int rows,
+OrderedArrayTable<RoomConnection, Wall> collect_wall_candidates(int rows,
     int cols, DSU& rooms) {
-    OrderedArrayTable<RoomConnection, WallSet> walls_to_destroy;
+    OrderedArrayTable<RoomConnection, Wall> walls_to_destroy;
 
     for (int i = 0; i < rows * cols; i++) {
         int right = i + 1;
         int bottom = i + cols;
 
-        if ((i % cols) + 1 < cols && rooms.find(i) != rooms.find(right)) {
-            RoomConnection connection(rooms.find(i), rooms.find(right));
-
-            if (walls_to_destroy.contains(connection) == false) {
-                walls_to_destroy.insert(connection, WallSet());
-            }
-
-            walls_to_destroy.find(connection)->add(i, right);
+        if ((i % cols) + 1 < cols) {
+            RoomConnection connection(i, right);
+            walls_to_destroy.insert(connection, Wall(i, right));
         }
 
-        if ((i / cols) + 1 < rows && rooms.find(i) != rooms.find(bottom)) {
-            RoomConnection connection(rooms.find(i), rooms.find(bottom));
-
-            if (walls_to_destroy.contains(connection) == false) {
-                walls_to_destroy.insert(connection, WallSet());
-            }
-
-            walls_to_destroy.find(connection)->add(i, bottom);
+        if ((i / cols) + 1 < rows) {
+            RoomConnection connection(i, bottom);
+            walls_to_destroy.insert(connection, Wall(i, bottom));
         }
     }
 
@@ -187,16 +177,14 @@ OrderedArrayTable<RoomConnection, WallSet> collect_wall_candidates(int rows,
 }
 
 void build_labyrinth(Matrix<Cell>& walls, DSU& rooms,
-    OrderedArrayTable<RoomConnection, WallSet>& table, int cols) {
+    OrderedArrayTable<RoomConnection, Wall>& table, int cols) {
     TVector<RoomConnection> keys = table.get_keys();
     shuffle(keys);
 
     for (auto key : keys) {
-        WallSet* set = table.find(key);
-        int wall_index = get_random_index(set->size());
-        Wall wall_to_destroy = set->get_wall(wall_index);
-        int room1 = wall_to_destroy.first();
-        int room2 = wall_to_destroy.second();
+        Wall* wall = table.find(key);
+        int room1 = wall->first();
+        int room2 = wall->second();
 
         if (rooms.find(room1) == rooms.find(room2)) {
             continue;
@@ -217,7 +205,7 @@ Matrix<Cell> generate(int start_cell, int end_cell, int rows, int cols) {
     Matrix<Cell> walls = create_initial_matrix(rows, cols, start_cell, end_cell);
 
     DSU rooms(rows * cols);
-    OrderedArrayTable<RoomConnection, WallSet> walls_to_destroy =
+    OrderedArrayTable<RoomConnection, Wall> walls_to_destroy =
         collect_wall_candidates(rows, cols, rooms);
 
     build_labyrinth(walls, rooms, walls_to_destroy, cols);

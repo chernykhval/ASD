@@ -67,36 +67,6 @@ struct Wall {
     }
 };
 
-struct WallSet {
-    TVector<Wall> walls;
-
-    WallSet() = default;
-
-    void add(int cell_1, int cell_2) {
-        walls.push_back(Wall(cell_1, cell_2));
-    }
-
-    size_t size() const {
-        return walls.size();
-    }
-
-    Wall get_wall(int index) const {
-        return walls[index];
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const WallSet& ws) {
-        os << "(";
-
-        for (const auto& wall : ws.walls) {
-             os << wall << " ";
-        }
-
-        os << "Count:" << ws.walls.size();
-        os << ")";
-
-        return os;
-    }
-};
 
 enum Cell {
     ROOM,
@@ -119,10 +89,10 @@ void print_labyrinth(const Matrix<Cell>& walls, bool print_path = false);
 void validate_input(int start_cell, int end_cell, int rows, int cols);
 Matrix<Cell> create_initial_matrix(int rows, int cols,
     int start_cell, int end_cell);
-OrderedArrayTable<RoomConnection, WallSet> collect_wall_candidates(int rows,
+OrderedArrayTable<RoomConnection, Wall> collect_wall_candidates(int rows,
     int cols, DSU& rooms);
 void build_labyrinth(Matrix<Cell>& walls, DSU& rooms,
-    OrderedArrayTable<RoomConnection, WallSet>& table, int cols);
+    OrderedArrayTable<RoomConnection, Wall>& table, int cols);
 void add_path(Matrix<Cell>& walls);
 
 template<typename T>

@@ -1153,13 +1153,14 @@ template<typename T>
 typename TVector<T>::Iterator& TVector<T>::Iterator::operator++() noexcept {
     ptrdiff_t current_index = _ptr - _parent._data;
 
-    for (ptrdiff_t i = current_index + 1; i <= _parent._used; i++) {
+    for (ptrdiff_t i = current_index + 1; i < static_cast<ptrdiff_t>(_parent._used); i++) {
         if (_parent._states[i] != Deleted) {
             _ptr = &_parent._data[i];
-            break;
+            return *this;
         }
     }
 
+    _ptr = &_parent._data[_parent._used];
     return *this;
 }
 
@@ -1398,13 +1399,14 @@ typename TVector<T>::ConstIterator&
 TVector<T>::ConstIterator::operator++() noexcept {
     difference_type current_index = _ptr - _parent._data;
 
-    for (difference_type i = current_index + 1; i <= _parent._used; i++) {
+    for (difference_type i = current_index + 1; i < static_cast<difference_type>(_parent._used); i++) {
         if (_parent._states[i] != Deleted) {
             _ptr = &_parent._data[i];
-            break;
+            return *this;
         }
     }
 
+    _ptr = &_parent._data[_parent._used];
     return *this;
 }
 

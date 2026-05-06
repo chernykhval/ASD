@@ -406,9 +406,7 @@ int main() {
 #include "libs/lib_algorithms/algorithms.h"
 
 int main() {
-    std::cout << "start gen" << std::endl;
-    auto labyrinth = generate(0, 3474, 25, 139);
-    // std::cout << labyrinth << std::endl;
+    auto labyrinth = generate(0, 899, 30, 30);
     print_labyrinth(labyrinth);
     print_labyrinth(labyrinth, true);
     system("pause");
