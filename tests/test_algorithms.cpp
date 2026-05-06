@@ -144,3 +144,113 @@ TEST(TestLabyrinthGenerate, start_and_end_exception) {
 TEST(TestLabyrinthGenerate, generate) {
     generate(0, 15, 4, 4);
 }
+
+// A --4-- B
+// |       |
+// 1       3
+// |       |
+// C --2-- D
+//  \
+//   1
+//    \
+//     E
+TEST(TestDijkstra, basic_path) {
+    AdjMatrixGraph<char> graph({
+        {'A', 'B', 4},
+        {'A', 'C', 1},
+        {'C', 'D', 2},
+        {'C', 'E', 1},
+        {'B', 'E', 3}
+    });
+
+    auto result = dijkstra<char>(graph, 'A', 'D');
+
+    EXPECT_EQ(result.second, 3);
+    EXPECT_EQ(result.first.size(), 3);
+    EXPECT_EQ(result.first[0], 'A');
+    EXPECT_EQ(result.first[1], 'C');
+    EXPECT_EQ(result.first[2], 'D');
+}
+
+// Короткий прямой путь vs длинный дешёвый
+// A --10-- B
+//  \      /
+//   5    1
+//    \  /
+//     C
+TEST(TestDijkstra, short_path_not_always_cheapest) {
+    AdjMatrixGraph<char> graph({
+        {'A', 'B', 10},
+        {'A', 'C', 5},
+        {'C', 'B', 1}
+    });
+
+    auto result = dijkstra<char>(graph, 'A', 'B');
+
+    EXPECT_EQ(result.second, 6);
+    EXPECT_EQ(result.first.size(), 3);
+    EXPECT_EQ(result.first[0], 'A');
+    EXPECT_EQ(result.first[1], 'C');
+    EXPECT_EQ(result.first[2], 'B');
+}
+
+TEST(TestDijkstra, src_equals_dst) {
+    AdjMatrixGraph<char> graph({
+        {'A', 'B', 1},
+        {'B', 'C', 2}
+    });
+
+    auto result = dijkstra<char>(graph, 'A', 'A');
+
+    EXPECT_EQ(result.second, 0);
+    EXPECT_EQ(result.first.size(), 1);
+    EXPECT_EQ(result.first[0], 'A');
+}
+
+TEST(TestDijkstra, no_path) {
+    AdjMatrixGraph<char> graph({
+        {'A', 'B', 1},
+        {'C', 'D', 1}
+    }, true);
+
+    auto result = dijkstra<char>(graph, 'A', 'D');
+
+    EXPECT_EQ(result.second, -1);
+    EXPECT_EQ(result.first.size(), 0);
+}
+
+TEST(TestDijkstra, directed_no_path_back) {
+    AdjMatrixGraph<char> graph({
+        {'A', 'B', 1},
+        {'B', 'C', 2}
+    }, true);
+
+    auto fwd = dijkstra<char>(graph, 'A', 'C');
+    EXPECT_EQ(fwd.second, 3);
+
+    auto back = dijkstra<char>(graph, 'C', 'A');
+    EXPECT_EQ(back.second, -1);
+    EXPECT_EQ(back.first.size(), 0);
+}
+
+// Невзвешенный: кратчайший путь по числу рёбер
+// A - B - C
+// |       |
+// D - E --+
+TEST(TestDijkstra, unweighted_shortest_by_hops) {
+    AdjMatrixGraph<char> graph({
+        {'A', 'B'},
+        {'B', 'C'},
+        {'A', 'D'},
+        {'D', 'E'},
+        {'E', 'C'}
+    }, false, false);
+
+    auto result = dijkstra<char>(graph, 'A', 'C');
+
+    EXPECT_EQ(result.second, 2);
+    EXPECT_EQ(result.first.size(), 3);
+    EXPECT_EQ(result.first[0], 'A');
+    EXPECT_EQ(result.first[1], 'B');
+    EXPECT_EQ(result.first[2], 'C');
+}

@@ -5,7 +5,7 @@
 #include "libs/lib_algorithms/algorithms.h"
 #include "libs/lib_matrix/matrix.h"
 #include "libs/lib_dsu/dsu.h"
-#include "libs/lib_unordered_array_table/unordered_array_table.h"
+#include "libs/lib_adj_matrix_graph/adj_matrix_graph.h"
 
 size_t get_random_index(size_t n) noexcept {
     static std::random_device rd;
@@ -126,10 +126,10 @@ void validate_input(int start_cell, int end_cell, int rows, int cols) {
     }
 }
 
-Matrix<int> create_initial_matrix(int rows, int cols,
+Matrix<Cell> create_initial_matrix(int rows, int cols,
     int start_cell, int end_cell) {
 
-    Matrix<int> walls(2 * rows + 1, 2 * cols + 1);
+    Matrix<Cell> walls(2 * rows + 1, 2 * cols + 1);
 
     for (int i = 0; i < 2 * rows + 1; i++) {
         for (int j = 0; j < 2 * cols + 1; j++) {
@@ -139,14 +139,14 @@ Matrix<int> create_initial_matrix(int rows, int cols,
                 int current_cell = cell_row  * cols + cell_col;
 
                 if (current_cell == start_cell) {
-                    walls[i][j] = 2;
+                    walls[i][j] = START;
                 } else if (current_cell == end_cell) {
-                    walls[i][j] = 3;
+                    walls[i][j] = FINISH;
                 } else {
-                    walls[i][j] = 0;
+                    walls[i][j] = ROOM;
                 }
             } else {
-                walls[i][j] = 1;
+                walls[i][j] = WALL;
             }
         }
     }
@@ -154,9 +154,9 @@ Matrix<int> create_initial_matrix(int rows, int cols,
     return walls;
 }
 
-UnorderedArrayTable<RoomConnection, WallSet> collect_wall_candidates(int rows,
+OrderedArrayTable<RoomConnection, WallSet> collect_wall_candidates(int rows,
     int cols, DSU& rooms) {
-    UnorderedArrayTable<RoomConnection, WallSet> walls_to_destroy;
+    OrderedArrayTable<RoomConnection, WallSet> walls_to_destroy;
 
     for (int i = 0; i < rows * cols; i++) {
         int right = i + 1;
@@ -186,8 +186,8 @@ UnorderedArrayTable<RoomConnection, WallSet> collect_wall_candidates(int rows,
     return walls_to_destroy;
 }
 
-void build_labyrinth(Matrix<int>& walls, DSU& rooms,
-    UnorderedArrayTable<RoomConnection, WallSet>& table, int cols) {
+void build_labyrinth(Matrix<Cell>& walls, DSU& rooms,
+    OrderedArrayTable<RoomConnection, WallSet>& table, int cols) {
     TVector<RoomConnection> keys = table.get_keys();
     shuffle(keys);
 
@@ -205,43 +205,126 @@ void build_labyrinth(Matrix<int>& walls, DSU& rooms,
         rooms.unite(room1, room2);
 
         if (room2 == room1 + 1) {
-            walls[2 * (room1 / cols) + 1][2 * (room1 % cols) + 2] = 0;
+            walls[2 * (room1 / cols) + 1][2 * (room1 % cols) + 2] = ROOM;
         } else {
-            walls[2 * (room1 / cols) + 2][2 * (room1 % cols) + 1] = 0;
+            walls[2 * (room1 / cols) + 2][2 * (room1 % cols) + 1] = ROOM;
         }
     }
 }
 
-Matrix<int> generate(int start_cell, int end_cell, int rows, int cols) {
+Matrix<Cell> generate(int start_cell, int end_cell, int rows, int cols) {
     validate_input(start_cell, end_cell, rows, cols);
-    Matrix<int> walls = create_initial_matrix(rows, cols, start_cell, end_cell);
+    Matrix<Cell> walls = create_initial_matrix(rows, cols, start_cell, end_cell);
 
     DSU rooms(rows * cols);
-    UnorderedArrayTable<RoomConnection, WallSet> walls_to_destroy =
+    OrderedArrayTable<RoomConnection, WallSet> walls_to_destroy =
         collect_wall_candidates(rows, cols, rooms);
 
     build_labyrinth(walls, rooms, walls_to_destroy, cols);
+    add_path(walls);
 
     return walls;
 }
 
-void print_labyrinth(const Matrix<int>& walls) {
+struct Vertex {
+    size_t row;
+    size_t col;
+
+    bool operator==(const Vertex& other) const {
+        return row == other.row && col == other.col;
+    }
+
+    bool operator!=(const Vertex& other) const {
+        return !(*this == other);
+    }
+
+    bool operator<(const Vertex& other) const {
+        if (row != other.row) return row < other.row;
+        return col < other.col;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Vertex& v) {
+        return os << "(" << v.row << "," << v.col << ")";
+    }
+};
+
+void add_path(Matrix<Cell>& walls) {
+    std::vector<std::pair<Vertex, Vertex>> edges;
+    Vertex start = {};
+    Vertex finish = {};
+
+    for (size_t i = 1; i < walls.rows(); i+=2) {
+        for (size_t j = 1; j < walls.cols(); j+=2) {
+            if (walls[i][j] == START) {
+                start = {i, j};
+            }
+            if (walls[i][j] == FINISH) {
+                finish = {i, j};
+            }
+            if (j + 1 != walls.cols() && walls[i][j + 1] == ROOM) {
+                Vertex v1 = {i, j};
+                Vertex v2 = {i, j + 2};
+                edges.push_back({v1, v2});
+            }
+
+            if (i + 1 != walls.rows() && walls[i + 1][j] == ROOM) {
+                Vertex v1 = {i, j};
+                Vertex v2 = {i + 2, j};
+                edges.push_back({v1, v2});
+            }
+        }
+    }
+
+    AdjListGraph<Vertex> labyrinth(edges);
+
+    auto path_info = dijkstra(labyrinth, start, finish);
+
+    if (path_info.second == -1) {
+        return;
+    }
+
+    for (size_t i = 0; i < path_info.first.size() - 1; i++) {
+        Vertex current = path_info.first[i];
+        Vertex next = path_info.first[i + 1];
+
+        walls[(current.row + next.row) / 2][(current.col + next.col) / 2] = PATH;
+
+        if (next != finish) {
+            walls[next.row][next.col] = PATH;
+        }
+    }
+}
+
+const char* const COLOR_YELLOW = "\033[93m";
+const char* const COLOR_GREEN  = "\033[92m";
+const char* const COLOR_RESET  = "\033[0m";
+
+void print_colored(char c, const char* color) {
+    std::cout << color << c << COLOR_RESET;
+}
+
+void print_labyrinth(const Matrix<Cell>& walls, bool print_path) {
     int rows = walls.rows();
     int cols = walls.cols();
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            if (walls[i][j] == 2) {
-                std::cout << "s";
+            if (walls[i][j] == START) {
+                print_colored('s', COLOR_YELLOW);
                 continue;
             }
 
-            if (walls[i][j] == 3) {
-                std::cout << "f";
+            if (walls[i][j] == FINISH) {
+                print_colored('f', COLOR_YELLOW);
                 continue;
             }
 
-            if (walls[i][j] != 1) {
+            if (print_path && walls[i][j] == PATH) {
+                print_colored('p', COLOR_GREEN);
+                continue;
+            }
+
+            if (walls[i][j] != WALL) {
                 std::cout << " ";
                 continue;
             }

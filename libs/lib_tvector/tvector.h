@@ -6,7 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <utility>
-#include <ctime>
+#include <random>
 
 enum State {
     Empty,
@@ -1001,11 +1001,12 @@ std::ostream& operator<<(std::ostream& stream, const TVector<T>& out) noexcept {
 
 template<typename U>
 void shuffle(TVector<U>& vec) noexcept {
-    std::srand(std::time(0));
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
 
     for (size_t i = vec._used - 1; i > 0; --i) {
-        size_t j = std::rand() % (i + 1);
-        vec.swap_elem(i, j);
+        std::uniform_int_distribution<size_t> dist(0, i);
+        vec.swap_elem(i, dist(gen));
     }
 }
 

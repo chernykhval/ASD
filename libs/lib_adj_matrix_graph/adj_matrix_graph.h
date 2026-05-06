@@ -58,16 +58,49 @@ AdjMatrixGraph<T>::AdjMatrixGraph(size_t vertex_count, bool is_directed, bool is
 template<typename T>
 AdjMatrixGraph<T>::AdjMatrixGraph(std::vector<std::pair<T, T>> edges, bool is_directed, bool is_weighted)
     : _is_directed(is_directed), _is_weighted(is_weighted), _adj_matrix(), _vertices() {
-    for (auto edge : edges) {
-        add_edge(edge.first, edge.second);
+    for (const auto& edge : edges) {
+        if (!has_vertex(edge.first))  _vertices.push_back(edge.first);
+        if (!has_vertex(edge.second)) _vertices.push_back(edge.second);
+    }
+
+    size_t n = _vertices.size();
+    _adj_matrix = Matrix<int>(n, n);
+    for (size_t i = 0; i < n; i++)
+        for (size_t j = 0; j < n; j++)
+            _adj_matrix[i][j] = NULL_EDGE;
+
+    for (const auto& edge : edges) {
+        size_t from_idx = get_vertex_index(edge.first);
+        size_t to_idx   = get_vertex_index(edge.second);
+        _adj_matrix[from_idx][to_idx] = 0;
+        if (!_is_directed && from_idx != to_idx)
+            _adj_matrix[to_idx][from_idx] = 0;
     }
 }
 
 template<typename T>
 AdjMatrixGraph<T>::AdjMatrixGraph(std::vector<std::tuple<T, T, int>> edges, bool is_directed, bool is_weighted)
     : _is_directed(is_directed), _is_weighted(is_weighted), _adj_matrix(), _vertices() {
-    for (auto edge : edges) {
-        add_edge(std::get<0>(edge), std::get<1>(edge), std::get<2>(edge));
+    for (const auto& edge : edges) {
+        if (!has_vertex(std::get<0>(edge))) _vertices.push_back(std::get<0>(edge));
+        if (!has_vertex(std::get<1>(edge))) _vertices.push_back(std::get<1>(edge));
+    }
+
+    size_t n = _vertices.size();
+    _adj_matrix = Matrix<int>(n, n);
+    for (size_t i = 0; i < n; i++)
+        for (size_t j = 0; j < n; j++)
+            _adj_matrix[i][j] = NULL_EDGE;
+
+    for (const auto& edge : edges) {
+        int weight = std::get<2>(edge);
+        if (weight == NULL_EDGE)
+            throw std::invalid_argument("AdjMatrixGraph: MAX_INT weight is reserved");
+        size_t from_idx = get_vertex_index(std::get<0>(edge));
+        size_t to_idx   = get_vertex_index(std::get<1>(edge));
+        _adj_matrix[from_idx][to_idx] = weight;
+        if (!_is_directed && from_idx != to_idx)
+            _adj_matrix[to_idx][from_idx] = weight;
     }
 }
 

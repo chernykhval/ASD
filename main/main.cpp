@@ -1,4 +1,6 @@
 // Copyright 2024 Marina Usova
+// Copyright 2025 Chernykh Valentin
+// Copyright 2026 Chernykh Valentin
 
 #define LABYRINTH_TEST
 
@@ -400,11 +402,123 @@ int main() {
 
 #ifdef LABYRINTH_TEST
 
+#include <iostream>
 #include "libs/lib_algorithms/algorithms.h"
 
 int main() {
-    print_labyrinth(generate(0, 3474, 25, 139));
+    std::cout << "start gen" << std::endl;
+    auto labyrinth = generate(0, 3474, 25, 139);
+    // std::cout << labyrinth << std::endl;
+    print_labyrinth(labyrinth);
+    print_labyrinth(labyrinth, true);
     system("pause");
     return 0;
 }
 #endif  // LABYRINTH_TEST
+
+#ifdef HEAP_TEST
+
+#include <iostream>
+#include "libs/lib_heap/heap.h"
+#include "libs/lib_priority_queue/priority_queue.h"
+#include "random"
+
+int main() {
+    PriorityQueue<int> priority_queue;
+    int K = 30;
+    int k = K;
+    std::random_device random_device;
+    std::mt19937 gen(random_device());
+    std::uniform_int_distribution<> dist_1(0, 3);
+    std::uniform_int_distribution<> dist_2(0, 99);
+
+    while (k > 0) {
+        int n = dist_1(gen);
+        int rand_priority = dist_2(gen);
+
+        for (int i = 0; i < n; i++) {
+            priority_queue.push(rand_priority, k);
+            k--;
+        }
+    }
+
+    for (int i = 0; i < 15; i++) {
+        std::cout << priority_queue.pop_info() << std::endl;
+        priority_queue.pop();
+    }
+
+    system("pause");
+
+    return 0;
+}
+#endif  // HEAP_TEST
+
+#ifdef HASH_TABLE_TEST
+
+#include <iostream>
+#include <cstdlib>
+#include "libs/lib_hash_table_c/hash_table_c.h"
+#include "libs/lib_hash_table_oa/hash_table_oa.h"
+#include "libs/lib_tvector/tvector.h"
+
+int main() {
+    TVector<std::pair<std::string, int>> dict1;
+    TVector<std::pair<std::string, int>> dict2;
+
+    dict1.push_back(std::pair<std::string, int>("table", 1349));
+    dict1.push_back(std::pair<std::string, int>("hash", 1985));
+    dict1.push_back(std::pair<std::string, int>("list", 4372));
+    dict2.push_back(std::pair<std::string, int>("array", 4312));
+    dict2.push_back(std::pair<std::string, int>("list", 5863));
+    dict2.push_back(std::pair<std::string, int>("hash", 4372));
+    dict2.push_back(std::pair<std::string, int>("vector", 2586));
+
+    HashTableOA<int> hash_table;
+
+    for (std::pair<std::string, int> pair : dict1) {
+        hash_table.insert(pair.first, pair.second);
+    }
+
+    for (std::pair<std::string, int> pair : dict2) {
+        try {
+            hash_table.insert(pair.first, pair.second);
+        }
+        catch (const std::exception& e) {
+        }
+    }
+
+    std::cout << hash_table.to_string();
+
+    system("pause");
+
+    return 0;
+}
+
+#endif  // HASH_TABLE_TEST
+
+#ifdef DIJKSTRA_TEST
+
+#include <iostream>
+#include <cstdlib>
+#include "libs/lib_algorithms/algorithms.h"
+#include "libs/lib_adj_matrix_graph/adj_matrix_graph.h"
+#include "libs/lib_tvector/tvector.h"
+
+int main() {
+    AdjMatrixGraph<char> graph({
+        {'A', 'B', 4},
+        {'A', 'C', 1},
+        {'C', 'D', 2},
+        {'C', 'E', 1},
+        {'B', 'E', 3}
+    });
+
+    std::pair<TVector<char>, int> result = dijkstra<char>(graph, 'A', 'D');
+    std::cout << result.first << "\n" << result.second << std::endl;
+
+    system("pause");
+
+    return 0;
+}
+
+#endif  // DIJKSTRA_TEST
