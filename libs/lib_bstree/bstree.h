@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include "libs/lib_queue/queue.h"
+#include "libs/lib_tvector/tvector.h"
 
 template<typename Key, typename Value>
 class BSTree {
@@ -33,6 +34,8 @@ class BSTree {
     void erase(const Key& key);
     void clear();
     bool is_empty() const;
+    size_t size() const noexcept;
+    TVector<Key> get_keys() const;
 
     void print_w() const;
     void print_dlcr() const;
@@ -42,8 +45,6 @@ class BSTree {
 
  private:
     Node* find_parent(const Key& key) const;
-    void left_swap_and_erase(Node* node);
-    void right_swap_and_erase(Node* node);
     void print_dlcr_rec(Node* node, bool& first) const;
     void print_dlrc_rec(Node* node, bool& first) const;
     void print_dclr_rec(Node* node, bool& first) const;
@@ -106,8 +107,8 @@ Value* BSTree<Key, Value>::find(const Key& key) const {
         return &parent->right->value;
     }
 
-    if (parent == _root) {
-        return &_root->value;
+    if (parent->key == key) {
+        return &parent->value;
     }
 
     return nullptr;
@@ -129,7 +130,7 @@ void BSTree<Key, Value>::erase(const Key& key) {
     } else if (to_erase_parent->right && to_erase_parent->right->key == key) {
         to_erase = to_erase_parent->right;
         slot = &to_erase_parent->right;
-    } else if (to_erase_parent == _root) {
+    } else if (to_erase_parent == _root && to_erase_parent->key == key) {
         to_erase = _root;
         slot = &_root;
     } else {
@@ -158,6 +159,7 @@ void BSTree<Key, Value>::erase(const Key& key) {
         *slot = to_erase->left ? to_erase->left : to_erase->right;
         delete to_erase;
     }
+    _size--;
 }
 
 template<typename Key, typename Value>
@@ -305,7 +307,41 @@ void BSTree<Key, Value>::clear_rec(Node *node) {
 }
 
 template<typename Key, typename Value>
-typename BSTree<Key, Value>::Node *BSTree<Key, Value>::find_parent(const Key& key) const {
+size_t BSTree<Key, Value>::size() const noexcept {
+    return _size;
+}
+
+template<typename Key, typename Value>
+TVector<Key> BSTree<Key, Value>::get_keys() const {
+    TVector<Key> result;
+
+    if (is_empty()) {
+        return result;
+    }
+
+    Node* current = nullptr;
+    Queue<Node*> queue((_size + 1) / 2);
+    queue.enqueue(_root);
+
+    while (!queue.is_empty()) {
+        current = queue.front();
+        result.push_back(current->key);
+        queue.dequeue();
+
+        if (current->left) {
+            queue.enqueue(current->left);
+        }
+
+        if (current->right) {
+            queue.enqueue(current->right);
+        }
+    }
+
+    return result;
+}
+
+template<typename Key, typename Value>
+typename BSTree<Key, Value>::Node* BSTree<Key, Value>::find_parent(const Key& key) const {
     if (_root == nullptr) {
         return nullptr;
     }
@@ -314,7 +350,7 @@ typename BSTree<Key, Value>::Node *BSTree<Key, Value>::find_parent(const Key& ke
         return _root;
     }
 
-    Node *current = _root;
+    Node* current = _root;
 
     while (current) {
         if (current->key > key) {
@@ -337,36 +373,5 @@ typename BSTree<Key, Value>::Node *BSTree<Key, Value>::find_parent(const Key& ke
     return nullptr;
 }
 
-template<typename Key, typename Value>
-void BSTree<Key, Value>::left_swap_and_erase(Node* node) {
-    Node* to_swap = node->left;
-    Node* to_swap_parent = nullptr;
-
-    while (to_swap->right) {
-        to_swap_parent = to_swap;
-        to_swap = to_swap->right;
-    }
-
-    node->key = to_swap->key;
-    node->value = to_swap->value;
-    delete to_swap;
-    to_swap_parent->right = nullptr;
-}
-
-template<typename Key, typename Value>
-void BSTree<Key, Value>::right_swap_and_erase(Node* node) {
-    Node* to_swap = node->left;
-    Node* to_swap_parent = nullptr;
-
-    while (to_swap->right) {
-        to_swap_parent = to_swap;
-        to_swap = to_swap->right;
-    }
-
-    node->key = to_swap->key;
-    node->value = to_swap->value;
-    delete to_swap;
-    to_swap_parent->right = nullptr;
-}
 
 #endif  // LIBS_LIB_BSTREE_BSTREE_H_

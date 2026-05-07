@@ -574,10 +574,48 @@ TEST(TestBSTree, FindNodeReturnPtr) {
     EXPECT_EQ(*tree.find(2), 6);
 }
 
+TEST(TestBSTree, EraseNonExistentWouldBeChildOfRoot) {
+    BSTree<int, int> tree;
+    tree.insert(10, 100);
+    tree.insert(15, 150);
+
+    // 5 не существует, его родителем был бы корень (у корня нет левого ребёнка)
+    EXPECT_THROW(tree.erase(5), std::invalid_argument);
+}
+
 TEST(TestBSTree, FindRootInTreeWithSingleElementReturnPtr) {
     BSTree<int, int> tree;
 
     tree.insert(6, 24);
 
     EXPECT_EQ(*tree.find(6), 24);
+}
+
+TEST(TestBSTree, FindNonExistKeyInSingleElementTreeReturnsNullptr) {
+    BSTree<int, int> tree;
+
+    tree.insert(6, 24);
+
+    EXPECT_EQ(tree.find(5), nullptr);
+    EXPECT_EQ(tree.find(7), nullptr);
+}
+
+TEST(TestBSTree, FindNonExistKeyWouldBeLeftChildOfRoot) {
+    BSTree<int, int> tree;
+
+    tree.insert(10, 1);
+    tree.insert(15, 2);
+
+    // ключ 5 не существует, его родителем был бы root (у root нет левого ребёнка)
+    EXPECT_EQ(tree.find(5), nullptr);
+}
+
+TEST(TestBSTree, FindNonExistKeyWouldBeRightChildOfRoot) {
+    BSTree<int, int> tree;
+
+    tree.insert(10, 1);
+    tree.insert(5, 2);
+
+    // ключ 15 не существует, его родителем был бы root (у root нет правого ребёнка)
+    EXPECT_EQ(tree.find(15), nullptr);
 }

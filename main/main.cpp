@@ -2,7 +2,7 @@
 // Copyright 2025 Chernykh Valentin
 // Copyright 2026 Chernykh Valentin
 
-#define LABYRINTH_TEST
+#define HASH_TABLE_TEST
 
 #include "libs/lib_matrix/matrix.h"
 #include "libs/lib_triangle_matrix/triangle_matrix.h"
