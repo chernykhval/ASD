@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include "libs/lib_matrix/matrix.h"
 #include "libs/lib_algorithms/algorithms.h"
+#include "libs/lib_adj_matrix_graph/adj_matrix_graph.h"
 
 #define EPSILON 0.000001
 

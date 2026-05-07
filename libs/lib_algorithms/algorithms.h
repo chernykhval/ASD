@@ -95,8 +95,8 @@ void build_labyrinth(Matrix<Cell>& walls, DSU& rooms,
     OrderedArrayTable<RoomConnection, Wall>& table, int cols);
 void add_path(Matrix<Cell>& walls);
 
-template<typename T>
-std::pair<TVector<T>, int> dijkstra(const AdjListGraph<T>& graph, const T& src, const T& dst) {
+template<typename T, typename Graph>
+std::pair<TVector<T>, int> dijkstra(const Graph& graph, const T& src, const T& dst) {
     const int INF = std::numeric_limits<int>::max();
 
     OrderedArrayTable<T, int> dist;
