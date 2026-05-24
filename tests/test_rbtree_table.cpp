@@ -2,27 +2,27 @@
 
 #include <gtest/gtest.h>
 #include <string>
-#include "libs/lib_avltree_table/avltree_table.h"
+#include "libs/lib_rbtree_table/rbtree_table.h"
 #include "libs/lib_tvector/tvector.h"
 
-TEST(TestAVLTreeTable, insert) {
-    AVLTreeTable<int, std::string> table;
+TEST(TestRBTreeTable, insert) {
+    RBTreeTable<int, std::string> table;
 
     table.insert(1, "hello");
 
     EXPECT_EQ(1, table.size());
 }
 
-TEST(TestAVLTreeTable, insert_exception) {
-    AVLTreeTable<int, std::string> table;
+TEST(TestRBTreeTable, insert_exception) {
+    RBTreeTable<int, std::string> table;
 
     table.insert(1, "hello");
 
     EXPECT_THROW(table.insert(1, "hello"), std::invalid_argument);
 }
 
-TEST(TestAVLTreeTable, erase_true) {
-    AVLTreeTable<int, std::string> table;
+TEST(TestRBTreeTable, erase_true) {
+    RBTreeTable<int, std::string> table;
 
     table.insert(1, "hello");
 
@@ -31,24 +31,24 @@ TEST(TestAVLTreeTable, erase_true) {
     EXPECT_EQ(0, table.size());
 }
 
-TEST(TestAVLTreeTable, erase_false) {
-    AVLTreeTable<int, std::string> table;
+TEST(TestRBTreeTable, erase_false) {
+    RBTreeTable<int, std::string> table;
 
     table.insert(1, "hello");
 
     EXPECT_FALSE(table.erase(2));
 }
 
-TEST(TestAVLTreeTable, find) {
-    AVLTreeTable<int, std::string> table;
+TEST(TestRBTreeTable, find) {
+    RBTreeTable<int, std::string> table;
 
     EXPECT_EQ(nullptr, table.find(1));
     table.insert(1, "hello");
     EXPECT_EQ("hello", *table.find(1));
 }
 
-TEST(TestAVLTreeTable, is_empty_and_clear) {
-    AVLTreeTable<int, std::string> table;
+TEST(TestRBTreeTable, is_empty_and_clear) {
+    RBTreeTable<int, std::string> table;
 
     EXPECT_TRUE(table.is_empty());
     table.insert(1, "hello");
@@ -57,8 +57,8 @@ TEST(TestAVLTreeTable, is_empty_and_clear) {
     EXPECT_TRUE(table.is_empty());
 }
 
-TEST(TestAVLTreeTable, multiple_elements_scenario) {
-    AVLTreeTable<int, std::string> table;
+TEST(TestRBTreeTable, multiple_elements_scenario) {
+    RBTreeTable<int, std::string> table;
 
     table.insert(1, "one");
     table.insert(2, "two");
@@ -66,20 +66,20 @@ TEST(TestAVLTreeTable, multiple_elements_scenario) {
 
     EXPECT_EQ(3, table.size());
 
-    EXPECT_EQ("one", *table.find(1));
-    EXPECT_EQ("two", *table.find(2));
+    EXPECT_EQ("one",   *table.find(1));
+    EXPECT_EQ("two",   *table.find(2));
     EXPECT_EQ("three", *table.find(3));
 
     table.erase(2);
 
     EXPECT_EQ(2, table.size());
     EXPECT_EQ(nullptr, table.find(2));
-    EXPECT_EQ("one", *table.find(1));
+    EXPECT_EQ("one",   *table.find(1));
     EXPECT_EQ("three", *table.find(3));
 }
 
-TEST(TestAVLTreeTable, to_string) {
-    AVLTreeTable<int, std::string> table;
+TEST(TestRBTreeTable, to_string) {
+    RBTreeTable<int, std::string> table;
 
     table.insert(2, "two");
     table.insert(1, "one");
@@ -93,14 +93,14 @@ TEST(TestAVLTreeTable, to_string) {
     EXPECT_EQ(text, table.to_string());
 }
 
-TEST(TestAVLTreeTable, ToStringForEmptyTable) {
-    AVLTreeTable<int, std::string> table;
+TEST(TestRBTreeTable, ToStringForEmptyTable) {
+    RBTreeTable<int, std::string> table;
 
     EXPECT_EQ("Table is empty\n", table.to_string());
 }
 
-TEST(TestAVLTreeTable, contains) {
-    AVLTreeTable<int, std::string> table;
+TEST(TestRBTreeTable, contains) {
+    RBTreeTable<int, std::string> table;
 
     table.insert(1, "one");
 
@@ -111,8 +111,8 @@ TEST(TestAVLTreeTable, contains) {
     EXPECT_FALSE(table.contains(1));
 }
 
-TEST(TestAVLTreeTable, get_keys) {
-    AVLTreeTable<int, std::string> table;
+TEST(TestRBTreeTable, get_keys) {
+    RBTreeTable<int, std::string> table;
 
     table.insert(2, "two");
     table.insert(1, "one");
@@ -126,12 +126,12 @@ TEST(TestAVLTreeTable, get_keys) {
     EXPECT_EQ(3, keys[2]);
 }
 
-// AVL-специфичный: вставка в отсортированном порядке вызывает ротации,
-// но find должен находить все элементы
-TEST(TestAVLTreeTable, FindAfterRotations) {
-    AVLTreeTable<int, std::string> table;
+// RBTree-специфичный: вставка 1,2,3 вызывает левый поворот (RR-случай),
+// 2 становится корнем — find должен находить все элементы
+TEST(TestRBTreeTable, FindAfterRebalancing) {
+    RBTreeTable<int, std::string> table;
 
-    // вставка 1,2,3 вызывает RR-ротацию, 2 становится корнем
+    // вставка 1,2,3: 3(R) — правый ребёнок 2(R) — нарушение, left_rotate(1) → 2(B), 1(R), 3(R)
     table.insert(1, "one");
     table.insert(2, "two");
     table.insert(3, "three");
@@ -141,12 +141,12 @@ TEST(TestAVLTreeTable, FindAfterRotations) {
     EXPECT_EQ("three", *table.find(3));
 }
 
-// AVL-специфичный: вставка 1,2,3 вызывает RR-ротацию (корень=2, левый=1, правый=3),
+// RBTree-специфичный: вставка 1,2,3 вызывает left_rotate (корень=2, левый=1, правый=3),
 // get_keys возвращает ключи в порядке in-order (отсортированно)
-TEST(TestAVLTreeTable, GetKeysAfterRotation) {
-    AVLTreeTable<int, std::string> table;
+TEST(TestRBTreeTable, GetKeysAfterRebalancing) {
+    RBTreeTable<int, std::string> table;
 
-    // вставка 1,2,3 → RR-ротация → корень=2, левый=1, правый=3
+    // вставка 1,2,3 → left_rotate → корень=2, левый=1, правый=3
     table.insert(1, "one");
     table.insert(2, "two");
     table.insert(3, "three");

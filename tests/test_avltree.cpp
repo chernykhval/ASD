@@ -203,7 +203,7 @@ TEST(TestAVLTree, GetKeysEmpty) {
     EXPECT_EQ(0, keys.size());
 }
 
-TEST(TestAVLTree, GetKeysReturnsBFS) {
+TEST(TestAVLTree, GetKeysReturnsInOrder) {
     AVLTree<int, int> tree;
     tree.insert(5, 5);
     tree.insert(3, 3);
@@ -213,11 +213,11 @@ TEST(TestAVLTree, GetKeysReturnsBFS) {
 
     TVector<int> keys = tree.get_keys();
     EXPECT_EQ(5, keys.size());
-    EXPECT_EQ(5, keys[0]);
+    EXPECT_EQ(1, keys[0]);
     EXPECT_EQ(3, keys[1]);
-    EXPECT_EQ(7, keys[2]);
-    EXPECT_EQ(1, keys[3]);
-    EXPECT_EQ(4, keys[4]);
+    EXPECT_EQ(4, keys[2]);
+    EXPECT_EQ(5, keys[3]);
+    EXPECT_EQ(7, keys[4]);
 }
 
 TEST(TestAVLTree, EraseRoot) {

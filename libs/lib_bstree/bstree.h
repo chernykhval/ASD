@@ -45,6 +45,7 @@ class BSTree {
 
  private:
     Node* find_parent(const Key& key) const;
+    void get_keys_rec(Node* node, TVector<Key>& result) const;
     void print_dlcr_rec(Node* node, bool& first) const;
     void print_dlrc_rec(Node* node, bool& first) const;
     void print_dclr_rec(Node* node, bool& first) const;
@@ -312,31 +313,17 @@ size_t BSTree<Key, Value>::size() const noexcept {
 }
 
 template<typename Key, typename Value>
+void BSTree<Key, Value>::get_keys_rec(Node* node, TVector<Key>& result) const {
+    if (!node) return;
+    get_keys_rec(node->left, result);
+    result.push_back(node->key);
+    get_keys_rec(node->right, result);
+}
+
+template<typename Key, typename Value>
 TVector<Key> BSTree<Key, Value>::get_keys() const {
     TVector<Key> result;
-
-    if (is_empty()) {
-        return result;
-    }
-
-    Node* current = nullptr;
-    Queue<Node*> queue((_size + 1) / 2);
-    queue.enqueue(_root);
-
-    while (!queue.is_empty()) {
-        current = queue.front();
-        result.push_back(current->key);
-        queue.dequeue();
-
-        if (current->left) {
-            queue.enqueue(current->left);
-        }
-
-        if (current->right) {
-            queue.enqueue(current->right);
-        }
-    }
-
+    get_keys_rec(_root, result);
     return result;
 }
 

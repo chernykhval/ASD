@@ -86,8 +86,8 @@ TEST(TestBSTreeTable, to_string) {
     table.insert(3, "three");
 
     std::string text = "{key} : {value}\n"
-                       "{2} : {two}\n"
                        "{1} : {one}\n"
+                       "{2} : {two}\n"
                        "{3} : {three}\n";
 
     EXPECT_EQ(text, table.to_string());
@@ -121,7 +121,7 @@ TEST(TestBSTreeTable, get_keys) {
     TVector<int> keys = table.get_keys();
 
     EXPECT_EQ(3, keys.size());
-    EXPECT_EQ(2, keys[0]);
-    EXPECT_EQ(1, keys[1]);
+    EXPECT_EQ(1, keys[0]);
+    EXPECT_EQ(2, keys[1]);
     EXPECT_EQ(3, keys[2]);
 }
