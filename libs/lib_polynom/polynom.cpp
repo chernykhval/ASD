@@ -1,0 +1,661 @@
+// Copyright 2026 Chernykh Valentin
+
+#include <cmath>
+#include <sstream>
+#include <string>
+
+#include "libs/lib_polynom/polynom.h"
+
+Monom::Monom(double coeff, const int* powers) : _coeff(coeff) {
+    if (powers == nullptr) {
+        for (size_t i = 0; i < VAR_COUNT; ++i) {
+            _powers[i] = 0;
+        }
+    } else {
+        for (size_t i = 0; i < VAR_COUNT; ++i) {
+            if (powers[i] < 0) {
+                throw std::out_of_range("Error: powers cannot be negative");
+            }
+
+            _powers[i] = powers[i];
+        }
+    }
+}
+
+Monom::Monom(const Monom& monom) : _coeff(monom._coeff) {
+    for (size_t i = 0; i < VAR_COUNT; ++i) {
+        _powers[i] = monom._powers[i];
+    }
+}
+
+bool Monom::operator==(const Monom& monom) const {
+    for (size_t i = 0; i < VAR_COUNT; ++i) {
+        if (_powers[i] != monom._powers[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool Monom::operator!=(const Monom& monom) const {
+    return !(*this == monom);
+}
+
+bool Monom::operator>(const Monom& monom) const {
+    for (size_t i = 0; i < VAR_COUNT; ++i) {
+        if (_powers[i] != monom._powers[i]) {
+            return _powers[i] > monom._powers[i];
+        }
+    }
+
+    return false;
+}
+
+bool Monom::operator<(const Monom& monom) const {
+    return !(*this == monom || *this > monom);
+}
+
+Monom Monom::operator+(const Monom& monom) const {
+    Monom result(*this);
+
+    return result += monom;
+}
+
+Monom Monom::operator-(const Monom& monom) const {
+    Monom result(*this);
+
+    return result -= monom;
+}
+
+Monom Monom::operator*(const Monom& monom) const {
+    Monom result(*this);
+
+    return result *= monom;
+}
+
+Monom Monom::operator/(const Monom& monom) const {
+    Monom result(*this);
+
+    return result /= monom;
+}
+
+Monom Monom::operator*(double value) const {
+    Monom result(*this);
+
+    return result *= value;
+}
+
+Monom Monom::operator/(double value) const {
+    Monom result(*this);
+
+    return result /= value;
+}
+
+Monom Monom::operator-() const {
+    Monom result(*this);
+    result._coeff = -result._coeff;
+    return result;
+}
+
+Monom& Monom::operator+=(const Monom& monom) {
+    if (*this != monom) {
+        throw std::invalid_argument("Error: monomes are not similar");
+    }
+
+    _coeff += monom._coeff;
+
+    return *this;
+}
+
+Monom& Monom::operator-=(const Monom& monom) {
+    return *this += (-monom);
+}
+
+Monom& Monom::operator*=(const Monom& monom) {
+    _coeff *= monom._coeff;
+
+    for (size_t i = 0; i < VAR_COUNT; ++i) {
+        _powers[i] += monom._powers[i];
+    }
+
+    return *this;
+}
+
+Monom& Monom::operator/=(const Monom& monom) {
+    if (monom._coeff == 0.0) {
+        throw std::invalid_argument("Error: division by zero monom");
+    }
+
+    for (size_t i = 0; i < VAR_COUNT; ++i) {
+        if (this->_powers[i] < monom._powers[i]) {
+            throw std::out_of_range("Error: resulting power would be negative");
+        }
+    }
+
+    _coeff /= monom._coeff;
+
+    for (size_t i = 0; i < VAR_COUNT; ++i) {
+        _powers[i] -= monom._powers[i];
+    }
+
+    return *this;
+}
+
+Monom& Monom::operator*=(double value) {
+    _coeff *= value;
+
+    return *this;
+}
+
+Monom& Monom::operator/=(double value) {
+    if (value == 0.0) {
+        throw std::invalid_argument("Error: division by zero");
+    }
+
+    _coeff /= value;
+
+    return *this;
+}
+
+double Monom::calculate(double x, double y, double z) const {
+    double result = _coeff
+    * std::pow(x, _powers[0])
+    * std::pow(y, _powers[1])
+    * std::pow(z, _powers[2]);
+
+    return result;
+}
+
+bool Monom::is_zero() const {
+    return _coeff == 0;
+}
+
+bool Monom::is_negative() const {
+    return _coeff < 0.0;
+}
+
+std::string Monom::abs_string() const {
+    std::ostringstream oss;
+    char vars[VAR_COUNT] = {'x', 'y', 'z'};
+
+    for (int i = 0; i < VAR_COUNT; i++) {
+        if (i == VAR_COUNT - 1 && _powers[i] == 0) {
+            oss << std::abs(_coeff);;
+            return oss.str();
+        }
+
+        if (_powers[i] != 0) {
+            break;
+        }
+    }
+
+    if (std::abs(_coeff) != 1) {
+        oss << std::abs(_coeff);
+    }
+
+    for (int i = 0; i < VAR_COUNT; i++) {
+        if (_powers[i] > 0) {
+            oss << vars[i];
+        }
+
+        if (_powers[i] > 1) {
+            oss << "^" << _powers[i];
+        }
+    }
+
+    return oss.str();
+}
+
+bool Monom::equal(const Monom& other) const {
+    return *this == other && _coeff == other._coeff;
+}
+
+Monom& Monom::operator=(const Monom& monom) {
+    if (this == &monom) {
+        return *this;
+    }
+
+    _coeff = monom._coeff;
+
+    for (size_t i = 0; i < VAR_COUNT; ++i) {
+        _powers[i] = monom._powers[i];
+    }
+
+    return *this;
+}
+
+Polynom::Polynom(const std::string& name) : _name(name), _monomes() {
+}
+
+Polynom::Polynom(const Polynom& polynom) : _name(polynom._name),
+_monomes(polynom._monomes) {
+}
+
+Polynom::Polynom(const std::string& name, const std::string& polynom) {
+    _name = name;
+    parse_polynom(polynom);
+}
+
+Polynom Polynom::operator+(const Polynom& polynom) const {
+    Polynom result(*this);
+    result += polynom;
+    return result;
+}
+
+Polynom Polynom::operator-(const Polynom& polynom) const {
+    Polynom result(*this);
+    result -= polynom;
+    return result;
+}
+
+Polynom Polynom::operator*(const Polynom& polynom) const {
+    Polynom result(*this);
+    result *= polynom;
+    return result;
+}
+
+Polynom& Polynom::operator+=(const Polynom& polynom) {
+    auto it1 = _monomes.begin();
+    auto it2 = polynom._monomes.begin();
+    auto prev = it1;
+
+    while (it1 != _monomes.end() && it2 != polynom._monomes.end()) {
+        if (*it1 > *it2) {
+            prev = it1;
+            ++it1;
+        } else if (*it2 > *it1) {
+            if (it1 == _monomes.begin()) {
+                _monomes.push_front(*it2);
+            } else {
+                _monomes.insert(prev, *it2);
+            }
+
+            ++it2;
+        } else {
+            *it1 += *it2;
+
+            if (it1->is_zero()) {
+                it1 = _monomes.erase(it1);
+            } else {
+                prev = it1;
+                ++it1;
+            }
+
+            ++it2;
+        }
+    }
+
+    while (it2 != polynom._monomes.end()) {
+        _monomes.push_back(*it2);
+        ++it2;
+    }
+
+    return *this;
+}
+
+Polynom& Polynom::operator-=(const Polynom& polynom) {
+    return (*this) += (-polynom);
+}
+
+Polynom& Polynom::operator*=(const Polynom& polynom) {
+    Polynom result;
+
+    for (const auto& m1 : _monomes) {
+        for (const auto& m2 : polynom._monomes) {
+            result += m1 * m2;
+        }
+    }
+
+    *this = result;
+    return *this;
+}
+
+Polynom Polynom::operator+(const Monom& monom) const {
+    Polynom result(*this);
+
+    result += monom;
+
+    return result;
+}
+
+Polynom Polynom::operator-(const Monom& monom) const {
+    Polynom result(*this);
+
+    result -= monom;
+
+    return result;
+}
+
+Polynom Polynom::operator*(const Monom& monom) const {
+    Polynom result(*this);
+
+    result *= monom;
+
+    return result;
+}
+
+Polynom& Polynom::operator+=(const Monom& monom) {
+    if (monom.is_zero()) {
+        return *this;
+    }
+
+    if (_monomes.is_empty() || monom > *(_monomes.begin())) {
+        _monomes.push_front(monom);
+
+        return *this;
+    }
+
+    for (auto it = _monomes.begin(); it != _monomes.end(); ++it) {
+        if (*it == monom) {
+            *it += monom;
+
+            if (it->is_zero()) {
+                it = _monomes.erase(it);
+            }
+
+            return *this;
+        }
+
+        auto next = it;
+        ++next;
+
+        if (next == _monomes.end() || monom > *next) {
+            _monomes.insert(it, monom);
+
+            return *this;
+        }
+    }
+
+    _monomes.push_back(monom);
+
+    return *this;
+}
+
+Polynom& Polynom::operator-=(const Monom& monom) {
+    *this += (-monom);
+    return *this;
+}
+
+Polynom& Polynom::operator*=(const Monom& monom) {
+    if (monom.is_zero()) {
+        _monomes.clear();
+        return *this;
+    }
+
+    for (auto& m : _monomes) {
+        m *= monom;
+    }
+
+    return *this;
+}
+
+Polynom Polynom::operator*(double value) const {
+    Polynom result(*this);
+
+    result *= value;
+    return result;
+}
+
+Polynom Polynom::operator/(double value) const {
+    Polynom result(*this);
+
+    result /= value;
+    return result;
+}
+
+bool Polynom::operator==(const Polynom& other) const {
+    if (_monomes.size() != other._monomes.size()) {
+        return false;
+    }
+
+    auto it1 = _monomes.begin();
+    auto it2 = other._monomes.begin();
+
+    while (it1 != _monomes.end()) {
+        if (!it1->equal(*it2)) {
+            return false;
+        }
+
+        ++it1;
+        ++it2;
+    }
+
+    return true;
+}
+
+bool Polynom::operator!=(const Polynom& other) const {
+    return !(*this == other);
+}
+
+Polynom Polynom::operator-() const {
+    Polynom result(*this);
+
+    return result * (-1.0);
+}
+
+Polynom& Polynom::operator*=(double value) {
+    if (value == 0.0) {
+        _monomes.clear();
+        return *this;
+    }
+
+    for (auto& monom : _monomes) {
+        monom *= value;
+    }
+
+    return *this;
+}
+
+Polynom& Polynom::operator/=(double value) {
+    if (value == 0.0) {
+        throw std::invalid_argument("Polynom: division by zero");
+    }
+
+    for (auto& monom : _monomes) {
+        monom /= value;
+    }
+
+    return *this;
+}
+
+double Polynom::calculate(double x, double y, double z) const {
+    double result = 0.0;
+
+    for (auto& monom : _monomes) {
+        result += monom.calculate(x, y, z);
+    }
+
+    return  result;
+}
+
+Polynom& Polynom::operator=(const Polynom& polynom) {
+    if (this == &polynom) {
+        return *this;
+    }
+
+    _name = polynom._name;
+    _monomes = polynom._monomes;
+
+    return *this;
+}
+
+size_t Polynom::size() const {
+    return _monomes.size();
+}
+
+std::string Polynom::name() const {
+    return _name;
+}
+
+void Polynom::parse_polynom(const std::string& polynom) {
+    size_t pos = 0;
+
+    while (pos < polynom.size()) {
+        parse_monom(polynom, pos);
+    }
+}
+
+void Polynom::parse_monom(const std::string& polynom, size_t& pos) {
+    skip_spaces(polynom, pos);
+    if (pos >= polynom.size()) {
+        return;
+    }
+
+    double coeff = read_coeff(polynom, pos);
+    int powers[VAR_COUNT];
+    read_powers(polynom, pos, powers);
+
+    Monom m(coeff, powers);
+
+    *this += m;
+}
+
+void Polynom::skip_spaces(const std::string& polynom, size_t& pos) {
+    while (pos < polynom.size() && polynom[pos] == ' ') {
+        pos++;
+    }
+}
+
+double Polynom::read_coeff(const std::string& polynom, size_t& pos) {
+    std::ostringstream oss;
+    bool has_dot = false;
+
+    if (polynom[pos] == '-') {
+        oss << '-';
+        pos++;
+    } else if (polynom[pos] == '+') {
+        pos++;
+    }
+
+    skip_spaces(polynom, pos);
+
+    if (pos >= polynom.size() ||
+        (polynom[pos] != '.' &&
+         !(polynom[pos] >= '0' && polynom[pos] <= '9') &&
+         polynom[pos] != 'x' && polynom[pos] != 'y' && polynom[pos] != 'z')) {
+        throw std::invalid_argument(
+            "Polynom::parse - invalid symbol after sign: "
+            + std::string(1, polynom[pos]));
+    }
+
+    while (polynom[pos] >= '0' && polynom[pos] <= '9') {
+        oss << polynom[pos];
+        pos++;
+    }
+
+    if (polynom[pos] == '.') {
+        has_dot = true;
+        oss << '.';
+        pos++;
+    }
+
+    if (has_dot) {
+        while (polynom[pos] >= '0' && polynom[pos] <= '9') {
+            oss << polynom[pos];
+            pos++;
+        }
+    }
+
+    if (oss.str() == "-" || oss.str() == "") {
+        oss << 1;
+    }
+
+    return std::stod(oss.str());
+}
+
+void Polynom::read_powers(const std::string& polynom,
+    size_t& pos, int powers[VAR_COUNT]) {
+    char vars[VAR_COUNT] = {'x', 'y', 'z'};
+
+    for (int i = 0; i < VAR_COUNT; i++) {
+        if (polynom[pos] != vars[i]) {
+            powers[i] = 0;
+            continue;
+        }
+
+        pos++;
+
+        if (polynom[pos] != '^') {
+            powers[i] = 1;
+            continue;
+        }
+
+        pos++;
+        std::ostringstream oss;
+
+        while (polynom[pos] >= '0' && polynom[pos] <= '9') {
+            oss << polynom[pos];
+            pos++;
+        }
+
+        powers[i] = std::stoi(oss.str());
+    }
+
+    skip_spaces(polynom, pos);
+
+    if (pos < polynom.size() && polynom[pos] != '+' && polynom[pos] != '-') {
+        throw std::invalid_argument(
+            "Polynom::parse - invalid symbol: "
+            + std::string(1, polynom[pos]));
+    }
+}
+
+std::ostream& operator<<(std::ostream& os, const Monom& monom) {
+    if (monom.is_negative()) {
+        os << '-';
+    }
+
+    os << monom.abs_string();
+
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, Monom& monom) {
+    is >> monom._coeff
+    >> monom._powers[0]
+    >> monom._powers[1]
+    >> monom._powers[2];
+
+    if (is.fail()) {
+        throw std::invalid_argument("Monom::operator>> - invalid input");
+    }
+
+    return is;
+}
+
+std::ostream& operator<<(std::ostream& os, const Polynom& p) {
+    if (p.size() == 0) {
+        os << "0";
+
+        return os;
+    }
+
+    auto first = p._monomes.begin();
+    if (first->is_negative()) {
+        os << '-';
+    }
+
+    os << first -> abs_string();
+
+
+    for (auto it = ++p._monomes.begin(); it != p._monomes.end(); ++it) {
+        if (it->is_negative()) {
+            os << " - ";
+        } else {
+            os << " + ";
+        }
+
+        os << it->abs_string();
+    }
+
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, Polynom& p) {
+    std::string input;
+    std::getline(is, input);
+    p.parse_polynom(input);
+
+    return is;
+}
